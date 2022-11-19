@@ -1,13 +1,13 @@
-import {
-  GetServerSideProps,
-  GetServerSidePropsContext,
-  PreviewData,
-} from "next";
+import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import getRanking, { Ranking } from "../lib/ranking";
 
 import Head from "next/head";
-import { ParsedUrlQuery } from "querystring";
+import Link from "next/link";
 
-function Home({ data }: { data: any }) {
+function Home({
+  ranking: { items, matches },
+}: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const now = new Date();
   return (
     <div>
       <Head>
@@ -21,29 +21,56 @@ function Home({ data }: { data: any }) {
 
       <main>
         <h1>Ranking Geral</h1>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Posição</th>
+              <th>Nome</th>
+              {matches.map((match) => (
+                <th key={match.id}>
+                  <div className="-rotate-90">
+                    {match.homeTeam + "x" + match.awayTeam}
+                  </div>
+                </th>
+              ))}
+              <th>Pontuação</th>
+            </tr>
+          </thead>
+          <tbody>
+            {items.map((item, index) => (
+              <tr key={index}>
+                <td>{item.position}</td>
+                <td>
+                  <Link href={`/players/${item.player.id}`}>
+                    {item.player.name}
+                  </Link>
+                </td>
+                {item.bets.map((item) => (
+                  <td key={item.matchID}>{item.points ?? ""}</td>
+                ))}
+                <td>{item.points}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </main>
 
-      <footer>Atualizada: {new Date().toDateString()}</footer>
+      <footer>{`Atualizado: ${now.toLocaleDateString("pt-BR")}`}</footer>
     </div>
   );
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const baseUrl = returnUrl(context);
-  const res = await fetch(baseUrl + "/api/hello");
-  const data = await res.json();
-
+export const getServerSideProps: GetServerSideProps<{
+  ranking: Ranking;
+}> = async ({ res }) => {
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=60, stale-while-revalidate=86400"
+  );
+  const ranking = await getRanking();
   // Pass data to the page via props
-  return { props: { data } };
+  return { props: { ranking } };
 };
-
-function returnUrl(
-  context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
-) {
-  if (process.env.NODE_ENV === "production") {
-    return `https://${context.req.rawHeaders[1]}`;
-  }
-  return "http://localhost:3000";
-}
 
 export default Home;
