@@ -96,7 +96,7 @@ export interface Fixture {
   id: number;
   referee?: any;
   timezone: string;
-  date: Date;
+  date: string;
   timestamp: number;
   periods: Periods;
   venue: Venue;
