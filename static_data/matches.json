@@ -1,0 +1,386 @@
+[
+  {
+    "id": 211,
+    "sequence": 1,
+    "homeTeam": "Catar",
+    "awayTeam": "Equador",
+    "fase": "Fase 1",
+    "fixtureID": 855736
+  },
+  {
+    "id": 217,
+    "sequence": 7,
+    "homeTeam": "Inglaterra",
+    "awayTeam": "Irã",
+    "fase": "Fase 1",
+    "fixtureID": 855735
+  },
+  {
+    "id": 212,
+    "sequence": 2,
+    "homeTeam": "Senegal",
+    "awayTeam": "Holanda",
+    "fase": "Fase 1",
+    "fixtureID": 855734
+  },
+  {
+    "id": 218,
+    "sequence": 8,
+    "homeTeam": "Estados Unidos",
+    "awayTeam": "País de Gales",
+    "fase": "Fase 1",
+    "fixtureID": 866681
+  },
+  {
+    "id": 223,
+    "sequence": 13,
+    "homeTeam": "Argentina",
+    "awayTeam": "Arábia Saudita",
+    "fase": "Fase 1",
+    "fixtureID": 855737
+  },
+  {
+    "id": 229,
+    "sequence": 19,
+    "homeTeam": "Dinamarca",
+    "awayTeam": "Tunísia",
+    "fase": "Fase 1",
+    "fixtureID": 855738
+  },
+  {
+    "id": 224,
+    "sequence": 14,
+    "homeTeam": "México",
+    "awayTeam": "Polônia",
+    "fase": "Fase 1",
+    "fixtureID": 855739
+  },
+  {
+    "id": 230,
+    "sequence": 20,
+    "homeTeam": "França",
+    "awayTeam": "Austrália",
+    "fase": "Fase 1",
+    "fixtureID": 871850
+  },
+  {
+    "id": 241,
+    "sequence": 31,
+    "homeTeam": "Marrocos",
+    "awayTeam": "Croácia",
+    "fase": "Fase 1",
+    "fixtureID": 855740
+  },
+  {
+    "id": 235,
+    "sequence": 25,
+    "homeTeam": "Alemanha",
+    "awayTeam": "Japão",
+    "fase": "Fase 1",
+    "fixtureID": 855741
+  },
+  {
+    "id": 236,
+    "sequence": 26,
+    "homeTeam": "Espanha",
+    "awayTeam": "Costa Rica",
+    "fase": "Fase 1",
+    "fixtureID": 871851
+  },
+  {
+    "id": 242,
+    "sequence": 32,
+    "homeTeam": "Bélgica",
+    "awayTeam": "Canadá",
+    "fase": "Fase 1",
+    "fixtureID": 855742
+  },
+  {
+    "id": 247,
+    "sequence": 37,
+    "homeTeam": "Suíça",
+    "awayTeam": "Camarões",
+    "fase": "Fase 1",
+    "fixtureID": 855743
+  },
+  {
+    "id": 253,
+    "sequence": 43,
+    "homeTeam": "Uruguai",
+    "awayTeam": "Coreia do Sul",
+    "fase": "Fase 1",
+    "fixtureID": 855744
+  },
+  {
+    "id": 254,
+    "sequence": 44,
+    "homeTeam": "Portugal",
+    "awayTeam": "Gana",
+    "fase": "Fase 1",
+    "fixtureID": 855745
+  },
+  {
+    "id": 248,
+    "sequence": 38,
+    "homeTeam": "Brasil",
+    "awayTeam": "Sérvia",
+    "fase": "Fase 1",
+    "fixtureID": 855746
+  },
+  {
+    "id": 219,
+    "sequence": 9,
+    "homeTeam": "País de Gales",
+    "awayTeam": "Irã",
+    "fase": "Fase 1",
+    "fixtureID": 866682
+  },
+  {
+    "id": 213,
+    "sequence": 3,
+    "homeTeam": "Catar",
+    "awayTeam": "Senegal",
+    "fase": "Fase 1",
+    "fixtureID": 855747
+  },
+  {
+    "id": 214,
+    "sequence": 4,
+    "homeTeam": "Holanda",
+    "awayTeam": "Equador",
+    "fase": "Fase 1",
+    "fixtureID": 855748
+  },
+  {
+    "id": 220,
+    "sequence": 10,
+    "homeTeam": "Inglaterra",
+    "awayTeam": "Estados Unidos",
+    "fase": "Fase 1",
+    "fixtureID": 855749
+  },
+  {
+    "id": 231,
+    "sequence": 21,
+    "homeTeam": "Tunísia",
+    "awayTeam": "Austrália",
+    "fase": "Fase 1",
+    "fixtureID": 871852
+  },
+  {
+    "id": 225,
+    "sequence": 15,
+    "homeTeam": "Polônia",
+    "awayTeam": "Arábia Saudita",
+    "fase": "Fase 1",
+    "fixtureID": 855750
+  },
+  {
+    "id": 232,
+    "sequence": 22,
+    "homeTeam": "França",
+    "awayTeam": "Dinamarca",
+    "fase": "Fase 1",
+    "fixtureID": 855751
+  },
+  {
+    "id": 226,
+    "sequence": 16,
+    "homeTeam": "Argentina",
+    "awayTeam": "México",
+    "fase": "Fase 1",
+    "fixtureID": 855752
+  },
+  {
+    "id": 237,
+    "sequence": 27,
+    "homeTeam": "Japão",
+    "awayTeam": "Costa Rica",
+    "fase": "Fase 1",
+    "fixtureID": 871853
+  },
+  {
+    "id": 243,
+    "sequence": 33,
+    "homeTeam": "Bélgica",
+    "awayTeam": "Marrocos",
+    "fase": "Fase 1",
+    "fixtureID": 855753
+  },
+  {
+    "id": 244,
+    "sequence": 34,
+    "homeTeam": "Croácia",
+    "awayTeam": "Canadá",
+    "fase": "Fase 1",
+    "fixtureID": 855754
+  },
+  {
+    "id": 238,
+    "sequence": 28,
+    "homeTeam": "Espanha",
+    "awayTeam": "Alemanha",
+    "fase": "Fase 1",
+    "fixtureID": 855755
+  },
+  {
+    "id": 249,
+    "sequence": 39,
+    "homeTeam": "Camarões",
+    "awayTeam": "Sérvia",
+    "fase": "Fase 1",
+    "fixtureID": 855756
+  },
+  {
+    "id": 255,
+    "sequence": 45,
+    "homeTeam": "Coreia do Sul",
+    "awayTeam": "Gana",
+    "fase": "Fase 1",
+    "fixtureID": 855757
+  },
+  {
+    "id": 250,
+    "sequence": 40,
+    "homeTeam": "Brasil",
+    "awayTeam": "Suíça",
+    "fase": "Fase 1",
+    "fixtureID": 855758
+  },
+  {
+    "id": 256,
+    "sequence": 46,
+    "homeTeam": "Portugal",
+    "awayTeam": "Uruguai",
+    "fase": "Fase 1",
+    "fixtureID": 855759
+  },
+  {
+    "id": 215,
+    "sequence": 5,
+    "homeTeam": "Holanda",
+    "awayTeam": "Catar",
+    "fase": "Fase 1",
+    "fixtureID": 855760
+  },
+  {
+    "id": 216,
+    "sequence": 6,
+    "homeTeam": "Equador",
+    "awayTeam": "Senegal",
+    "fase": "Fase 1",
+    "fixtureID": 855761
+  },
+  {
+    "id": 221,
+    "sequence": 11,
+    "homeTeam": "Irã",
+    "awayTeam": "Estados Unidos",
+    "fase": "Fase 1",
+    "fixtureID": 855762
+  },
+  {
+    "id": 222,
+    "sequence": 12,
+    "homeTeam": "País de Gales",
+    "awayTeam": "Inglaterra",
+    "fase": "Fase 1",
+    "fixtureID": 866683
+  },
+  {
+    "id": 233,
+    "sequence": 23,
+    "homeTeam": "Tunísia",
+    "awayTeam": "França",
+    "fase": "Fase 1",
+    "fixtureID": 855763
+  },
+  {
+    "id": 234,
+    "sequence": 24,
+    "homeTeam": "Austrália",
+    "awayTeam": "Dinamarca",
+    "fase": "Fase 1",
+    "fixtureID": 871854
+  },
+  {
+    "id": 227,
+    "sequence": 17,
+    "homeTeam": "Polônia",
+    "awayTeam": "Argentina",
+    "fase": "Fase 1",
+    "fixtureID": 855764
+  },
+  {
+    "id": 228,
+    "sequence": 18,
+    "homeTeam": "Arábia Saudita",
+    "awayTeam": "México",
+    "fase": "Fase 1",
+    "fixtureID": 855765
+  },
+  {
+    "id": 245,
+    "sequence": 35,
+    "homeTeam": "Croácia",
+    "awayTeam": "Bélgica",
+    "fase": "Fase 1",
+    "fixtureID": 855766
+  },
+  {
+    "id": 246,
+    "sequence": 36,
+    "homeTeam": "Canadá",
+    "awayTeam": "Marrocos",
+    "fase": "Fase 1",
+    "fixtureID": 855767
+  },
+  {
+    "id": 239,
+    "sequence": 29,
+    "homeTeam": "Japão",
+    "awayTeam": "Espanha",
+    "fase": "Fase 1",
+    "fixtureID": 855768
+  },
+  {
+    "id": 240,
+    "sequence": 30,
+    "homeTeam": "Costa Rica",
+    "awayTeam": "Alemanha",
+    "fase": "Fase 1",
+    "fixtureID": 871855
+  },
+  {
+    "id": 257,
+    "sequence": 47,
+    "homeTeam": "Coreia do Sul",
+    "awayTeam": "Portugal",
+    "fase": "Fase 1",
+    "fixtureID": 855769
+  },
+  {
+    "id": 258,
+    "sequence": 48,
+    "homeTeam": "Gana",
+    "awayTeam": "Uruguai",
+    "fase": "Fase 1",
+    "fixtureID": 855770
+  },
+  {
+    "id": 251,
+    "sequence": 41,
+    "homeTeam": "Camarões",
+    "awayTeam": "Brasil",
+    "fase": "Fase 1",
+    "fixtureID": 855771
+  },
+  {
+    "id": 252,
+    "sequence": 42,
+    "homeTeam": "Sérvia",
+    "awayTeam": "Suíça",
+    "fase": "Fase 1",
+    "fixtureID": 855772
+  }
+]
