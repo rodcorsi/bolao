@@ -102,7 +102,7 @@
         "timestamp": 1668960000,
         "periods": { "first": null, "second": null },
         "venue": { "id": null, "name": "Al Bayt Stadium", "city": "Al Khor" },
-        "status": { "long": "Not Started", "short": "NS", "elapsed": null }
+        "status": { "long": "Not Started", "short": "FT", "elapsed": null }
       },
       "league": {
         "id": 1,

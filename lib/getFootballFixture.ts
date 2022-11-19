@@ -29,6 +29,42 @@ function fetchFootballFixture() {
   return require("../static_data/football_fixture.json");
 }
 
+export async function getFootballFixtureMap() {
+  const fixture = await getFootballFixture();
+  return fixture.response.reduce((acc, response) => {
+    acc[response.fixture.id] = response;
+    return acc;
+  }, {} as { [fixtureID: number]: ResponseFixture });
+}
+
+export type MatchStatus = "NOT_STARTED" | "IN_PLAY" | "FINISHED";
+
+const matchStatusByFixture: { [status: string]: MatchStatus } = {
+  TBD: "NOT_STARTED",
+  NS: "NOT_STARTED",
+  "1H": "IN_PLAY",
+  HT: "IN_PLAY",
+  "2H": "IN_PLAY",
+  ET: "IN_PLAY",
+  BT: "IN_PLAY",
+  P: "IN_PLAY",
+  SUSP: "IN_PLAY",
+  INT: "IN_PLAY",
+  FT: "FINISHED",
+  AET: "FINISHED",
+  PEN: "FINISHED",
+  PST: "NOT_STARTED",
+  CANC: "NOT_STARTED",
+  ABD: "NOT_STARTED",
+  AWD: "NOT_STARTED",
+  WO: "NOT_STARTED",
+  LIVE: "IN_PLAY",
+};
+
+export function matchStatus(status: Status) {
+  return matchStatusByFixture[status.short];
+}
+
 export interface Parameters {
   league: string;
   season: string;

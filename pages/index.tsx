@@ -1,9 +1,15 @@
-import Head from "next/head";
-import styles from "../styles/Home.module.css";
+import {
+  GetServerSideProps,
+  GetServerSidePropsContext,
+  PreviewData,
+} from "next";
 
-export default function Home() {
+import Head from "next/head";
+import { ParsedUrlQuery } from "querystring";
+
+function Home({ data }: { data: any }) {
   return (
-    <div className={styles.container}>
+    <div>
       <Head>
         <title>Bolão Scheelita Copa 2022</title>
         <meta
@@ -13,13 +19,31 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>Ranking Geral</h1>
+      <main>
+        <h1>Ranking Geral</h1>
       </main>
 
-      <footer className={styles.footer}>
-        Atualizada: {new Date().toDateString()}
-      </footer>
+      <footer>Atualizada: {new Date().toDateString()}</footer>
     </div>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const baseUrl = returnUrl(context);
+  const res = await fetch(baseUrl + "/api/hello");
+  const data = await res.json();
+
+  // Pass data to the page via props
+  return { props: { data } };
+};
+
+function returnUrl(
+  context: GetServerSidePropsContext<ParsedUrlQuery, PreviewData>
+) {
+  if (process.env.NODE_ENV === "production") {
+    return `https://${context.req.rawHeaders[1]}`;
+  }
+  return "http://localhost:3000";
+}
+
+export default Home;
