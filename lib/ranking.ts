@@ -98,7 +98,7 @@ function rankingItem(player: Player, matches: MatchResult[]): RankingItem {
     const bet = betsByMatchID[match.id];
     let points = null;
     if (match.status !== "NOT_STARTED") {
-      points = calculatePoints(bet, match.fixture.goals);
+      points = calculatePoints(bet, match.fixture.score.fulltime);
     }
     bets[i] = { ...bet, points };
   }
