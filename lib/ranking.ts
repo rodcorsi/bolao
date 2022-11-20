@@ -51,13 +51,17 @@ export default async function getRanking(): Promise<Ranking> {
     return cachedResponse;
   }
   console.log("########### getRanking Gerou");
-  const data = await _getRanking();
-  cache.put(CACHE_NAME, data, calculateCacheTimeout());
-  return data;
+  const ranking = await _getRanking();
+  cache.put(CACHE_NAME, ranking, calculateCacheTimeout(ranking));
+  return ranking;
 }
 
-function calculateCacheTimeout() {
-  return 15 * MINUTE_IN_MS;
+function calculateCacheTimeout(ranking: Ranking) {
+  return hasInPlayMatch(ranking.matches) ? 5 * MINUTE_IN_MS : 15 * MINUTE_IN_MS;
+}
+
+function hasInPlayMatch(matches: MatchResult[]) {
+  return matches.find((match) => match.status === "IN_PLAY") != null;
 }
 
 async function _getRanking(): Promise<Ranking> {
