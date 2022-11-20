@@ -2,6 +2,9 @@
 const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
-}
+  images: {
+    domains: ["media.api-sports.io"],
+  },
+};
 
-module.exports = nextConfig
+module.exports = nextConfig;

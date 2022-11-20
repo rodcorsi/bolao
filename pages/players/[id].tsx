@@ -1,38 +1,41 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import Head from "next/head";
+import BetsList from "../../components/BetsList";
+import RankingList from "../../components/RankingList";
 import { getPlayerByID, Player } from "../../lib/getPlayers";
-import { useRouter } from "next/router";
-import getBets, { getBetsByPlayerID } from "../../lib/getBets";
-import { BetResult, getBetsResultByPlayer } from "../../lib/getBetResults";
+import getRanking, { MatchResult, RankingItem } from "../../lib/ranking";
 
 const Player = ({
   player,
-  bets,
+  rankingItem,
+  matches,
+  updateTime,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
-    <div className="container mx-auto">
-      <h1>Bolão Copa 2022</h1>
+    <div className="md:mx-auto md:w-3/4 grid">
+      <Head>
+        <title>{`Palpites - ${player.name} - Bolão Scheelita Copa 2022`}</title>
+        <meta
+          name="description"
+          content={`Palpites de ${player.name} para o bolão da scheelita copa 2022`}
+        />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <h1 className="p-2 text-lg text-gray-700 font-bold">
+        Bolão da Copa 2022 - Palpites
+      </h1>
       <h2>Jogador: {player.name}</h2>
-      <ul>
-        {bets.map((bet) => (
-          <li key={bet.matchID}>
-            <div className="flex">
-              <div>{bet.match.homeTeam}</div>
-              <div>{bet.homeGoals}</div>
-              <div>x</div>
-              <div>{bet.match.awayTeam}</div>
-              <div>{bet.awayGoals}</div>
-              <div>{bet.points == null ? "" : bet.points}</div>
-            </div>
-          </li>
-        ))}
-      </ul>
+      <RankingList rankingItems={new Array(rankingItem)} />
+      <BetsList rankingItem={rankingItem} matches={matches} />
     </div>
   );
 };
 
 export const getServerSideProps: GetServerSideProps<{
   player: Player;
-  bets: BetResult[];
+  rankingItem: RankingItem;
+  matches: MatchResult[];
+  updateTime: string;
 }> = async ({ req, res, params }) => {
   res.setHeader(
     "Cache-Control",
@@ -45,8 +48,21 @@ export const getServerSideProps: GetServerSideProps<{
       notFound: true,
     };
   }
-  const bets = await getBetsResultByPlayer(id);
-  return { props: { player, bets } };
+  const ranking = await getRanking();
+  const rankingItem = ranking.items.find((item) => item.player.id === id);
+  if (!rankingItem) {
+    return {
+      notFound: true,
+    };
+  }
+  return {
+    props: {
+      player,
+      matches: ranking.matches,
+      rankingItem,
+      updateTime: ranking.updateTime,
+    },
+  };
 };
 
 export default Player;
