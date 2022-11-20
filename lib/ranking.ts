@@ -78,12 +78,7 @@ async function getMatchesResult() {
     const status = matchStatus(fixture.fixture.status);
     matchesResult[i] = { ...match, status, fixture };
   }
-  matchesResult.sort((a, b) =>
-    a.fixture.fixture.date.localeCompare(b.fixture.fixture.date)
-  );
-  for (let i = 0; i < matchesResult.length; i++) {
-    matchesResult[i].sequence = i;
-  }
+  matchesResult.sort((a, b) => a.sequence - b.sequence);
   return matchesResult;
 }
 
