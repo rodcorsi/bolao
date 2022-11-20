@@ -7,6 +7,7 @@ export interface Match {
   awayTeam: string;
   fase: string;
   fixtureID: number;
+  group: string;
 }
 
 export default function getMatches() {
