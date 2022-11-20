@@ -3,6 +3,7 @@ import {
   ResponseFixture,
   Status,
   getFootballFixtureMap,
+  selectGoals,
 } from "./getFootballFixture";
 import getMatches, { Match } from "./getMatches";
 import getPlayers, { Player } from "./getPlayers";
@@ -96,7 +97,7 @@ function rankingItem(player: Player, matches: MatchResult[]): RankingItem {
     const bet = betsByMatchID[match.id];
     let points = null;
     if (match.status !== "NOT_STARTED") {
-      points = calculatePoints(bet, match.fixture.score.fulltime);
+      points = calculatePoints(bet, selectGoals(match.fixture));
     }
     bets[i] = { ...bet, points };
   }

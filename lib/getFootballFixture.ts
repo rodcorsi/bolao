@@ -34,6 +34,13 @@ export async function getFootballFixtureMap() {
   }, {} as { [fixtureID: number]: ResponseFixture });
 }
 
+export function selectGoals(fixture: ResponseFixture) {
+  if (fixture.score.fulltime.home == null) {
+    return fixture.goals;
+  }
+  return fixture.score.fulltime;
+}
+
 export interface Parameters {
   league: string;
   season: string;

@@ -4,6 +4,7 @@ import Image from "next/image";
 import React from "react";
 import { formatDateTime } from "../lib/formatDate";
 import groupByArray from "../lib/groupByArray";
+import { selectGoals } from "../lib/getFootballFixture";
 
 interface BetsListProps {
   rankingItem: RankingItem;
@@ -59,6 +60,7 @@ const Group: React.FC<FaseProps> = ({ matches, findBet }) => {
       <ul>
         {matches.map((match) => {
           const bet = findBet(match.id);
+          const goals = selectGoals(match.fixture);
           return (
             <li key={match.id}>
               <div className="flex flex-nowrap shrink-0 mt-2">
@@ -72,7 +74,7 @@ const Group: React.FC<FaseProps> = ({ matches, findBet }) => {
                 />
                 <IsEqual
                   value={bet.homeGoals}
-                  expected={match.fixture.score.fulltime.home}
+                  expected={goals.home}
                   className="w-10 text-lg text-center"
                 >
                   {bet.homeGoals}
@@ -80,7 +82,7 @@ const Group: React.FC<FaseProps> = ({ matches, findBet }) => {
                 <div className="text-sm text-center m-auto">x</div>
                 <IsEqual
                   value={bet.awayGoals}
-                  expected={match.fixture.score.fulltime.away}
+                  expected={goals.away}
                   className="w-10 text-lg text-center"
                 >
                   {bet.awayGoals}
@@ -103,12 +105,12 @@ const Group: React.FC<FaseProps> = ({ matches, findBet }) => {
                   {match.status === "IN_PLAY" ? "Em Andamento" : ""}
                 </div>
                 <div className="w-full my-auto text-right">
-                  {!!match.fixture.score.fulltime.home && (
+                  {!!goals.home && (
                     <div className="font-bold text-sm">
                       <span>Placar:</span>
-                      <span>{match.fixture.score.fulltime.home}</span>
+                      <span>{goals.home}</span>
                       <span>x</span>
-                      <span>{match.fixture.score.fulltime.away}</span>
+                      <span>{goals.away}</span>
                     </div>
                   )}
                 </div>
