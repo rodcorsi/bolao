@@ -10,7 +10,7 @@ interface RankingListProps {
 const RankingList: React.FC<RankingListProps> = ({ rankingItems }) => {
   return (
     <div className="flex flex-col justify-center h-full">
-      <RankingListHeader />
+      <RankingListHeader className="sticky top-0" />
       <ul className="grow w-full text-gray-900 overflow-y-auto">
         {rankingItems.map((item, index) => (
           <RankingListItem key={index} rankingItem={item} />

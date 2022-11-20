@@ -5,12 +5,26 @@ import Footer from "../components/Footer";
 import Head from "next/head";
 import RankingList from "../components/RankingList";
 
+const VALUE_GAME = 30;
+const SCHEELITA_VALUE = 1000;
+const FIRST_PLACE = 0.6;
+const SECOND_PLACE = 0.3;
+const THIRD_PLACE = 0.1;
+
+const currencyFormat = new Intl.NumberFormat("pt-BR", {
+  style: "currency",
+  currency: "BRL",
+}).format;
+
 function Home({
   ranking: { items, updateTime },
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const now = new Date();
+  const totalGame = items.length * VALUE_GAME + SCHEELITA_VALUE;
+  const firstPlace = totalGame * FIRST_PLACE;
+  const secondPlace = totalGame * SECOND_PLACE;
+  const thirdPlace = totalGame * THIRD_PLACE;
   return (
-    <div className="md:mx-auto md:w-3/4 grid h-screen grid-rows-layout">
+    <div className="md:mx-auto md:w-3/4">
       <Head>
         <title>Bolão Scheelita Copa 2022</title>
         <meta
@@ -23,8 +37,22 @@ function Home({
         Bolão da Copa 2022 - Ranking Geral
       </h1>
       <main className="md:container">
-        <div className="bg-white rounded-lg border border-gray-200 h-full">
+        <div className="bg-white rounded-lg border border-gray-200">
           <RankingList rankingItems={items} />
+        </div>
+        <div className="px-2 font-bold text-sm text-gray-800">
+          <div>{`Total de ${items.length} Jogos`}</div>
+          <div>{`Premiação Total ${currencyFormat(totalGame)}`}</div>
+          <div>{`1º - ${currencyFormat(firstPlace)}`}</div>
+          <div>{`2º - ${currencyFormat(secondPlace)}`}</div>
+          <div>{`3º - ${currencyFormat(thirdPlace)}`}</div>
+        </div>
+        <div className="text-xs text-right italic">
+          A Classificação é atualizada com as partidas em andamento, portanto as
+          posições podem ser alteradas durante o jogo
+        </div>
+        <div className="text-xs text-right italic">
+          O tempo médio de atualização é de 15 minutos
         </div>
       </main>
       <Footer updateTime={updateTime} />
