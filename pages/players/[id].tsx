@@ -1,6 +1,7 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
 import BetsList from "../../components/BetsList";
+import Footer from "../../components/Footer";
 import RankingList from "../../components/RankingList";
 import { getPlayerByID, Player } from "../../lib/getPlayers";
 import getRanking, { MatchResult, RankingItem } from "../../lib/ranking";
@@ -27,6 +28,7 @@ const Player = ({
       <h2>Jogador: {player.name}</h2>
       <RankingList rankingItems={new Array(rankingItem)} />
       <BetsList rankingItem={rankingItem} matches={matches} />
+      <Footer updateTime={updateTime} />
     </div>
   );
 };

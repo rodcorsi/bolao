@@ -1,11 +1,12 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import getRanking, { Ranking } from "../lib/ranking";
 
+import Footer from "../components/Footer";
 import Head from "next/head";
 import RankingList from "../components/RankingList";
 
 function Home({
-  ranking: { items, matches },
+  ranking: { items, updateTime },
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const now = new Date();
   return (
@@ -26,9 +27,7 @@ function Home({
           <RankingList rankingItems={items} />
         </div>
       </main>
-      <footer className="py-2 px-1 text-sm text-right">{`Atualizado: ${now.toLocaleDateString(
-        "pt-BR"
-      )}`}</footer>
+      <Footer updateTime={updateTime} />
     </div>
   );
 }
