@@ -64,7 +64,9 @@ const Group: React.FC<FaseProps> = ({ matches, findBet }) => {
           return (
             <li key={match.id}>
               <div className="flex flex-nowrap shrink-0 mt-2">
-                <div className="w-full text-right">{match.homeTeam}</div>
+                <div className="w-full text-right text-ellipsis whitespace-nowrap overflow-hidden">
+                  {match.homeTeam}
+                </div>
                 <Image
                   className="bg-center rounded-full mx-2"
                   src={match.fixture.teams.home.logo}
@@ -94,7 +96,9 @@ const Group: React.FC<FaseProps> = ({ matches, findBet }) => {
                   width={30}
                   height={30}
                 />
-                <div className="w-full">{match.awayTeam}</div>
+                <div className="w-full text-ellipsis whitespace-nowrap overflow-hidden">
+                  {match.awayTeam}
+                </div>
                 <Point points={bet.points} />
               </div>
               <div className="flex flex-nowrap shrink-0 text-xs justify-between italic mt-2">
