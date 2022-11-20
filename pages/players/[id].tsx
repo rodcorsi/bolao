@@ -1,5 +1,6 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import Head from "next/head";
+import Link from "next/link";
 import BetsList from "../../components/BetsList";
 import Footer from "../../components/Footer";
 import RankingList from "../../components/RankingList";
@@ -23,7 +24,7 @@ const Player = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1 className="p-2 text-lg text-gray-700 font-bold">
-        Bolão da Copa 2022 - Palpites
+        <Link href="/">⇦ Bolão da Copa 2022 - Palpites</Link>
       </h1>
       <h2>Jogador: {player.name}</h2>
       <RankingList rankingItems={new Array(rankingItem)} />
