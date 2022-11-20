@@ -9,7 +9,7 @@ const RankingListHeader: React.FC = ({}) => {
       </div>
       <div className="flex flex-nowrap shrink-0 w-48 text-white mr-2">
         <div className="w-full text-center">Pontos</div>
-        <div className="w-full text-center">Qtd 10</div>
+        <div className="w-full text-center">Qtd 12</div>
         <div className="w-full text-center">Qtd 7</div>
         <div className="w-full text-center">Qtd 5</div>
       </div>

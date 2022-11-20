@@ -1,15 +1,14 @@
 import { Bet, getBetsByPlayerID } from "./getBets";
-import getFootballFixture, {
+import {
   ResponseFixture,
   Status,
   getFootballFixtureMap,
 } from "./getFootballFixture";
-import getMatches, { Match, getMatchesMap } from "./getMatches";
+import getMatches, { Match } from "./getMatches";
 import getPlayers, { Player } from "./getPlayers";
 
 import cache from "memory-cache";
 import calculatePoints from "./calculatePoints";
-import deepEqual from "deep-equal";
 
 export interface Ranking {
   matches: MatchResult[];
@@ -17,13 +16,17 @@ export interface Ranking {
   updateTime: string;
 }
 
+export interface CountPoints {
+  P12: number;
+  P7: number;
+  P5: number;
+}
+
 export interface RankingItem {
   position: number;
   player: Player;
   points: number;
-  countPoints: {
-    [point: number]: number;
-  };
+  countPoints: CountPoints;
   bets: BetResult[];
 }
 
@@ -116,14 +119,19 @@ function sumPoints(bets: BetResult[]) {
   return points;
 }
 
-function countPoints(bets: BetResult[]) {
-  let count: { [point: number]: number } = {};
+function countPoints(bets: BetResult[]): CountPoints {
+  return {
+    P12: countPointsValue(bets, 12),
+    P7: countPointsValue(bets, 7),
+    P5: countPointsValue(bets, 5),
+  };
+}
+
+function countPointsValue(bets: BetResult[], value: number) {
+  let count = 0;
   for (const bet of bets) {
-    if (bet.points == null || bet.points === 0) continue;
-    if (count[bet.points]) {
-      count[bet.points] = count[bet.points] + 1;
-    } else {
-      count[bet.points] = 1;
+    if (bet.points === value) {
+      count++;
     }
   }
   return count;
@@ -145,27 +153,24 @@ function sortByPoints(a: RankingItem, b: RankingItem) {
   if (a.points !== b.points) {
     return b.points - a.points;
   }
-  for (const point of getAllPoints(a, b)) {
-    if (a.countPoints[point] !== b.countPoints[point]) {
-      const aCount = a.countPoints[point] || 0;
-      const bCount = b.countPoints[point] || 0;
-      return bCount - aCount;
-    }
+  if (a.countPoints.P12 !== b.countPoints.P12) {
+    return b.countPoints.P12 - a.countPoints.P12;
+  }
+  if (a.countPoints.P7 !== b.countPoints.P7) {
+    return b.countPoints.P7 - a.countPoints.P7;
+  }
+  if (a.countPoints.P5 !== b.countPoints.P5) {
+    return b.countPoints.P5 - a.countPoints.P5;
   }
   return 0;
 }
 
-function getAllPoints(a: RankingItem, b: RankingItem) {
-  return Array.from(
-    new Set(Object.keys(a.countPoints).concat(Object.keys(b.countPoints)))
-  )
-    .map((a) => parseInt(a))
-    .sort((a, b) => b - a);
-}
-
 function isTieRankingItems(a: RankingItem, b: RankingItem) {
   if (a.points !== b.points) return false;
-  return deepEqual(a.countPoints, b.countPoints);
+  if (a.countPoints.P12 !== b.countPoints.P12) return false;
+  if (a.countPoints.P7 !== b.countPoints.P7) return false;
+  if (a.countPoints.P5 !== b.countPoints.P5) return false;
+  return true;
 }
 
 export type MatchStatus = "NOT_STARTED" | "IN_PLAY" | "FINISHED";
