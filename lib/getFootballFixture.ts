@@ -13,16 +13,13 @@ export default async function getFootballFixture(): Promise<FootballFixture> {
   }
   console.log("########### getFootballFixture Gerou");
   const data = await fetchFootballFixture();
-  cache.put(CACHE_NAME, data, calculateCacheTimeout());
+  cache.put(CACHE_NAME, data, MINUTE_IN_MS);
   return data;
-}
-
-function calculateCacheTimeout() {
-  return 15 * MINUTE_IN_MS;
 }
 
 function fetchFootballFixture() {
   if (process.env.NODE_ENV === "production") {
+    console.log("########### fetchFootballFixture fetch");
     return apiFootball("/fixtures?league=1&season=2022");
   }
   console.log("########### fetchFootballFixture static json");
@@ -35,34 +32,6 @@ export async function getFootballFixtureMap() {
     acc[response.fixture.id] = response;
     return acc;
   }, {} as { [fixtureID: number]: ResponseFixture });
-}
-
-export type MatchStatus = "NOT_STARTED" | "IN_PLAY" | "FINISHED";
-
-const matchStatusByFixture: { [status: string]: MatchStatus } = {
-  TBD: "NOT_STARTED",
-  NS: "NOT_STARTED",
-  "1H": "IN_PLAY",
-  HT: "IN_PLAY",
-  "2H": "IN_PLAY",
-  ET: "IN_PLAY",
-  BT: "IN_PLAY",
-  P: "IN_PLAY",
-  SUSP: "IN_PLAY",
-  INT: "IN_PLAY",
-  FT: "FINISHED",
-  AET: "FINISHED",
-  PEN: "FINISHED",
-  PST: "NOT_STARTED",
-  CANC: "NOT_STARTED",
-  ABD: "NOT_STARTED",
-  AWD: "NOT_STARTED",
-  WO: "NOT_STARTED",
-  LIVE: "IN_PLAY",
-};
-
-export function matchStatus(status: Status) {
-  return matchStatusByFixture[status.short];
 }
 
 export interface Parameters {

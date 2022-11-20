@@ -1,19 +1,20 @@
 import { Bet, getBetsByPlayerID } from "./getBets";
-import {
-  MatchStatus,
+import getFootballFixture, {
   ResponseFixture,
+  Status,
   getFootballFixtureMap,
-  matchStatus,
 } from "./getFootballFixture";
 import getMatches, { Match, getMatchesMap } from "./getMatches";
 import getPlayers, { Player } from "./getPlayers";
 
+import cache from "memory-cache";
 import calculatePoints from "./calculatePoints";
 import deepEqual from "deep-equal";
 
 export interface Ranking {
   matches: MatchResult[];
   items: RankingItem[];
+  updateTime: string;
 }
 
 export interface RankingItem {
@@ -35,7 +36,27 @@ export interface MatchResult extends Match {
   fixture: ResponseFixture;
 }
 
+const CACHE_NAME = "ranking";
+const SECOND_IN_MS = 1000;
+const MINUTE_IN_MS = 60 * SECOND_IN_MS;
+
 export default async function getRanking(): Promise<Ranking> {
+  const cachedResponse = cache.get(CACHE_NAME);
+  if (cachedResponse) {
+    console.log("########### getRanking Cache");
+    return cachedResponse;
+  }
+  console.log("########### getRanking Gerou");
+  const data = await _getRanking();
+  cache.put(CACHE_NAME, data, calculateCacheTimeout());
+  return data;
+}
+
+function calculateCacheTimeout() {
+  return 15 * MINUTE_IN_MS;
+}
+
+async function _getRanking(): Promise<Ranking> {
   const matches = await getMatchesResult();
   const players = getPlayers();
   const items = new Array<RankingItem>(players.length);
@@ -44,7 +65,7 @@ export default async function getRanking(): Promise<Ranking> {
     items[i] = rankingItem(player, matches);
   }
   sortRankingItems(items);
-  return { matches, items };
+  return { matches, items, updateTime: new Date().toISOString() };
 }
 
 async function getMatchesResult() {
@@ -150,4 +171,32 @@ function getAllPoints(a: RankingItem, b: RankingItem) {
 function isTieRankingItems(a: RankingItem, b: RankingItem) {
   if (a.points !== b.points) return false;
   return deepEqual(a.countPoints, b.countPoints);
+}
+
+export type MatchStatus = "NOT_STARTED" | "IN_PLAY" | "FINISHED";
+
+const matchStatusByFixture: { [status: string]: MatchStatus } = {
+  TBD: "NOT_STARTED",
+  NS: "NOT_STARTED",
+  "1H": "IN_PLAY",
+  HT: "IN_PLAY",
+  "2H": "IN_PLAY",
+  ET: "IN_PLAY",
+  BT: "IN_PLAY",
+  P: "IN_PLAY",
+  SUSP: "IN_PLAY",
+  INT: "IN_PLAY",
+  FT: "FINISHED",
+  AET: "FINISHED",
+  PEN: "FINISHED",
+  PST: "NOT_STARTED",
+  CANC: "NOT_STARTED",
+  ABD: "NOT_STARTED",
+  AWD: "NOT_STARTED",
+  WO: "NOT_STARTED",
+  LIVE: "IN_PLAY",
+};
+
+export function matchStatus(status: Status) {
+  return matchStatusByFixture[status.short];
 }
