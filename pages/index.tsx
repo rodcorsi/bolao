@@ -2,14 +2,14 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import getRanking, { Ranking } from "../lib/ranking";
 
 import Head from "next/head";
-import Link from "next/link";
+import RankingList from "../components/RankingList";
 
 function Home({
   ranking: { items, matches },
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const now = new Date();
   return (
-    <div>
+    <div className="md:mx-auto md:w-3/4 grid h-screen grid-rows-layout">
       <Head>
         <title>Bolão Scheelita Copa 2022</title>
         <meta
@@ -18,45 +18,17 @@ function Home({
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-
-      <main>
-        <h1>Ranking Geral</h1>
-
-        <table>
-          <thead>
-            <tr>
-              <th>Posição</th>
-              <th>Nome</th>
-              {matches.map((match) => (
-                <th key={match.id}>
-                  <div className="-rotate-90">
-                    {match.homeTeam + "x" + match.awayTeam}
-                  </div>
-                </th>
-              ))}
-              <th>Pontuação</th>
-            </tr>
-          </thead>
-          <tbody>
-            {items.map((item, index) => (
-              <tr key={index}>
-                <td>{item.position}</td>
-                <td>
-                  <Link href={`/players/${item.player.id}`}>
-                    {item.player.name}
-                  </Link>
-                </td>
-                {item.bets.map((item) => (
-                  <td key={item.matchID}>{item.points ?? ""}</td>
-                ))}
-                <td>{item.points}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+      <h1 className="p-2 text-lg text-gray-700 font-bold">
+        Bolão da Copa 2022 - Ranking Geral
+      </h1>
+      <main className="md:container">
+        <div className="bg-white rounded-lg border border-gray-200 h-full">
+          <RankingList rankingItems={items} />
+        </div>
       </main>
-
-      <footer>{`Atualizado: ${now.toLocaleDateString("pt-BR")}`}</footer>
+      <footer className="py-2 px-1 text-sm text-right">{`Atualizado: ${now.toLocaleDateString(
+        "pt-BR"
+      )}`}</footer>
     </div>
   );
 }
