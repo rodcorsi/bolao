@@ -43,10 +43,12 @@ function Home({
         </div>
         <div className="px-2 font-bold text-sm text-gray-800">
           <div>{`Total de ${items.length} Jogos`}</div>
-          <div>{`Premiação Total ${currencyFormat(totalGame)}`}</div>
-          <div>{`1º - ${currencyFormat(firstPlace)}`}</div>
-          <div>{`2º - ${currencyFormat(secondPlace)}`}</div>
-          <div>{`3º - ${currencyFormat(thirdPlace)}`}</div>
+          <div>{`Premiação Total ${currencyFormat(
+            totalGame
+          )} a ser divida entre ganhadores`}</div>
+          <div>{`1º 🥇 - ${currencyFormat(firstPlace)}`}</div>
+          <div>{`2º 🥈 - ${currencyFormat(secondPlace)}`}</div>
+          <div>{`3º 🥉 - ${currencyFormat(thirdPlace)}`}</div>
         </div>
         <div className="text-sm text-right">
           <Link

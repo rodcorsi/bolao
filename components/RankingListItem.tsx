@@ -12,7 +12,7 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
   return (
     <li className="px-4 py-2 border-b border-gray-200 w-full hover:bg-slate-200">
       <Link className="flex" href={`/players/${player.id}`}>
-        <div className="text-sm w-5 m-auto">{position}</div>
+        <Position position={position} />
         <div className="grow text-ellipsis whitespace-nowrap overflow-hidden">
           {player.name}
         </div>
@@ -28,3 +28,21 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
 };
 
 export default RankingListItem;
+
+interface PositionProps {
+  position: number;
+}
+
+const medals: { [position: number]: string } = {
+  1: "🥇",
+  2: "🥈",
+  3: "🥉",
+};
+
+const Position: React.FC<PositionProps> = ({ position }) => {
+  return (
+    <div className="text-sm w-5 m-auto text-center">
+      {medals[position] || position}
+    </div>
+  );
+};
