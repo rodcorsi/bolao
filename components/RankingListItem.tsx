@@ -4,15 +4,17 @@ import React from "react";
 
 interface RankingListItemProps {
   rankingItem: RankingItem;
+  lastPosition: number;
 }
 
 const RankingListItem: React.FC<RankingListItemProps> = ({
   rankingItem: { position, player, points, countPoints },
+  lastPosition,
 }) => {
   return (
     <li className="px-4 py-2 border-b border-gray-200 w-full hover:bg-slate-200">
       <Link className="flex" href={`/players/${player.id}`}>
-        <Position position={position} />
+        <Position position={position} lastPosition={lastPosition} />
         <div className="grow text-ellipsis whitespace-nowrap overflow-hidden">
           {player.name}
         </div>
@@ -31,6 +33,7 @@ export default RankingListItem;
 
 interface PositionProps {
   position: number;
+  lastPosition: number;
 }
 
 const medals: { [position: number]: string } = {
@@ -39,10 +42,10 @@ const medals: { [position: number]: string } = {
   3: "🥉",
 };
 
-const Position: React.FC<PositionProps> = ({ position }) => {
+const Position: React.FC<PositionProps> = ({ position, lastPosition }) => {
   return (
     <div className="text-sm w-5 m-auto text-center">
-      {medals[position] || position}
+      {medals[position] || (position === lastPosition ? "🍍" : position)}
     </div>
   );
 };
