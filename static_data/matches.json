@@ -4,7 +4,7 @@
     "sequence": 1,
     "homeTeam": "Catar",
     "awayTeam": "Equador",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855736,
     "group": "Grupo A"
   },
@@ -13,7 +13,7 @@
     "sequence": 2,
     "homeTeam": "Senegal",
     "awayTeam": "Holanda",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855734,
     "group": "Grupo A"
   },
@@ -22,7 +22,7 @@
     "sequence": 3,
     "homeTeam": "Catar",
     "awayTeam": "Senegal",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855747,
     "group": "Grupo A"
   },
@@ -31,7 +31,7 @@
     "sequence": 4,
     "homeTeam": "Holanda",
     "awayTeam": "Equador",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855748,
     "group": "Grupo A"
   },
@@ -40,7 +40,7 @@
     "sequence": 5,
     "homeTeam": "Holanda",
     "awayTeam": "Catar",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855760,
     "group": "Grupo A"
   },
@@ -49,7 +49,7 @@
     "sequence": 6,
     "homeTeam": "Equador",
     "awayTeam": "Senegal",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855761,
     "group": "Grupo A"
   },
@@ -58,7 +58,7 @@
     "sequence": 7,
     "homeTeam": "Inglaterra",
     "awayTeam": "Irã",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855735,
     "group": "Grupo B"
   },
@@ -67,7 +67,7 @@
     "sequence": 8,
     "homeTeam": "Estados Unidos",
     "awayTeam": "País de Gales",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 866681,
     "group": "Grupo B"
   },
@@ -76,7 +76,7 @@
     "sequence": 9,
     "homeTeam": "País de Gales",
     "awayTeam": "Irã",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 866682,
     "group": "Grupo B"
   },
@@ -85,7 +85,7 @@
     "sequence": 10,
     "homeTeam": "Inglaterra",
     "awayTeam": "Estados Unidos",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855749,
     "group": "Grupo B"
   },
@@ -94,7 +94,7 @@
     "sequence": 11,
     "homeTeam": "Irã",
     "awayTeam": "Estados Unidos",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855762,
     "group": "Grupo B"
   },
@@ -103,7 +103,7 @@
     "sequence": 12,
     "homeTeam": "País de Gales",
     "awayTeam": "Inglaterra",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 866683,
     "group": "Grupo B"
   },
@@ -112,7 +112,7 @@
     "sequence": 13,
     "homeTeam": "Argentina",
     "awayTeam": "Arábia Saudita",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855737,
     "group": "Grupo C"
   },
@@ -121,7 +121,7 @@
     "sequence": 14,
     "homeTeam": "México",
     "awayTeam": "Polônia",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855739,
     "group": "Grupo C"
   },
@@ -130,7 +130,7 @@
     "sequence": 15,
     "homeTeam": "Polônia",
     "awayTeam": "Arábia Saudita",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855750,
     "group": "Grupo C"
   },
@@ -139,7 +139,7 @@
     "sequence": 16,
     "homeTeam": "Argentina",
     "awayTeam": "México",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855752,
     "group": "Grupo C"
   },
@@ -148,7 +148,7 @@
     "sequence": 17,
     "homeTeam": "Polônia",
     "awayTeam": "Argentina",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855764,
     "group": "Grupo C"
   },
@@ -157,7 +157,7 @@
     "sequence": 18,
     "homeTeam": "Arábia Saudita",
     "awayTeam": "México",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855765,
     "group": "Grupo C"
   },
@@ -166,7 +166,7 @@
     "sequence": 19,
     "homeTeam": "Dinamarca",
     "awayTeam": "Tunísia",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855738,
     "group": "Grupo D"
   },
@@ -175,7 +175,7 @@
     "sequence": 20,
     "homeTeam": "França",
     "awayTeam": "Austrália",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 871850,
     "group": "Grupo D"
   },
@@ -184,7 +184,7 @@
     "sequence": 21,
     "homeTeam": "Tunísia",
     "awayTeam": "Austrália",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 871852,
     "group": "Grupo D"
   },
@@ -193,7 +193,7 @@
     "sequence": 22,
     "homeTeam": "França",
     "awayTeam": "Dinamarca",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855751,
     "group": "Grupo D"
   },
@@ -202,7 +202,7 @@
     "sequence": 23,
     "homeTeam": "Tunísia",
     "awayTeam": "França",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855763,
     "group": "Grupo D"
   },
@@ -211,7 +211,7 @@
     "sequence": 24,
     "homeTeam": "Austrália",
     "awayTeam": "Dinamarca",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 871854,
     "group": "Grupo D"
   },
@@ -220,7 +220,7 @@
     "sequence": 25,
     "homeTeam": "Alemanha",
     "awayTeam": "Japão",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855741,
     "group": "Grupo E"
   },
@@ -229,7 +229,7 @@
     "sequence": 26,
     "homeTeam": "Espanha",
     "awayTeam": "Costa Rica",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 871851,
     "group": "Grupo E"
   },
@@ -238,7 +238,7 @@
     "sequence": 27,
     "homeTeam": "Japão",
     "awayTeam": "Costa Rica",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 871853,
     "group": "Grupo E"
   },
@@ -247,7 +247,7 @@
     "sequence": 28,
     "homeTeam": "Espanha",
     "awayTeam": "Alemanha",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855755,
     "group": "Grupo E"
   },
@@ -256,7 +256,7 @@
     "sequence": 29,
     "homeTeam": "Japão",
     "awayTeam": "Espanha",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855768,
     "group": "Grupo E"
   },
@@ -265,7 +265,7 @@
     "sequence": 30,
     "homeTeam": "Costa Rica",
     "awayTeam": "Alemanha",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 871855,
     "group": "Grupo E"
   },
@@ -274,7 +274,7 @@
     "sequence": 31,
     "homeTeam": "Marrocos",
     "awayTeam": "Croácia",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855740,
     "group": "Grupo F"
   },
@@ -283,7 +283,7 @@
     "sequence": 32,
     "homeTeam": "Bélgica",
     "awayTeam": "Canadá",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855742,
     "group": "Grupo F"
   },
@@ -292,7 +292,7 @@
     "sequence": 33,
     "homeTeam": "Bélgica",
     "awayTeam": "Marrocos",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855753,
     "group": "Grupo F"
   },
@@ -301,7 +301,7 @@
     "sequence": 34,
     "homeTeam": "Croácia",
     "awayTeam": "Canadá",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855754,
     "group": "Grupo F"
   },
@@ -310,7 +310,7 @@
     "sequence": 35,
     "homeTeam": "Croácia",
     "awayTeam": "Bélgica",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855766,
     "group": "Grupo F"
   },
@@ -319,7 +319,7 @@
     "sequence": 36,
     "homeTeam": "Canadá",
     "awayTeam": "Marrocos",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855767,
     "group": "Grupo F"
   },
@@ -328,7 +328,7 @@
     "sequence": 37,
     "homeTeam": "Suíça",
     "awayTeam": "Camarões",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855743,
     "group": "Grupo G"
   },
@@ -337,7 +337,7 @@
     "sequence": 38,
     "homeTeam": "Brasil",
     "awayTeam": "Sérvia",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855746,
     "group": "Grupo G"
   },
@@ -346,7 +346,7 @@
     "sequence": 39,
     "homeTeam": "Camarões",
     "awayTeam": "Sérvia",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855756,
     "group": "Grupo G"
   },
@@ -355,7 +355,7 @@
     "sequence": 40,
     "homeTeam": "Brasil",
     "awayTeam": "Suíça",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855758,
     "group": "Grupo G"
   },
@@ -364,7 +364,7 @@
     "sequence": 41,
     "homeTeam": "Camarões",
     "awayTeam": "Brasil",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855771,
     "group": "Grupo G"
   },
@@ -373,7 +373,7 @@
     "sequence": 42,
     "homeTeam": "Sérvia",
     "awayTeam": "Suíça",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855772,
     "group": "Grupo G"
   },
@@ -382,7 +382,7 @@
     "sequence": 43,
     "homeTeam": "Uruguai",
     "awayTeam": "Coreia do Sul",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855744,
     "group": "Grupo H"
   },
@@ -391,7 +391,7 @@
     "sequence": 44,
     "homeTeam": "Portugal",
     "awayTeam": "Gana",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855745,
     "group": "Grupo H"
   },
@@ -400,7 +400,7 @@
     "sequence": 45,
     "homeTeam": "Coreia do Sul",
     "awayTeam": "Gana",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855757,
     "group": "Grupo H"
   },
@@ -409,7 +409,7 @@
     "sequence": 46,
     "homeTeam": "Portugal",
     "awayTeam": "Uruguai",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855759,
     "group": "Grupo H"
   },
@@ -418,7 +418,7 @@
     "sequence": 47,
     "homeTeam": "Coreia do Sul",
     "awayTeam": "Portugal",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855769,
     "group": "Grupo H"
   },
@@ -427,7 +427,7 @@
     "sequence": 48,
     "homeTeam": "Gana",
     "awayTeam": "Uruguai",
-    "fase": "Fase 1",
+    "fase": "Fase Grupos",
     "fixtureID": 855770,
     "group": "Grupo H"
   }
