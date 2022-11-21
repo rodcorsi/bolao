@@ -38,7 +38,7 @@ const Fase: React.FC<FaseProps> = ({ matches, findBet }) => {
   const groups = groupByArray(matches, "group");
   return (
     <div className="pt-1">
-      <div className="bg-gray-700 text-white mb-3 px-3 py-1 font-bold">
+      <div className="bg-gray-700 text-white mb-3 px-3 py-1 font-bold sticky top-0">
         {matches[0].fase}
       </div>
       <div className="grid lg:grid-cols-2 gap-3">
