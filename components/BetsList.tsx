@@ -109,7 +109,7 @@ const Group: React.FC<FaseProps> = ({ matches, findBet }) => {
                   {match.status === "IN_PLAY" ? "Em Andamento" : ""}
                 </div>
                 <div className="w-full my-auto text-right">
-                  {!!goals.home && (
+                  {goals.home != null && (
                     <div className="font-bold text-sm">
                       <span>Placar:</span>
                       <span>{goals.home}</span>
