@@ -10,6 +10,7 @@ import getRanking, { MatchResult, RankingItem } from "../../lib/ranking";
 const Player = ({
   player,
   rankingItem,
+  lastPosition,
   matches,
   updateTime,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
@@ -27,7 +28,7 @@ const Player = ({
         <Link href="/">⇦ Bolão da Copa 2022 - Palpites</Link>
       </h1>
       <h2>Jogador: {player.name}</h2>
-      <RankingList rankingItems={new Array(rankingItem)} />
+      <RankingList rankingItems={[rankingItem]} lastPosition={lastPosition} />
       <BetsList rankingItem={rankingItem} matches={matches} />
       <Footer updateTime={updateTime} />
     </div>
@@ -37,6 +38,7 @@ const Player = ({
 export const getServerSideProps: GetServerSideProps<{
   player: Player;
   rankingItem: RankingItem;
+  lastPosition: number;
   matches: MatchResult[];
   updateTime: string;
 }> = async ({ req, res, params }) => {
@@ -64,6 +66,7 @@ export const getServerSideProps: GetServerSideProps<{
       matches: ranking.matches,
       rankingItem,
       updateTime: ranking.updateTime,
+      lastPosition: ranking.lastPosition,
     },
   };
 };

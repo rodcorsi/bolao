@@ -5,10 +5,13 @@ import React from "react";
 
 interface RankingListProps {
   rankingItems: RankingItem[];
+  lastPosition: number;
 }
 
-const RankingList: React.FC<RankingListProps> = ({ rankingItems }) => {
-  const lastPosition = rankingItems[rankingItems.length - 1].position;
+const RankingList: React.FC<RankingListProps> = ({
+  rankingItems,
+  lastPosition,
+}) => {
   return (
     <div className="flex flex-col justify-center h-full">
       <RankingListHeader className="sticky top-0" />

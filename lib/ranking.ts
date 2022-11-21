@@ -15,6 +15,7 @@ export interface Ranking {
   matches: MatchResult[];
   items: RankingItem[];
   updateTime: string;
+  lastPosition: number;
 }
 
 export interface CountPoints {
@@ -73,7 +74,12 @@ async function _getRanking(): Promise<Ranking> {
     items[i] = rankingItem(player, matches);
   }
   sortRankingItems(items);
-  return { matches, items, updateTime: new Date().toISOString() };
+  return {
+    matches,
+    items,
+    updateTime: new Date().toISOString(),
+    lastPosition: items[items.length - 1]?.position || 0,
+  };
 }
 
 async function getMatchesResult() {

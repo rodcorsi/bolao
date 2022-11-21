@@ -18,7 +18,7 @@ const currencyFormat = new Intl.NumberFormat("pt-BR", {
 }).format;
 
 function Home({
-  ranking: { items, updateTime },
+  ranking: { items, updateTime, lastPosition },
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const totalGame = items.length * VALUE_GAME + SCHEELITA_VALUE;
   const firstPlace = totalGame * FIRST_PLACE;
@@ -39,7 +39,7 @@ function Home({
       </h1>
       <main className="md:container">
         <div className="bg-white rounded-lg border border-gray-200">
-          <RankingList rankingItems={items} />
+          <RankingList rankingItems={items} lastPosition={lastPosition} />
         </div>
         <div className="px-2 font-bold text-sm text-gray-800">
           <div>{`Total de ${items.length} Jogos`}</div>
