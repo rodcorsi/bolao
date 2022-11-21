@@ -3,6 +3,7 @@ import getRanking, { Ranking } from "../lib/ranking";
 
 import Footer from "../components/Footer";
 import Head from "next/head";
+import Link from "next/link";
 import RankingList from "../components/RankingList";
 
 const VALUE_GAME = 30;
@@ -46,6 +47,15 @@ function Home({
           <div>{`1º - ${currencyFormat(firstPlace)}`}</div>
           <div>{`2º - ${currencyFormat(secondPlace)}`}</div>
           <div>{`3º - ${currencyFormat(thirdPlace)}`}</div>
+        </div>
+        <div className="text-sm text-right">
+          <Link
+            href="https://drive.google.com/file/d/10HK_51xsTPTfR0X-3fRDqofp-M432Zch/view?usp=share_link"
+            target="_blank"
+            className="text-blue-600 hover:underline"
+          >
+            Jogos Originais (Fase Grupos)
+          </Link>
         </div>
         <div className="text-xs text-right italic">
           A Classificação é atualizada com as partidas em andamento, portanto as
