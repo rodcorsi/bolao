@@ -119,6 +119,7 @@ const Group: React.FC<FaseProps> = ({ matches, findBet }) => {
                   )}
                 </div>
               </div>
+              <hr className="mx-auto w-48 h-px border-0 bg-gray-200" />
             </li>
           );
         })}
