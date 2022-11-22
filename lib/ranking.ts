@@ -99,12 +99,7 @@ function whenIsNextMatchInMs(matches: MatchResult[]) {
 async function _getRanking(): Promise<Ranking> {
   const matches = await getMatchesResult();
   const players = getPlayers();
-  const items = new Array<RankingItem>(players.length);
-  for (let i = 0; i < players.length; i++) {
-    const player = players[i];
-    items[i] = rankingItem(player, matches);
-  }
-  sortRankingItems(items);
+  const items = createRankingItems(players, matches);
   return {
     matches,
     items,
@@ -125,6 +120,44 @@ async function getMatchesResult() {
   }
   matchesResult.sort((a, b) => a.sequence - b.sequence);
   return matchesResult;
+}
+
+export type MatchStatus = "NOT_STARTED" | "IN_PLAY" | "FINISHED";
+
+const matchStatusByFixture: { [status: string]: MatchStatus } = {
+  TBD: "NOT_STARTED",
+  NS: "NOT_STARTED",
+  "1H": "IN_PLAY",
+  HT: "IN_PLAY",
+  "2H": "IN_PLAY",
+  ET: "IN_PLAY",
+  BT: "IN_PLAY",
+  P: "IN_PLAY",
+  SUSP: "IN_PLAY",
+  INT: "IN_PLAY",
+  FT: "FINISHED",
+  AET: "FINISHED",
+  PEN: "FINISHED",
+  PST: "NOT_STARTED",
+  CANC: "NOT_STARTED",
+  ABD: "NOT_STARTED",
+  AWD: "NOT_STARTED",
+  WO: "NOT_STARTED",
+  LIVE: "IN_PLAY",
+};
+
+export function matchStatus(status: Status) {
+  return matchStatusByFixture[status.short];
+}
+
+function createRankingItems(players: Player[], matches: MatchResult[]) {
+  const items = new Array<RankingItem>(players.length);
+  for (let i = 0; i < players.length; i++) {
+    const player = players[i];
+    items[i] = rankingItem(player, matches);
+  }
+  sortRankingItems(items);
+  return items;
 }
 
 function rankingItem(player: Player, matches: MatchResult[]): RankingItem {
@@ -213,32 +246,4 @@ function isTieRankingItems(a: RankingItem, b: RankingItem) {
   if (a.countPoints.P7 !== b.countPoints.P7) return false;
   if (a.countPoints.P5 !== b.countPoints.P5) return false;
   return true;
-}
-
-export type MatchStatus = "NOT_STARTED" | "IN_PLAY" | "FINISHED";
-
-const matchStatusByFixture: { [status: string]: MatchStatus } = {
-  TBD: "NOT_STARTED",
-  NS: "NOT_STARTED",
-  "1H": "IN_PLAY",
-  HT: "IN_PLAY",
-  "2H": "IN_PLAY",
-  ET: "IN_PLAY",
-  BT: "IN_PLAY",
-  P: "IN_PLAY",
-  SUSP: "IN_PLAY",
-  INT: "IN_PLAY",
-  FT: "FINISHED",
-  AET: "FINISHED",
-  PEN: "FINISHED",
-  PST: "NOT_STARTED",
-  CANC: "NOT_STARTED",
-  ABD: "NOT_STARTED",
-  AWD: "NOT_STARTED",
-  WO: "NOT_STARTED",
-  LIVE: "IN_PLAY",
-};
-
-export function matchStatus(status: Status) {
-  return matchStatusByFixture[status.short];
 }
