@@ -44,6 +44,9 @@ export interface MatchResult extends Match {
 const CACHE_NAME = "ranking";
 const SECOND_IN_MS = 1000;
 const MINUTE_IN_MS = 60 * SECOND_IN_MS;
+const HOURS_IN_MS = 60 * MINUTE_IN_MS;
+const MIN_REFRESH_IN_MS = 8 * MINUTE_IN_MS;
+const MAX_REFRESH_IN_MS = 12 * HOURS_IN_MS;
 
 export default async function getRanking(): Promise<Ranking> {
   const cachedResponse = cache.get(CACHE_NAME);
@@ -58,11 +61,31 @@ export default async function getRanking(): Promise<Ranking> {
 }
 
 function calculateCacheTimeout(ranking: Ranking) {
-  return hasInPlayMatch(ranking.matches) ? 5 * MINUTE_IN_MS : 15 * MINUTE_IN_MS;
+  if (hasInPlayMatch(ranking.matches)) {
+    return MIN_REFRESH_IN_MS;
+  }
+  let nextMatch = whenIsNextMatchInMs(ranking.matches);
+  if (nextMatch > 0) {
+    return nextMatch + MIN_REFRESH_IN_MS;
+  }
+  return MAX_REFRESH_IN_MS;
 }
 
 function hasInPlayMatch(matches: MatchResult[]) {
   return matches.find((match) => match.status === "IN_PLAY") != null;
+}
+
+function whenIsNextMatchInMs(matches: MatchResult[]) {
+  const nowInMs = new Date().getTime();
+  let nextMatch = Infinity;
+  for (const match of matches) {
+    const matchDateInMs = new Date(match.fixture.fixture.date).getTime();
+    if (matchDateInMs < nowInMs) {
+      continue;
+    }
+    nextMatch = Math.min(nextMatch, matchDateInMs - nowInMs);
+  }
+  return nextMatch === Infinity ? -1 : nextMatch;
 }
 
 async function _getRanking(): Promise<Ranking> {
