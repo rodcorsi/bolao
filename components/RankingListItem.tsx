@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Position from "./Position";
 import { RankingItem } from "../lib/ranking";
 import React from "react";
 
@@ -30,22 +31,3 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
 };
 
 export default RankingListItem;
-
-interface PositionProps {
-  position: number;
-  lastPosition: number;
-}
-
-const medals: { [position: number]: string } = {
-  1: "🥇",
-  2: "🥈",
-  3: "🥉",
-};
-
-const Position: React.FC<PositionProps> = ({ position, lastPosition }) => {
-  return (
-    <div className="text-sm w-5 m-auto text-center">
-      {medals[position] || (position === lastPosition ? "🍍" : position)}
-    </div>
-  );
-};
