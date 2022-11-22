@@ -1,6 +1,7 @@
 import { BetResult, MatchResult } from "../lib/ranking";
 
 import Image from "next/image";
+import InPlay from "./InPlay";
 import React from "react";
 import { formatDateTime } from "../lib/formatDate";
 import { selectGoals } from "../lib/getFootballFixture";
@@ -56,9 +57,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
         <div className="w-full">
           {formatDateTime(match.fixture.fixture.date)}
         </div>
-        <div className="text-white bg-green-600 rounded-md px-2 whitespace-nowrap my-auto">
-          {match.status === "IN_PLAY" ? "Em Andamento" : ""}
-        </div>
+        <InPlay status={match.status} />
         <div className="w-full my-auto text-right">
           {goals.home != null && (
             <div className="font-bold text-sm text-gray-700">
