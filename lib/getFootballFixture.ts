@@ -1,5 +1,5 @@
 import apiFootball from "./apiFootball";
-import cache from "memory-cache";
+import cache from "./cache";
 
 const CACHE_NAME = "football";
 const SECOND_IN_MS = 1000;
@@ -11,10 +11,18 @@ export default async function getFootballFixture(): Promise<FootballFixture> {
     console.log("########### getFootballFixture Cache");
     return cachedResponse;
   }
-  console.log("########### getFootballFixture Gerou");
-  const data = await fetchFootballFixture();
-  cache.put(CACHE_NAME, data, MINUTE_IN_MS);
-  return data;
+  try {
+    console.log("########### getFootballFixture Gerou");
+    const data = await fetchFootballFixture();
+    return cache.put(CACHE_NAME, data, MINUTE_IN_MS);
+  } catch (error) {
+    console.log("########### getFootballFixture get last");
+    const lastCache = cache.getLast(CACHE_NAME);
+    if (lastCache) {
+      return lastCache;
+    }
+    throw error;
+  }
 }
 
 function fetchFootballFixture() {

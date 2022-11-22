@@ -8,7 +8,7 @@ import {
 import getMatches, { Match } from "./getMatches";
 import getPlayers, { Player } from "./getPlayers";
 
-import cache from "memory-cache";
+import cache from "./cache";
 import calculatePoints from "./calculatePoints";
 
 export interface Ranking {
@@ -54,10 +54,18 @@ export default async function getRanking(): Promise<Ranking> {
     console.log("########### getRanking Cache");
     return cachedResponse;
   }
-  console.log("########### getRanking Gerou");
-  const ranking = await _getRanking();
-  cache.put(CACHE_NAME, ranking, calculateCacheTimeout(ranking));
-  return ranking;
+  try {
+    console.log("########### getRanking Gerou");
+    const ranking = await _getRanking();
+    return cache.put(CACHE_NAME, ranking, calculateCacheTimeout(ranking));
+  } catch (error) {
+    console.log("########### getRanking get last");
+    const lastCache = cache.getLast(CACHE_NAME);
+    if (lastCache) {
+      return lastCache;
+    }
+    throw error;
+  }
 }
 
 function calculateCacheTimeout(ranking: Ranking) {

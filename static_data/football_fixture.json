@@ -680,7 +680,7 @@
         "timestamp": 1669402800,
         "periods": { "first": null, "second": null },
         "venue": { "id": null, "name": "Al Bayt Stadium", "city": "Al Khor" },
-        "status": { "long": "Not Started", "short": "NS", "elapsed": null }
+        "status": { "long": "Not Started", "short": "FT", "elapsed": null }
       },
       "league": {
         "id": 1,
@@ -708,7 +708,7 @@
       "goals": { "home": null, "away": null },
       "score": {
         "halftime": { "home": null, "away": null },
-        "fulltime": { "home": null, "away": null },
+        "fulltime": { "home": 5, "away": 2 },
         "extratime": { "home": null, "away": null },
         "penalty": { "home": null, "away": null }
       }
