@@ -35,8 +35,8 @@ const Match = ({
       </h1>
       <MatchHeader
         match={match}
-        homeGoals={goals.home || 0}
-        awayGoals={goals.away || 0}
+        homeGoals={goals.home}
+        awayGoals={goals.away}
       />
       <div
         className={`flex text-sm px-3 py-2 border-b bg-gray-700 w-full rounded-t-lg sticky top-0 text-white `}

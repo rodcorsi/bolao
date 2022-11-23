@@ -5,8 +5,8 @@ import React from "react";
 
 interface MatchHeaderProps {
   match: MatchResult;
-  homeGoals: React.ReactNode;
-  awayGoals: React.ReactNode;
+  homeGoals?: React.ReactNode;
+  awayGoals?: React.ReactNode;
   className?: string;
 }
 
