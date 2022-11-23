@@ -38,7 +38,7 @@ function Home({
         Bolão da Copa 2022 - Ranking Geral
       </h1>
       <main className="md:container">
-        <div className="bg-white rounded-lg border border-gray-200">
+        <div className="bg-white rounded-lg md:border border-gray-200">
           <RankingList rankingItems={items} lastPosition={lastPosition} />
         </div>
         <div className="px-2 font-bold text-sm text-gray-800">

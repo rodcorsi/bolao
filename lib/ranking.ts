@@ -26,6 +26,7 @@ export interface CountPoints {
 
 export interface RankingItem {
   position: number;
+  oldPosition: number;
   player: Player;
   points: number;
   countPoints: CountPoints;
@@ -151,12 +152,9 @@ export function matchStatus(status: Status) {
 }
 
 function createRankingItems(players: Player[], matches: MatchResult[]) {
-  const items = new Array<RankingItem>(players.length);
-  for (let i = 0; i < players.length; i++) {
-    const player = players[i];
-    items[i] = rankingItem(player, matches);
-  }
+  const items = players.map((player) => rankingItem(player, matches));
   sortRankingItems(items);
+  assignOldPosition(items, calculateLastRanking(players, matches));
   return items;
 }
 
@@ -177,6 +175,7 @@ function rankingItem(player: Player, matches: MatchResult[]): RankingItem {
   }
   return {
     position: 0,
+    oldPosition: 0,
     player,
     points: sumPoints(bets),
     countPoints: countPoints(bets),
@@ -246,4 +245,31 @@ function isTieRankingItems(a: RankingItem, b: RankingItem) {
   if (a.countPoints.P7 !== b.countPoints.P7) return false;
   if (a.countPoints.P5 !== b.countPoints.P5) return false;
   return true;
+}
+
+function calculateLastRanking(players: Player[], matches: MatchResult[]) {
+  const startDay = brazilStartDay().getTime();
+  const matchUntilStartDay = matches.filter(
+    ({ fixture }) => new Date(fixture.fixture.date).getTime() < startDay
+  );
+  const items = players.map((player) =>
+    rankingItem(player, matchUntilStartDay)
+  );
+  sortRankingItems(items);
+  return items;
+}
+
+function brazilStartDay() {
+  const n = new Date();
+  return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate(), 3));
+}
+
+function assignOldPosition(items: RankingItem[], lastItems: RankingItem[]) {
+  const mapLastRanking = lastItems.reduce((acc, item) => {
+    acc[item.player.id] = item.position;
+    return acc;
+  }, {} as { [playerID: string]: number });
+  for (const item of items) {
+    item.oldPosition = mapLastRanking[item.player.id];
+  }
 }
