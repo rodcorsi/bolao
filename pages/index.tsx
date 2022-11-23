@@ -56,7 +56,7 @@ function Home({
             target="_blank"
             className="text-blue-600 hover:underline"
           >
-            Jogos Originais (Fase Grupos)
+            Jogos Originais (Fase Grupos)🡕
           </Link>
         </div>
         <div className="text-xs text-right italic">
