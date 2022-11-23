@@ -45,7 +45,7 @@ const Match = ({
         <div className="grow text-ellipsis whitespace-nowrap overflow-hidden">
           Classificação
         </div>
-        <div className="flex-nowrap shrink-0 w-14 mr-2">Placar</div>
+        <div className="flex-nowrap shrink-0 w-14 mr-2">Palpite</div>
         <div className="flex-nowrap shrink-0 w-14 text-right">Pontos</div>
       </div>
       <ul className="grow w-full text-gray-900 border border-gray-200">
