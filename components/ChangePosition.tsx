@@ -14,7 +14,7 @@ const ChangePosition: React.FC<ChangePositionProps> = ({
   oldPosition,
   className,
 }) => {
-  const variation = position - oldPosition;
+  const variation = oldPosition - position;
   let arrow: React.ReactNode = "·";
   if (variation > 0) {
     arrow = (
@@ -26,7 +26,7 @@ const ChangePosition: React.FC<ChangePositionProps> = ({
   } else if (variation < 0) {
     arrow = (
       <div>
-        <span className="text-xs">{variation}</span>
+        <span className="text-xs">{-variation}</span>
         {downArrow}
       </div>
     );
