@@ -10,9 +10,9 @@ import config from "../static_data/config.json";
 const scorePoints = config.scorePoints;
 const prize = config.prize;
 
-const currencyFormat = new Intl.NumberFormat("pt-BR", {
+const currencyFormat = new Intl.NumberFormat(config.locale, {
   style: "currency",
-  currency: "BRL",
+  currency: config.currency,
 }).format;
 
 function Home({

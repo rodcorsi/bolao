@@ -1,4 +1,7 @@
 {
+  "timeZone": "America/Sao_Paulo",
+  "locale": "pt-BR",
+  "currency": "BRL",
   "scorePoints": {
     "EXACT": 12,
     "WINNER_AND_ONE_SCORE": 7,

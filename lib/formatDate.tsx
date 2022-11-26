@@ -1,6 +1,7 @@
-const locale = "pt-BR";
+import config from "../static_data/config.json";
+const locale = config.locale;
 const optionsDateFormat: Intl.DateTimeFormatOptions = {
-  timeZone: "America/Sao_Paulo",
+  timeZone: config.timeZone,
   day: "numeric",
   month: "2-digit",
   year: "numeric",
