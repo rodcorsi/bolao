@@ -27,7 +27,6 @@ const Player = ({
       <h1 className="p-2 text-lg text-gray-700 font-bold">
         <Link href="/">⇦ Bolão da Copa 2022 - Palpites</Link>
       </h1>
-      <h2>Jogador: {player.name}</h2>
       <RankingList rankingItems={[rankingItem]} lastPosition={lastPosition} />
       <BetsList rankingItem={rankingItem} matches={matches} />
       <Footer updateTime={updateTime} />
