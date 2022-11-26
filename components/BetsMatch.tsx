@@ -23,6 +23,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
           </div>
           <Image
             className="bg-center rounded-full mx-2"
+            style={{ height: 30 }}
             src={match.fixture.teams.home.logo}
             alt={`Bandeira ${match.homeTeam}`}
             width={30}
@@ -45,6 +46,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
           </IsEqual>
           <Image
             className="bg-center rounded-full mx-2"
+            style={{ height: 30 }}
             src={match.fixture.teams.away.logo}
             alt={`Bandeira ${match.awayTeam}`}
             width={30}
