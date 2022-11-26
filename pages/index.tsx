@@ -1,11 +1,14 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import getRanking, { Ranking } from "../lib/ranking";
-import { prize, scorePoints } from "../static_data/config.json";
 
 import Footer from "../components/Footer";
 import Head from "next/head";
 import Link from "next/link";
 import RankingList from "../components/RankingList";
+import config from "../static_data/config.json";
+
+const scorePoints = config.scorePoints;
+const prize = config.prize;
 
 const currencyFormat = new Intl.NumberFormat("pt-BR", {
   style: "currency",

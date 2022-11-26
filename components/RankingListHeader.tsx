@@ -1,5 +1,8 @@
 import React from "react";
-import { scorePoints } from "../static_data/config.json";
+import config from "../static_data/config.json";
+
+const scorePoints = config.scorePoints;
+
 export interface RankingListHeaderProps {
   className?: string;
 }
