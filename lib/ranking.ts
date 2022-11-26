@@ -11,6 +11,7 @@ import getPlayers, { Player } from "./getPlayers";
 
 import calculatePoints from "./calculatePoints";
 import config from "../static_data/config.json";
+import daysDiff from "./daysDiff";
 import startOfDay from "./startOfDay";
 
 export interface Ranking {
@@ -275,4 +276,13 @@ function assignOldPosition(items: RankingItem[], lastItems: RankingItem[]) {
   for (const item of items) {
     item.oldPosition = mapLastRanking[item.player.id];
   }
+}
+
+export function getMatchesOfDay(
+  matches: MatchResult[],
+  day: Date | number | string = Date.now()
+) {
+  return matches.filter(
+    (match) => startOfDay(match.fixture.fixture.date) === startOfDay(day)
+  );
 }

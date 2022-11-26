@@ -1,9 +1,14 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import getRanking, { Ranking } from "../lib/ranking";
+import getRanking, {
+  MatchResult,
+  Ranking,
+  getMatchesOfDay,
+} from "../lib/ranking";
 
 import Footer from "../components/Footer";
 import Head from "next/head";
 import Link from "next/link";
+import ListActiveMatches from "../components/ListActiveMatches";
 import RankingList from "../components/RankingList";
 import config from "../static_data/config.json";
 
@@ -17,6 +22,7 @@ const currencyFormat = new Intl.NumberFormat(config.locale, {
 
 function Home({
   ranking: { items, updateTime, lastPosition },
+  activeMatches,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const totalGame = items.length * prize.GAME_VALUE + prize.BONUS;
   const firstPlace = totalGame * prize.FIRST_PLACE_PART;
@@ -36,6 +42,10 @@ function Home({
         Bolão da Copa 2022 - Ranking Geral
       </h1>
       <main className="md:container">
+        <ListActiveMatches
+          className="grid sm:grid-cols-2 gap-2 mb-2"
+          matches={activeMatches}
+        />
         <div className="bg-white rounded-lg md:border border-gray-200">
           <RankingList rankingItems={items} lastPosition={lastPosition} />
         </div>
@@ -79,14 +89,16 @@ function Home({
 
 export const getServerSideProps: GetServerSideProps<{
   ranking: Ranking;
+  activeMatches: MatchResult[];
 }> = async ({ res }) => {
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=60, stale-while-revalidate=86400"
   );
   const ranking = await getRanking();
+  const activeMatches = getMatchesOfDay(ranking.matches);
   // Pass data to the page via props
-  return { props: { ranking } };
+  return { props: { ranking, activeMatches } };
 };
 
 export default Home;
