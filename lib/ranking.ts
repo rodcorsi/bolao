@@ -11,6 +11,7 @@ import getPlayers, { Player } from "./getPlayers";
 
 import calculatePoints from "./calculatePoints";
 import config from "../static_data/config.json";
+import startOfDay from "./startOfDay";
 
 export interface Ranking {
   matches: MatchResult[];
@@ -255,7 +256,7 @@ function isTieRankingItems(a: RankingItem, b: RankingItem) {
 }
 
 function calculateLastRanking(players: Player[], matches: MatchResult[]) {
-  const startDay = brazilStartDay().getTime();
+  const startDay = startOfDay();
   const matchUntilStartDay = matches.filter(
     ({ fixture }) => new Date(fixture.fixture.date).getTime() < startDay
   );
@@ -264,11 +265,6 @@ function calculateLastRanking(players: Player[], matches: MatchResult[]) {
   );
   sortRankingItems(items);
   return items;
-}
-
-function brazilStartDay() {
-  const n = new Date();
-  return new Date(Date.UTC(n.getFullYear(), n.getMonth(), n.getDate(), 3));
 }
 
 function assignOldPosition(items: RankingItem[], lastItems: RankingItem[]) {
