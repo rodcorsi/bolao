@@ -1,11 +1,11 @@
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import getRanking, { Ranking } from "../lib/ranking";
+import { prize, scorePoints } from "../static_data/config.json";
 
 import Footer from "../components/Footer";
 import Head from "next/head";
 import Link from "next/link";
 import RankingList from "../components/RankingList";
-import { prize } from "../static_data/config.json";
 
 const currencyFormat = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -45,6 +45,12 @@ function Home({
           <div>{`2º 🥈 - ${currencyFormat(secondPlace)}`}</div>
           <div>{`3º 🥉 - ${currencyFormat(thirdPlace)}`}</div>
         </div>
+        <ul className="px-2 pt-2 text-xs text-gray-800">
+          <li>{`*Q${scorePoints.EXACT}: Quantidade de ${scorePoints.EXACT} pontos, atingido quando se acerta o placar exato`}</li>
+          <li>{`*Q${scorePoints.WINNER_AND_ONE_SCORE}: Quantidade de ${scorePoints.WINNER_AND_ONE_SCORE} pontos, atingido quando se acerta o vencedor e um placar`}</li>
+          <li>{`*Q${scorePoints.WINNER}: Quantidade de ${scorePoints.WINNER} pontos, atingido quando se acerta somente o vencedor`}</li>
+          <li>{`*Q${scorePoints.ONE_SCORE}: Quantidade de ${scorePoints.ONE_SCORE} pontos, atingido quando se acerta um placar`}</li>
+        </ul>
         <div className="text-sm text-right">
           <Link
             href="https://drive.google.com/file/d/10HK_51xsTPTfR0X-3fRDqofp-M432Zch/view?usp=share_link"

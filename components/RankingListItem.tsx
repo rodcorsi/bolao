@@ -25,13 +25,14 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
           position={position}
           oldPosition={oldPosition}
         />
-        <div className="flex flex-nowrap shrink-0 w-40">
-          <div className="w-full text-center font-bold">{points}</div>
-          <div className="w-full text-center">{countPoints.exact}</div>
-          <div className="w-full text-center">
-            {countPoints.winnerAndOneScore}
-          </div>
-          <div className="w-full text-center">{countPoints.winner}</div>
+        <div className="w-10 flex-nowrap my-auto shrink-0 text-center font-bold">
+          {points}
+        </div>
+        <div className="flex flex-nowrap shrink-0 w-32 text-center text-sm">
+          <div className="w-full my-auto">{countPoints.exact}</div>
+          <div className="w-full my-auto">{countPoints.winnerAndOneScore}</div>
+          <div className="w-full my-auto">{countPoints.winner}</div>
+          <div className="w-full my-auto">{countPoints.oneScore}</div>
         </div>
       </Link>
     </li>
