@@ -44,9 +44,10 @@ function Home({
           <div>{`Premiação Total ${currencyFormat(
             totalGame
           )} a ser divida entre ganhadores`}</div>
-          <div>{`1º 🥇 - ${currencyFormat(firstPlace)}`}</div>
-          <div>{`2º 🥈 - ${currencyFormat(secondPlace)}`}</div>
-          <div>{`3º 🥉 - ${currencyFormat(thirdPlace)}`}</div>
+          <div>{`🥇 1º - ${currencyFormat(firstPlace)}`}</div>
+          <div>{`🥈 2º - ${currencyFormat(secondPlace)}`}</div>
+          <div>{`🥉 3º - ${currencyFormat(thirdPlace)}`}</div>
+          <div>{`🍍 Último - Muito obrigado continue assim 😉`}</div>
         </div>
         <ul className="px-2 pt-2 text-xs text-gray-800">
           <li>{`*Q${scorePoints.EXACT}: Quantidade de ${scorePoints.EXACT} pontos, atingido quando se acerta o placar exato`}</li>
