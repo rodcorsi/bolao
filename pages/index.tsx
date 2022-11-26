@@ -5,12 +5,7 @@ import Footer from "../components/Footer";
 import Head from "next/head";
 import Link from "next/link";
 import RankingList from "../components/RankingList";
-
-const VALUE_GAME = 30;
-const SCHEELITA_VALUE = 1000;
-const FIRST_PLACE = 0.6;
-const SECOND_PLACE = 0.3;
-const THIRD_PLACE = 0.1;
+import { prize } from "../static_data/config.json";
 
 const currencyFormat = new Intl.NumberFormat("pt-BR", {
   style: "currency",
@@ -20,10 +15,10 @@ const currencyFormat = new Intl.NumberFormat("pt-BR", {
 function Home({
   ranking: { items, updateTime, lastPosition },
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
-  const totalGame = items.length * VALUE_GAME + SCHEELITA_VALUE;
-  const firstPlace = totalGame * FIRST_PLACE;
-  const secondPlace = totalGame * SECOND_PLACE;
-  const thirdPlace = totalGame * THIRD_PLACE;
+  const totalGame = items.length * prize.GAME_VALUE + prize.BONUS;
+  const firstPlace = totalGame * prize.FIRST_PLACE_PART;
+  const secondPlace = totalGame * prize.SECOND_PLACE_PART;
+  const thirdPlace = totalGame * prize.THIRD_PLACE_PART;
   return (
     <div className="md:mx-auto md:w-3/4">
       <Head>

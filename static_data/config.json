@@ -4,5 +4,12 @@
     "WINNER_AND_ONE_SCORE": 7,
     "WINNER": 5,
     "ONE_SCORE": 2
+  },
+  "prize": {
+    "BONUS": 1000,
+    "GAME_VALUE": 30,
+    "FIRST_PLACE_PART": 0.6,
+    "SECOND_PLACE_PART": 0.3,
+    "THIRD_PLACE_PART": 0.1
   }
 }
