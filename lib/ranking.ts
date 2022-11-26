@@ -10,6 +10,7 @@ import getMatches, { Match } from "./getMatches";
 import getPlayers, { Player } from "./getPlayers";
 
 import calculatePoints from "./calculatePoints";
+import config from "../static_data/config.json";
 
 export interface Ranking {
   matches: MatchResult[];
@@ -20,9 +21,10 @@ export interface Ranking {
 }
 
 export interface CountPoints {
-  P12: number;
-  P7: number;
-  P5: number;
+  exact: number;
+  winnerAndOneScore: number;
+  winner: number;
+  oneScore: number;
 }
 
 export interface RankingItem {
@@ -199,10 +201,12 @@ function sumPoints(bets: BetResult[]) {
 }
 
 function countPoints(bets: BetResult[]): CountPoints {
+  const { scorePoints } = config;
   return {
-    P12: countPointsValue(bets, 12),
-    P7: countPointsValue(bets, 7),
-    P5: countPointsValue(bets, 5),
+    exact: countPointsValue(bets, scorePoints.EXACT),
+    winnerAndOneScore: countPointsValue(bets, scorePoints.WINNER_AND_ONE_SCORE),
+    winner: countPointsValue(bets, scorePoints.WINNER),
+    oneScore: countPointsValue(bets, scorePoints.ONE_SCORE),
   };
 }
 
@@ -232,23 +236,24 @@ function sortByPoints(a: RankingItem, b: RankingItem) {
   if (a.points !== b.points) {
     return b.points - a.points;
   }
-  if (a.countPoints.P12 !== b.countPoints.P12) {
-    return b.countPoints.P12 - a.countPoints.P12;
+  if (a.countPoints.exact !== b.countPoints.exact) {
+    return b.countPoints.exact - a.countPoints.exact;
   }
-  if (a.countPoints.P7 !== b.countPoints.P7) {
-    return b.countPoints.P7 - a.countPoints.P7;
+  if (a.countPoints.winnerAndOneScore !== b.countPoints.winnerAndOneScore) {
+    return b.countPoints.winnerAndOneScore - a.countPoints.winnerAndOneScore;
   }
-  if (a.countPoints.P5 !== b.countPoints.P5) {
-    return b.countPoints.P5 - a.countPoints.P5;
+  if (a.countPoints.winner !== b.countPoints.winner) {
+    return b.countPoints.winner - a.countPoints.winner;
   }
   return 0;
 }
 
 function isTieRankingItems(a: RankingItem, b: RankingItem) {
   if (a.points !== b.points) return false;
-  if (a.countPoints.P12 !== b.countPoints.P12) return false;
-  if (a.countPoints.P7 !== b.countPoints.P7) return false;
-  if (a.countPoints.P5 !== b.countPoints.P5) return false;
+  if (a.countPoints.exact !== b.countPoints.exact) return false;
+  if (a.countPoints.winnerAndOneScore !== b.countPoints.winnerAndOneScore)
+    return false;
+  if (a.countPoints.winner !== b.countPoints.winner) return false;
   return true;
 }
 

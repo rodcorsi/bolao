@@ -1,0 +1,8 @@
+{
+  "scorePoints": {
+    "EXACT": 12,
+    "WINNER_AND_ONE_SCORE": 7,
+    "WINNER": 5,
+    "ONE_SCORE": 2
+  }
+}
