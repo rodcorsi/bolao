@@ -286,3 +286,26 @@ export function getMatchesOfDay(
     (match) => startOfDay(match.fixture.fixture.date) === startOfDay(day)
   );
 }
+
+export function bestRankingForMatches(
+  matches: MatchResult[],
+  items: RankingItem[]
+): RankingItem[] {
+  const matchSet = matches.reduce(
+    (set, match) => set.add(match.id),
+    new Set<number>()
+  );
+  const itemsForMatches = items.map((item) => {
+    const bets = item.bets.filter((bet) => matchSet.has(bet.matchID));
+    return {
+      ...item,
+      bets,
+      points: sumPoints(bets),
+      countPoints: countPoints(bets),
+    } as RankingItem;
+  });
+  sortRankingItems(itemsForMatches);
+  return itemsForMatches.filter(
+    (item) => item.points > 0 && item.position <= 3
+  );
+}

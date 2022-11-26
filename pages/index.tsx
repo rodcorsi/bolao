@@ -2,6 +2,8 @@ import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import getRanking, {
   MatchResult,
   Ranking,
+  RankingItem,
+  bestRankingForMatches,
   getMatchesOfDay,
 } from "../lib/ranking";
 
@@ -9,6 +11,7 @@ import Footer from "../components/Footer";
 import Head from "next/head";
 import Link from "next/link";
 import ListActiveMatches from "../components/ListActiveMatches";
+import ListBestPlayers from "../components/ListBestPlayers";
 import RankingList from "../components/RankingList";
 import config from "../static_data/config.json";
 
@@ -22,7 +25,8 @@ const currencyFormat = new Intl.NumberFormat(config.locale, {
 
 function Home({
   ranking: { items, updateTime, lastPosition },
-  activeMatches,
+  matchesOfDay,
+  bestOfDay,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const totalGame = items.length * prize.GAME_VALUE + prize.BONUS;
   const firstPlace = totalGame * prize.FIRST_PLACE_PART;
@@ -44,8 +48,9 @@ function Home({
       <main className="md:container">
         <ListActiveMatches
           className="grid sm:grid-cols-2 gap-2 mb-2"
-          matches={activeMatches}
+          matches={matchesOfDay}
         />
+        <ListBestPlayers rankingItems={bestOfDay} />
         <div className="bg-white rounded-lg md:border border-gray-200">
           <RankingList rankingItems={items} lastPosition={lastPosition} />
         </div>
@@ -89,16 +94,18 @@ function Home({
 
 export const getServerSideProps: GetServerSideProps<{
   ranking: Ranking;
-  activeMatches: MatchResult[];
+  matchesOfDay: MatchResult[];
+  bestOfDay: RankingItem[];
 }> = async ({ res }) => {
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=60, stale-while-revalidate=86400"
   );
   const ranking = await getRanking();
-  const activeMatches = getMatchesOfDay(ranking.matches);
+  const matchesOfDay = getMatchesOfDay(ranking.matches);
+  const bestOfDay = bestRankingForMatches(matchesOfDay, ranking.items);
   // Pass data to the page via props
-  return { props: { ranking, activeMatches } };
+  return { props: { ranking, matchesOfDay, bestOfDay } };
 };
 
 export default Home;
