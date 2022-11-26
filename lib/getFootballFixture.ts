@@ -5,6 +5,14 @@ const CACHE_NAME = "football";
 const SECOND_IN_MS = 1000;
 const MINUTE_IN_MS = 60 * SECOND_IN_MS;
 
+export async function getFootballFixtureMap() {
+  const fixture = await getFootballFixture();
+  return fixture.response.reduce((acc, response) => {
+    acc[response.fixture.id] = response;
+    return acc;
+  }, {} as { [fixtureID: number]: ResponseFixture });
+}
+
 export default async function getFootballFixture(): Promise<FootballFixture> {
   const cachedResponse = cache.get(CACHE_NAME);
   if (cachedResponse) {
@@ -26,20 +34,8 @@ export default async function getFootballFixture(): Promise<FootballFixture> {
 }
 
 function fetchFootballFixture() {
-  if (process.env.NODE_ENV === "production") {
-    console.log("########### fetchFootballFixture fetch");
-    return apiFootball("/fixtures?league=1&season=2022");
-  }
-  console.log("########### fetchFootballFixture static json");
-  return require("../static_data/football_fixture.json");
-}
-
-export async function getFootballFixtureMap() {
-  const fixture = await getFootballFixture();
-  return fixture.response.reduce((acc, response) => {
-    acc[response.fixture.id] = response;
-    return acc;
-  }, {} as { [fixtureID: number]: ResponseFixture });
+  console.log("########### fetchFootballFixture fetch");
+  return apiFootball("/fixtures?league=1&season=2022");
 }
 
 export function selectGoals(fixture: ResponseFixture) {

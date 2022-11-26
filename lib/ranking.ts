@@ -5,10 +5,10 @@ import {
   getFootballFixtureMap,
   selectGoals,
 } from "./getFootballFixture";
+import connectCache, { getCacheResult, setCache } from "./connectCache";
 import getMatches, { Match } from "./getMatches";
 import getPlayers, { Player } from "./getPlayers";
 
-import cache from "./cache";
 import calculatePoints from "./calculatePoints";
 
 export interface Ranking {
@@ -16,6 +16,7 @@ export interface Ranking {
   items: RankingItem[];
   updateTime: string;
   lastPosition: number;
+  expire: number;
 }
 
 export interface CountPoints {
@@ -50,51 +51,26 @@ const MIN_REFRESH_IN_MS = 10 * MINUTE_IN_MS;
 const MAX_REFRESH_IN_MS = 12 * HOURS_IN_MS;
 
 export default async function getRanking(): Promise<Ranking> {
-  const cachedResponse = cache.get(CACHE_NAME);
-  if (cachedResponse) {
+  await connectCache();
+  const result = await getCacheResult<Ranking>(CACHE_NAME);
+  const cacheResult = result.get();
+  if (cacheResult != null) {
     console.log("########### getRanking Cache");
-    return cachedResponse;
+    return cacheResult;
   }
   try {
     console.log("########### getRanking Gerou");
     const ranking = await _getRanking();
-    return cache.put(CACHE_NAME, ranking, calculateCacheTimeout(ranking));
+    console.log("########### getRanking Salva");
+    return await setCache(CACHE_NAME, ranking, ranking.expire);
   } catch (error) {
-    console.log("########### getRanking get last");
-    const lastCache = cache.getLast(CACHE_NAME);
-    if (lastCache) {
+    console.log("########### getRanking get expired");
+    const lastCache = result.getEvenExpired();
+    if (lastCache != null) {
       return lastCache;
     }
     throw error;
   }
-}
-
-function calculateCacheTimeout(ranking: Ranking) {
-  if (hasInPlayMatch(ranking.matches)) {
-    return MIN_REFRESH_IN_MS;
-  }
-  let nextMatch = whenIsNextMatchInMs(ranking.matches);
-  if (nextMatch > 0) {
-    return nextMatch + MIN_REFRESH_IN_MS;
-  }
-  return MAX_REFRESH_IN_MS;
-}
-
-function hasInPlayMatch(matches: MatchResult[]) {
-  return matches.find((match) => match.status === "IN_PLAY") != null;
-}
-
-function whenIsNextMatchInMs(matches: MatchResult[]) {
-  const nowInMs = new Date().getTime();
-  let nextMatch = Infinity;
-  for (const match of matches) {
-    const matchDateInMs = new Date(match.fixture.fixture.date).getTime();
-    if (matchDateInMs < nowInMs) {
-      continue;
-    }
-    nextMatch = Math.min(nextMatch, matchDateInMs - nowInMs);
-  }
-  return nextMatch === Infinity ? -1 : nextMatch;
 }
 
 async function _getRanking(): Promise<Ranking> {
@@ -106,6 +82,7 @@ async function _getRanking(): Promise<Ranking> {
     items,
     updateTime: new Date().toISOString(),
     lastPosition: items[items.length - 1]?.position || 0,
+    expire: calculateCacheExpire(matches),
   };
 }
 
@@ -149,6 +126,34 @@ const matchStatusByFixture: { [status: string]: MatchStatus } = {
 
 export function matchStatus(status: Status) {
   return matchStatusByFixture[status.short];
+}
+
+function calculateCacheExpire(matches: MatchResult[]) {
+  if (hasInPlayMatch(matches)) {
+    return Date.now() + MIN_REFRESH_IN_MS;
+  }
+  let nextMatch = whenIsNextMatchInMs(matches);
+  if (nextMatch > 0) {
+    return Date.now() + nextMatch + MIN_REFRESH_IN_MS;
+  }
+  return Date.now() + MAX_REFRESH_IN_MS;
+}
+
+function hasInPlayMatch(matches: MatchResult[]) {
+  return matches.find((match) => match.status === "IN_PLAY") != null;
+}
+
+function whenIsNextMatchInMs(matches: MatchResult[]) {
+  const nowInMs = new Date().getTime();
+  let nextMatch = Infinity;
+  for (const match of matches) {
+    const matchDateInMs = new Date(match.fixture.fixture.date).getTime();
+    if (matchDateInMs < nowInMs) {
+      continue;
+    }
+    nextMatch = Math.min(nextMatch, matchDateInMs - nowInMs);
+  }
+  return nextMatch === Infinity ? -1 : nextMatch;
 }
 
 function createRankingItems(players: Player[], matches: MatchResult[]) {
