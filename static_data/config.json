@@ -11,5 +11,9 @@
     "FIRST_PLACE_PART": 0.6,
     "SECOND_PLACE_PART": 0.3,
     "THIRD_PLACE_PART": 0.1
+  },
+  "refreshTiming": {
+    "MIN_REFRESH_SEC": 600,
+    "MAX_REFRESH_SEC": 43200
   }
 }

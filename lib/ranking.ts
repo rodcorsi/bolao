@@ -46,11 +46,8 @@ export interface MatchResult extends Match {
 }
 
 const CACHE_NAME = "ranking";
-const SECOND_IN_MS = 1000;
-const MINUTE_IN_MS = 60 * SECOND_IN_MS;
-const HOURS_IN_MS = 60 * MINUTE_IN_MS;
-const MIN_REFRESH_IN_MS = 10 * MINUTE_IN_MS;
-const MAX_REFRESH_IN_MS = 12 * HOURS_IN_MS;
+const MIN_REFRESH_IN_MS = config.refreshTiming.MIN_REFRESH_SEC * 1000;
+const MAX_REFRESH_IN_MS = config.refreshTiming.MAX_REFRESH_SEC * 1000;
 
 export default async function getRanking(): Promise<Ranking> {
   await connectCache();
