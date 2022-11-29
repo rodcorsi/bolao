@@ -56,20 +56,22 @@ export default async function getRanking(): Promise<Ranking> {
   const result = await getCacheResult<Ranking>(CACHE_NAME);
   const cacheResult = result.get();
   if (cacheResult != null) {
-    console.log("########### getRanking Cache");
+    console.info("getRanking Cache next update:", new Date(cacheResult.expire));
     return cacheResult;
   }
   try {
-    console.log("########### getRanking Gerou");
+    console.info("getRanking");
     const ranking = await _getRanking();
-    console.log("########### getRanking Salva");
+    console.info("getRanking Saving cache");
     return await setCache(CACHE_NAME, ranking, ranking.expire);
   } catch (error) {
-    console.log("########### getRanking get expired");
+    console.info("getRanking error to get cache:", error);
+    console.info("getRanking expired");
     const lastCache = result.getEvenExpired();
     if (lastCache != null) {
       return lastCache;
     }
+    console.error("getRanking not expired cache");
     throw error;
   }
 }

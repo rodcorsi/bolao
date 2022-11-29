@@ -16,25 +16,26 @@ export async function getFootballFixtureMap() {
 export default async function getFootballFixture(): Promise<FootballFixture> {
   const cachedResponse = cache.get(CACHE_NAME);
   if (cachedResponse) {
-    console.log("########### getFootballFixture Cache");
+    console.info("getFootballFixture using Cache");
     return cachedResponse;
   }
   try {
-    console.log("########### getFootballFixture Gerou");
     const data = await fetchFootballFixture();
     return cache.put(CACHE_NAME, data, MINUTE_IN_MS);
   } catch (error) {
-    console.log("########### getFootballFixture get last");
+    console.info("fetchFootballFixture error to get cache", error);
+    console.info("getFootballFixture get expired");
     const lastCache = cache.getLast(CACHE_NAME);
     if (lastCache) {
       return lastCache;
     }
+    console.error("getFootballFixture not expired cache");
     throw error;
   }
 }
 
 function fetchFootballFixture() {
-  console.log("########### fetchFootballFixture fetch");
+  console.info("fetchFootballFixture");
   return apiFootball("/fixtures?league=1&season=2022");
 }
 

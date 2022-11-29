@@ -10,7 +10,9 @@ const client = createClient({
   password: process.env.REDIS_PASSWORD,
 });
 client.on("error", (err) => {
-  console.log("Error " + err);
+  console.error(
+    `Error redis: ${process.env.REDIS_HOST}:${process.env.REDIS_PORT}` + err
+  );
 });
 
 export default async function connectCache() {
@@ -23,8 +25,8 @@ export default async function connectCache() {
     if (!client.isOpen) {
       await client.connect();
     } else {
+      console.info(`waiting connection is ready ${tries}/${MAX_TRIES}`);
       await new Promise((f) => setTimeout(f, 1000));
-      console.log(`waiting connection is ready ${tries}/${MAX_TRIES}`);
     }
   }
   return client;
