@@ -19,7 +19,7 @@ const MatchHeader: React.FC<MatchHeaderProps> = ({
 }) => {
   return (
     <div className={className}>
-      <div className={`flex flex-nowrap shrink-0 my-2`}>
+      <div className={`flex flex-nowrap shrink-0 my-2 items-center`}>
         <div className="w-full text-right text-ellipsis whitespace-nowrap overflow-hidden">
           {match.homeTeam}
         </div>
@@ -32,7 +32,7 @@ const MatchHeader: React.FC<MatchHeaderProps> = ({
           height={30}
         />
         <div className="w-10 text-lg text-center">{homeGoals}</div>
-        <div className="text-sm text-center m-auto">x</div>
+        <div className="text-sm text-center">x</div>
         <div className="w-10 text-lg text-center">{awayGoals}</div>
         <Image
           className="bg-center rounded-full mx-2"
