@@ -430,5 +430,41 @@
     "fase": "Fase Grupos",
     "fixtureID": 855770,
     "group": "Grupo H"
+  },
+  {
+    "id": 259,
+    "sequence": 49,
+    "homeTeam": "Holanda",
+    "awayTeam": "Estados Unidos",
+    "fase": "Oitavas",
+    "fixtureID": 976533,
+    "group": "Oitavas 1"
+  },
+  {
+    "id": 260,
+    "sequence": 50,
+    "homeTeam": "Argentina",
+    "awayTeam": "Austrália",
+    "fase": "Oitavas",
+    "fixtureID": 976642,
+    "group": "Oitavas 1"
+  },
+  {
+    "id": 261,
+    "sequence": 51,
+    "homeTeam": "França",
+    "awayTeam": "Polônia",
+    "fase": "Oitavas",
+    "fixtureID": 976643,
+    "group": "Oitavas 1"
+  },
+  {
+    "id": 262,
+    "sequence": 52,
+    "homeTeam": "Inglaterra",
+    "awayTeam": "Senegal",
+    "fase": "Oitavas",
+    "fixtureID": 976534,
+    "group": "Oitavas 1"
   }
 ]
