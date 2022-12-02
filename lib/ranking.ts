@@ -11,7 +11,6 @@ import getPlayers, { Player } from "./getPlayers";
 
 import calculatePoints from "./calculatePoints";
 import config from "../static_data/config.json";
-import daysDiff from "./daysDiff";
 import startOfDay from "./startOfDay";
 
 export interface Ranking {
@@ -47,7 +46,9 @@ export interface MatchResult extends Match {
   fixture: ResponseFixture;
 }
 
-const CACHE_NAME = "ranking";
+const CACHE_NAME =
+  process.env.NODE_ENV === "development" ? "ranking:dev" : "ranking";
+
 const MIN_REFRESH_IN_MS = config.refreshTiming.MIN_REFRESH_SEC * 1000;
 const MAX_REFRESH_IN_MS = config.refreshTiming.MAX_REFRESH_SEC * 1000;
 
