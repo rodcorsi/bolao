@@ -29,7 +29,7 @@ export default BetsList;
 
 interface FaseProps {
   matches: MatchResult[];
-  findBet: (matchID: number) => BetResult;
+  findBet: (matchID: number) => BetResult | undefined;
 }
 
 const Fase: React.FC<FaseProps> = ({ matches, findBet }) => {

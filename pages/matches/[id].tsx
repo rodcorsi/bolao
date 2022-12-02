@@ -14,12 +14,11 @@ import { selectGoals } from "../../lib/getFootballFixture";
 
 const Match = ({
   ranking,
-  matchIndex,
+  match,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
-  const match = ranking.matches[matchIndex];
   const matchName = match.homeTeam + " x " + match.awayTeam;
   const goals = selectGoals(match.fixture);
-  const itemsByPoints = sortByPoints(ranking.items, matchIndex);
+  const itemsByPoints = sortByPoints(ranking.items, match.id);
   return (
     <div className="md:mx-auto md:w-3/4 grid">
       <Head>
@@ -50,7 +49,7 @@ const Match = ({
       </div>
       <ul className="grow w-full text-gray-900 border border-gray-200">
         {itemsByPoints.map(({ position, player, bets }, index) => {
-          const bet = bets[matchIndex];
+          const bet = bets.find((b) => b.matchID === match.id);
           return (
             <li
               key={index}
@@ -64,8 +63,10 @@ const Match = ({
                 <div className="grow text-ellipsis whitespace-nowrap overflow-hidden">
                   {player.name}
                 </div>
-                <div className="w-14">{`${bet.homeGoals} x ${bet.awayGoals}`}</div>
-                <div className="w-14 text-right">{bet.points}</div>
+                <div className="w-14">
+                  {bet != null ? `${bet.homeGoals} x ${bet.awayGoals}` : ""}
+                </div>
+                <div className="w-14 text-right">{bet?.points}</div>
               </Link>
             </li>
           );
@@ -76,18 +77,19 @@ const Match = ({
   );
 };
 
-function sortByPoints(rankingItems: RankingItem[], matchIndex: number) {
+function sortByPoints(rankingItems: RankingItem[], matchID: number) {
   const itemsByPoints = [...rankingItems];
   itemsByPoints.sort(
     (a, b) =>
-      (b.bets[matchIndex].points || 0) - (a.bets[matchIndex].points || 0)
+      (b.bets.find((b) => b.matchID === matchID)?.points || 0) -
+      (a.bets.find((b) => b.matchID === matchID)?.points || 0)
   );
   return itemsByPoints;
 }
 
 export const getServerSideProps: GetServerSideProps<{
   ranking: Ranking;
-  matchIndex: number;
+  match: MatchResult;
 }> = async ({ req, res, params }) => {
   res.setHeader(
     "Cache-Control",
@@ -95,8 +97,8 @@ export const getServerSideProps: GetServerSideProps<{
   );
   const id = parseInt(params?.id as string);
   const ranking = await getRanking();
-  const matchIndex = ranking.matches.findIndex((match) => match.id === id);
-  if (matchIndex < 0) {
+  const match = ranking.matches.find((match) => match.id === id);
+  if (match == null) {
     return {
       notFound: true,
     };
@@ -104,7 +106,7 @@ export const getServerSideProps: GetServerSideProps<{
   return {
     props: {
       ranking,
-      matchIndex,
+      match,
     },
   };
 };

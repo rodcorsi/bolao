@@ -9,7 +9,7 @@ import { selectGoals } from "../lib/getFootballFixture";
 
 interface BetsMatchProps {
   match: MatchResult;
-  bet: BetResult;
+  bet?: BetResult;
 }
 
 const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
@@ -29,21 +29,31 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
             width={30}
             height={30}
           />
-          <IsEqual
-            value={bet.homeGoals}
-            expected={goals.home}
-            className="w-10 text-lg text-center"
-          >
-            {bet.homeGoals}
-          </IsEqual>
-          <div className="text-sm text-center m-auto">x</div>
-          <IsEqual
-            value={bet.awayGoals}
-            expected={goals.away}
-            className="w-10 text-lg text-center"
-          >
-            {bet.awayGoals}
-          </IsEqual>
+          {bet == null ? (
+            <>
+              <div className="w-10 text-lg text-center"></div>
+              <div className="text-sm text-center m-auto">x</div>
+              <div className="w-10 text-lg text-center"></div>
+            </>
+          ) : (
+            <>
+              <IsEqual
+                value={bet.homeGoals}
+                expected={goals.home}
+                className="w-10 text-lg text-center"
+              >
+                {bet.homeGoals}
+              </IsEqual>
+              <div className="text-sm text-center m-auto">x</div>
+              <IsEqual
+                value={bet.awayGoals}
+                expected={goals.away}
+                className="w-10 text-lg text-center"
+              >
+                {bet.awayGoals}
+              </IsEqual>
+            </>
+          )}
           <Image
             className="bg-center rounded-full mx-2"
             style={{ height: 30 }}
@@ -55,7 +65,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
           <div className="w-full text-ellipsis whitespace-nowrap overflow-hidden">
             {match.awayTeam}
           </div>
-          <Point points={bet.points} />
+          {bet != null ? <Point points={bet.points} /> : <div></div>}
         </div>
         <div className="flex flex-nowrap shrink-0 text-xs justify-between italic mt-2">
           <div className="w-full">
