@@ -79,6 +79,15 @@ function Home({
             Jogos Originais (Fase Grupos)🡕
           </Link>
         </div>
+        <div className="text-sm text-right">
+          <Link
+            href="https://drive.google.com/file/d/1d_gIKSxqr1RO3_-pzjiM2hiYRbCCTOmt/view?usp=share_link"
+            target="_blank"
+            className="text-blue-600 hover:underline"
+          >
+            Jogos Originais (Oitavas Primeira Parte)🡕
+          </Link>
+        </div>
         <div className="text-xs text-right italic">
           A Classificação é atualizada com as partidas em andamento, portanto as
           posições podem ser alteradas durante o jogo
