@@ -466,5 +466,41 @@
     "fase": "Oitavas",
     "fixtureID": 976534,
     "group": "Oitavas 1"
+  },
+  {
+    "id": 263,
+    "sequence": 53,
+    "homeTeam": "Japão",
+    "awayTeam": "Croácia",
+    "fase": "Oitavas",
+    "fixtureID": 977344,
+    "group": "Oitavas 2"
+  },
+  {
+    "id": 264,
+    "sequence": 54,
+    "homeTeam": "Brasil",
+    "awayTeam": "Coreia do Sul",
+    "fase": "Oitavas",
+    "fixtureID": 977705,
+    "group": "Oitavas 2"
+  },
+  {
+    "id": 265,
+    "sequence": 55,
+    "homeTeam": "Marrocos",
+    "awayTeam": "Espanha",
+    "fase": "Oitavas",
+    "fixtureID": 977345,
+    "group": "Oitavas 2"
+  },
+  {
+    "id": 266,
+    "sequence": 56,
+    "homeTeam": "Portugal",
+    "awayTeam": "Suíça",
+    "fase": "Oitavas",
+    "fixtureID": 977706,
+    "group": "Oitavas 2"
   }
 ]
