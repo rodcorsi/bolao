@@ -70,22 +70,28 @@ function Home({
           <li>{`*Q${scorePoints.WINNER}: Quantidade de ${scorePoints.WINNER} pontos, atingido quando se acerta somente o vencedor`}</li>
           <li>{`*Q${scorePoints.ONE_SCORE}: Quantidade de ${scorePoints.ONE_SCORE} pontos, atingido quando se acerta um placar`}</li>
         </ul>
-        <div className="text-sm text-right">
+        <div className="text-sm font-bold text-right mb-2">
+          <div>Jogos Originais</div>
           <Link
             href="https://drive.google.com/file/d/10HK_51xsTPTfR0X-3fRDqofp-M432Zch/view?usp=share_link"
             target="_blank"
-            className="text-blue-600 hover:underline"
+            className="text-blue-600 hover:underline block"
           >
-            Jogos Originais (Fase Grupos)🡕
+            Fase Grupos🡕
           </Link>
-        </div>
-        <div className="text-sm text-right">
           <Link
             href="https://drive.google.com/file/d/1d_gIKSxqr1RO3_-pzjiM2hiYRbCCTOmt/view?usp=share_link"
             target="_blank"
-            className="text-blue-600 hover:underline"
+            className="text-blue-600 hover:underline block"
           >
-            Jogos Originais (Oitavas Primeira Parte)🡕
+            Oitavas Primeira Parte🡕
+          </Link>
+          <Link
+            href="https://drive.google.com/file/d/1JvOw9M8yXRDhz1n4NRR8sxNCcQpiHwYH/view?usp=share_link"
+            target="_blank"
+            className="text-blue-600 hover:underline block"
+          >
+            Oitavas Segunda Parte🡕
           </Link>
         </div>
         <div className="text-xs text-right italic">
