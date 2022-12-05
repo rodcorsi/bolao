@@ -70,8 +70,8 @@ function Home({
           <li>{`*Q${scorePoints.WINNER}: Quantidade de ${scorePoints.WINNER} pontos, atingido quando se acerta somente o vencedor`}</li>
           <li>{`*Q${scorePoints.ONE_SCORE}: Quantidade de ${scorePoints.ONE_SCORE} pontos, atingido quando se acerta um placar`}</li>
         </ul>
-        <div className="text-sm font-bold text-right mb-2">
-          <div>Jogos Originais</div>
+        <div className="text-sm text-right mb-2">
+          <div className="font-bold">Jogos Originais</div>
           <Link
             href="https://drive.google.com/file/d/10HK_51xsTPTfR0X-3fRDqofp-M432Zch/view?usp=share_link"
             target="_blank"
@@ -99,7 +99,7 @@ function Home({
           posições podem ser alteradas durante o jogo
         </div>
         <div className="text-xs text-right italic">
-          O tempo médio de atualização é de 15 minutos
+          O tempo médio de atualização é de 5 minutos
         </div>
       </main>
       <Footer updateTime={updateTime} />
