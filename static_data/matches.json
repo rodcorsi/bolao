@@ -502,5 +502,41 @@
     "fase": "Oitavas",
     "fixtureID": 977706,
     "group": "Oitavas 2"
+  },
+  {
+    "id": 267,
+    "sequence": 57,
+    "homeTeam": "Croácia",
+    "awayTeam": "Brasil",
+    "fase": "Quartas",
+    "fixtureID": 978072,
+    "group": "Quartas"
+  },
+  {
+    "id": 268,
+    "sequence": 58,
+    "homeTeam": "Holanda",
+    "awayTeam": "Argentina",
+    "fase": "Quartas",
+    "fixtureID": 977794,
+    "group": "Quartas"
+  },
+  {
+    "id": 269,
+    "sequence": 59,
+    "homeTeam": "Marrocos",
+    "awayTeam": "Portugal",
+    "fase": "Quartas",
+    "fixtureID": 978088,
+    "group": "Quartas"
+  },
+  {
+    "id": 270,
+    "sequence": 60,
+    "homeTeam": "Inglaterra",
+    "awayTeam": "França",
+    "fase": "Quartas",
+    "fixtureID": 978036,
+    "group": "Quartas"
   }
 ]
