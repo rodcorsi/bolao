@@ -138,7 +138,10 @@ function calculateCacheExpire(matches: MatchResult[]) {
   }
   let nextMatch = whenIsNextMatchInMs(matches);
   if (nextMatch > 0) {
-    return Date.now() + nextMatch + MIN_REFRESH_IN_MS;
+    return Math.min(
+      Date.now() + nextMatch + MIN_REFRESH_IN_MS,
+      Date.now() + MAX_REFRESH_IN_MS
+    );
   }
   return Date.now() + MAX_REFRESH_IN_MS;
 }
