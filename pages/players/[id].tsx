@@ -13,6 +13,7 @@ const Player = ({
   lastPosition,
   matches,
   updateTime,
+  expire,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <div className="md:mx-auto md:w-3/4 grid">
@@ -29,7 +30,7 @@ const Player = ({
       </h1>
       <RankingList rankingItems={[rankingItem]} lastPosition={lastPosition} />
       <BetsList rankingItem={rankingItem} matches={matches} />
-      <Footer updateTime={updateTime} />
+      <Footer updateTime={updateTime} expire={expire} />
     </div>
   );
 };
@@ -40,6 +41,7 @@ export const getServerSideProps: GetServerSideProps<{
   lastPosition: number;
   matches: MatchResult[];
   updateTime: string;
+  expire: number;
 }> = async ({ req, res, params }) => {
   res.setHeader(
     "Cache-Control",
@@ -65,6 +67,7 @@ export const getServerSideProps: GetServerSideProps<{
       matches: ranking.matches,
       rankingItem,
       updateTime: ranking.updateTime,
+      expire: ranking.expire,
       lastPosition: ranking.lastPosition,
     },
   };

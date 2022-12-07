@@ -24,7 +24,7 @@ const currencyFormat = new Intl.NumberFormat(config.locale, {
 }).format;
 
 function Home({
-  ranking: { items, updateTime, lastPosition },
+  ranking: { items, updateTime, expire, lastPosition },
   matchesOfDay,
   bestOfDay,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
@@ -102,7 +102,7 @@ function Home({
           O tempo médio de atualização é de 5 minutos
         </div>
       </main>
-      <Footer updateTime={updateTime} />
+      <Footer updateTime={updateTime} expire={expire} />
     </div>
   );
 }

@@ -10,7 +10,7 @@ const optionsDateFormat: Intl.DateTimeFormatOptions = {
   minute: "2-digit",
 };
 
-export function formatDateTime(date: Date | string) {
+export function formatDateTime(date: Date | string | number) {
   const dt = new Date(date);
   return dt.toLocaleString(locale, optionsDateFormat);
 }
