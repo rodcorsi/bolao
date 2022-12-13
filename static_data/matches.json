@@ -538,5 +538,23 @@
     "fase": "Quartas",
     "fixtureID": 978036,
     "group": "Quartas"
+  },
+  {
+    "id": 271,
+    "sequence": 61,
+    "homeTeam": "Argentina",
+    "awayTeam": "Croácia",
+    "fase": "Semi",
+    "fixtureID": 978279,
+    "group": "Semi"
+  },
+  {
+    "id": 272,
+    "sequence": 62,
+    "homeTeam": "França",
+    "awayTeam": "Marrocos",
+    "fase": "Semi",
+    "fixtureID": 978488,
+    "group": "Semi"
   }
 ]
