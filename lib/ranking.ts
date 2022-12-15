@@ -295,7 +295,8 @@ export function getMatchesOfDay(
 
 export function bestRankingForMatches(
   matches: MatchResult[],
-  items: RankingItem[]
+  items: RankingItem[],
+  tryMaxItems: number
 ): RankingItem[] {
   const matchSet = matches.reduce(
     (set, match) => set.add(match.id),
@@ -311,7 +312,19 @@ export function bestRankingForMatches(
     } as RankingItem;
   });
   sortRankingItems(itemsForMatches);
+  let best = filterToPosition(itemsForMatches, 3);
+  if (best.length <= tryMaxItems) {
+    return best;
+  }
+  best = filterToPosition(best, 2);
+  if (best.length <= tryMaxItems) {
+    return best;
+  }
+  return filterToPosition(best, 1);
+}
+
+function filterToPosition(itemsForMatches: RankingItem[], toPosition: number) {
   return itemsForMatches.filter(
-    (item) => item.points > 0 && item.position <= 3
+    (item) => item.points > 0 && item.position <= toPosition
   );
 }

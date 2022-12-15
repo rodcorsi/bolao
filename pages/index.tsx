@@ -102,6 +102,8 @@ function Home({
   );
 }
 
+const MAX_ITEMS_BEST_OF_DAY = 8;
+
 export const getServerSideProps: GetServerSideProps<{
   ranking: Ranking;
   matchesOfDay: MatchResult[];
@@ -113,7 +115,11 @@ export const getServerSideProps: GetServerSideProps<{
   );
   const ranking = await getRanking();
   const matchesOfDay = getMatchesOfDay(ranking.matches);
-  const bestOfDay = bestRankingForMatches(matchesOfDay, ranking.items);
+  const bestOfDay = bestRankingForMatches(
+    matchesOfDay,
+    ranking.items,
+    MAX_ITEMS_BEST_OF_DAY
+  );
   // Pass data to the page via props
   return { props: { ranking, matchesOfDay, bestOfDay } };
 };
