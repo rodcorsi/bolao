@@ -556,5 +556,23 @@
     "fase": "Semi",
     "fixtureID": 978488,
     "group": "Semi"
+  },
+  {
+    "id": 273,
+    "sequence": 63,
+    "homeTeam": "Croácia",
+    "awayTeam": "Marrocos",
+    "fase": "Finais",
+    "fixtureID": 979138,
+    "group": "Finais"
+  },
+  {
+    "id": 274,
+    "sequence": 64,
+    "homeTeam": "Argentina",
+    "awayTeam": "França",
+    "fase": "Finais",
+    "fixtureID": 979139,
+    "group": "Finais"
   }
 ]
