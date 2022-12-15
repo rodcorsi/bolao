@@ -88,6 +88,9 @@ function Home({
           <ExternalLink href="https://drive.google.com/file/d/1i2QLTJ1YtYh7Cww1Ni8eFv-vhmIReL5h/view?usp=share_link">
             Semifinais
           </ExternalLink>
+          <ExternalLink href="https://drive.google.com/file/d/1iDkLZsaUc1U-VC2a8vRJgw-a96erTLOg/view?usp=share_link">
+            Finais
+          </ExternalLink>
         </div>
         <div className="text-xs text-right italic">
           A Classificação é atualizada com as partidas em andamento, portanto as
