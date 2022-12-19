@@ -43,10 +43,37 @@ function Home({
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <h1 className="p-2 text-lg text-gray-700 font-bold">
-        Bolão da Copa 2022 - Ranking Geral
-      </h1>
       <main className="md:container">
+        <div>
+          <h1 className="p-2 text-xl text-gray-700 font-bold">
+            Parabéns aos vencedores!!
+          </h1>
+          <div className="grid sm:grid-cols-2 gap-2 mb-2">
+            <div className="border border-gray-300 p-2 rounded-md shadow-md">
+              <div className="font-bold text-lg text-gray-700">
+                🥇🥉Carlos Nascimento
+              </div>
+              <img
+                className="mx-auto"
+                width={175}
+                height={305}
+                src="images/pix-carlos.jpeg"
+              ></img>
+            </div>
+            <div className="border border-gray-300 p-2 rounded-md shadow-md">
+              <div className="font-bold text-lg text-gray-700">🥈Rubens</div>
+              <img
+                className="mx-auto"
+                width={175}
+                height={305}
+                src="images/pix-rubens.jpeg"
+              ></img>
+            </div>
+          </div>
+        </div>
+        <h2 className="p-2 text-lg text-gray-700 font-bold">
+          Bolão da Copa 2022 - Ranking Geral
+        </h2>
         <ListActiveMatches
           className="grid sm:grid-cols-2 gap-2 mb-2"
           matches={matchesOfDay}
