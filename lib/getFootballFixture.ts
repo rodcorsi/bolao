@@ -1,5 +1,6 @@
 import apiFootball from "./apiFootball";
 import cache from "./cache";
+import footballFixtureStatic from "../static_data/football_fixture.json";
 
 const CACHE_NAME = "football";
 const SECOND_IN_MS = 1000;
@@ -20,7 +21,15 @@ export default async function getFootballFixture(): Promise<FootballFixture> {
     return cachedResponse;
   }
   try {
+    if (!process.env.FOOTBALL_API_KEY) {
+      console.info("getFootballFixture using static data (missing API KEY)");
+      return footballFixtureStatic as unknown as FootballFixture;
+    }
     const data = await fetchFootballFixture();
+    if (data.errors && Object.keys(data.errors).length > 0) {
+      console.info("getFootballFixture using static data (API ERROR)");
+      return footballFixtureStatic as unknown as FootballFixture;
+    }
     return cache.put(CACHE_NAME, data, MINUTE_IN_MS);
   } catch (error) {
     console.info("fetchFootballFixture error to get cache", error);
@@ -29,8 +38,8 @@ export default async function getFootballFixture(): Promise<FootballFixture> {
     if (lastCache) {
       return lastCache;
     }
-    console.error("getFootballFixture not expired cache");
-    throw error;
+    console.info("getFootballFixture using static data (FALLBACK)");
+    return footballFixtureStatic as unknown as FootballFixture;
   }
 }
 

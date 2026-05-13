@@ -93,12 +93,16 @@ async function _getRanking(): Promise<Ranking> {
 async function getMatchesResult() {
   const matches = getMatches();
   const fixtureMap = await getFootballFixtureMap();
-  const matchesResult = new Array<MatchResult>(matches.length);
+  const matchesResult = [];
   for (let i = 0; i < matches.length; i++) {
     const match = matches[i];
     const fixture = fixtureMap[match.fixtureID];
+    if (!fixture) {
+      console.warn(`Fixture not found for match ${match.id} (fixtureID: ${match.fixtureID})`);
+      continue;
+    }
     const status = matchStatus(fixture.fixture.status);
-    matchesResult[i] = { ...match, status, fixture };
+    matchesResult.push({ ...match, status, fixture });
   }
   matchesResult.sort((a, b) => a.sequence - b.sequence);
   return matchesResult;

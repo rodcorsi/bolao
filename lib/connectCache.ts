@@ -1,15 +1,20 @@
 import { createClient } from "redis";
+import { createRedisMock } from "./redisMock";
 
 const MAX_TRIES = 5;
 
-const client = createClient({
-  socket: {
-    host: process.env.REDIS_HOST,
-    port: parseInt(process.env.REDIS_PORT),
-  },
-  password: process.env.REDIS_PASSWORD,
-});
-client.on("error", (err) => {
+const useMock = !process.env.REDIS_HOST;
+
+const client: any = useMock
+  ? createRedisMock()
+  : createClient({
+      socket: {
+        host: process.env.REDIS_HOST,
+        port: parseInt(process.env.REDIS_PORT || "6379"),
+      },
+      password: process.env.REDIS_PASSWORD,
+    });
+client.on("error", (err: any) => {
   console.error(
     `Error redis: ${process.env.REDIS_HOST}:${process.env.REDIS_PORT}` + err
   );
