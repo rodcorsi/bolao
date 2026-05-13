@@ -7,7 +7,7 @@ import RankingList from "../../components/RankingList";
 import { getPlayerByID, Player } from "../../lib/getPlayers";
 import getRanking, { MatchResult, RankingItem } from "../../lib/ranking";
 
-const Player = ({
+const PlayerDetails = ({
   player,
   rankingItem,
   lastPosition,
@@ -73,4 +73,4 @@ export const getServerSideProps: GetServerSideProps<{
   };
 };
 
-export default Player;
+export default PlayerDetails;

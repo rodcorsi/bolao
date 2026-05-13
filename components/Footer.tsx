@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { formatDateTime } from "../lib/formatDate";
 
 interface FooterProps {
@@ -12,6 +12,20 @@ const Footer: React.FC<FooterProps> = ({
   expire,
   className = "",
 }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return (
+      <footer className={`py-2 px-1 text-xs text-right italic ${className}`}>
+        &nbsp;
+      </footer>
+    );
+  }
+
   return (
     <footer
       className={`py-2 px-1 text-xs text-right italic ${className}`}
