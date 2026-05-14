@@ -1,9 +1,9 @@
 import { BetResult, MatchResult } from "../lib/ranking";
 
-import Image from "next/image";
 import InPlay from "./InPlay";
 import Link from "next/link";
 import React from "react";
+import TeamCrest from "./TeamCrest";
 import { formatDateTime } from "../lib/formatDate";
 import { selectGoals } from "../lib/getFootballFixture";
 
@@ -21,14 +21,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
           <div className="w-full text-right text-ellipsis whitespace-nowrap overflow-hidden">
             {match.homeTeam}
           </div>
-          <Image
-            className="bg-center rounded-full mx-2"
-            style={{ height: 30 }}
-            src={match.fixture.teams.home.logo}
-            alt={`Bandeira ${match.homeTeam}`}
-            width={30}
-            height={30}
-          />
+          <TeamCrest crest={match.fixture.homeTeam.crest} teamName={match.homeTeam} />
           {bet == null ? (
             <>
               <div className="w-10 text-lg text-center"></div>
@@ -54,14 +47,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
               </IsEqual>
             </>
           )}
-          <Image
-            className="bg-center rounded-full mx-2"
-            style={{ height: 30 }}
-            src={match.fixture.teams.away.logo}
-            alt={`Bandeira ${match.awayTeam}`}
-            width={30}
-            height={30}
-          />
+          <TeamCrest crest={match.fixture.awayTeam.crest} teamName={match.awayTeam} />
           <div className="w-full text-ellipsis whitespace-nowrap overflow-hidden">
             {match.awayTeam}
           </div>
@@ -69,7 +55,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
         </div>
         <div className="flex flex-nowrap shrink-0 text-xs justify-between italic mt-2">
           <div className="w-full">
-            {formatDateTime(match.fixture.fixture.date)}
+            {formatDateTime(match.fixture.utcDate)}
           </div>
           <InPlay status={match.status} />
           <div className="w-full my-auto text-right">

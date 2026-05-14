@@ -416,7 +416,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
                 </div>
                 <div className="text-xs text-slate-500 md:col-span-4">
                   {formatDateTime(
-                    match.fixture.fixture.date,
+                    match.fixture.utcDate,
                     config.locale,
                     config.timeZone
                   )}

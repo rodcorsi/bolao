@@ -1,6 +1,8 @@
 declare namespace NodeJS {
   interface ProcessEnv {
-    FOOTBALL_API_KEY: string;
+    FOOTBAL_DATA_ORG_API_KEY: string;
+    FOOTBALL_DATA_ORG_COMPETITION?: string;
+    FOOTBALL_DATA_ORG_SEASON?: string;
     REDIS_HOST: string;
     REDIS_PORT: string;
     REDIS_PASSWORD: string;

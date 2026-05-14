@@ -1,13 +1,21 @@
-const FOOTBALL_HOST = "v3.football.api-sports.io";
-export default async function apiFootball(endpoint: string) {
-  const myHeaders = new Headers();
-  myHeaders.append("x-rapidapi-key", process.env.FOOTBALL_API_KEY);
-  myHeaders.append("x-rapidapi-host", FOOTBALL_HOST);
+const FOOTBALL_DATA_BASE_URL = "https://api.football-data.org/v4";
 
-  const response = await fetch(`https://${FOOTBALL_HOST}${endpoint}`, {
+export default async function apiFootball<T>(endpoint: string): Promise<T> {
+  const headers = new Headers();
+  headers.append("X-Auth-Token", process.env.FOOTBAL_DATA_ORG_API_KEY);
+
+  const response = await fetch(`${FOOTBALL_DATA_BASE_URL}${endpoint}`, {
     method: "GET",
-    headers: myHeaders,
+    headers,
     redirect: "follow",
   });
-  return await response.json();
+
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(
+      `football-data.org request failed (${response.status} ${response.statusText}): ${body}`
+    );
+  }
+
+  return (await response.json()) as T;
 }

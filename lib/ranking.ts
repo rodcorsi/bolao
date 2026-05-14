@@ -1,6 +1,6 @@
 import { Bet, getBetsByPlayerID } from "./getBets";
 import {
-  ResponseFixture,
+  FootballDataMatch,
   getFootballFixtureMap,
   selectGoals,
 } from "./getFootballFixture";
@@ -42,7 +42,7 @@ export interface BetResult extends Bet {
 
 export interface MatchResult extends Match {
   status: MatchStatus;
-  fixture: ResponseFixture;
+  fixture: FootballDataMatch;
 }
 
 export type MatchStatus = "FINISHED" | "IN_PLAY" | "NOT_STARTED";
@@ -111,12 +111,23 @@ export async function getMatchesResult() {
   return matchesResult;
 }
 
-function calculateStatus(fixture: ResponseFixture): MatchStatus {
-  const status = fixture.fixture.status.short;
-  if (status === "FT" || status === "AET" || status === "PEN") {
+function calculateStatus(fixture: FootballDataMatch): MatchStatus {
+  const status = fixture.status;
+  if (
+    status === "FINISHED" ||
+    status === "AWARDED" ||
+    status === "AFTER_EXTRA_TIME" ||
+    status === "PENALTY_SHOOTOUT"
+  ) {
     return "FINISHED";
   }
-  if (status === "NS" || status === "TBD") {
+  if (
+    status === "SCHEDULED" ||
+    status === "TIMED" ||
+    status === "POSTPONED" ||
+    status === "SUSPENDED" ||
+    status === "CANCELLED"
+  ) {
     return "NOT_STARTED";
   }
   return "IN_PLAY";
@@ -144,7 +155,7 @@ function whenIsNextMatchInMs(matches: MatchResult[]) {
   const nowInMs = new Date().getTime();
   let nextMatch = Infinity;
   for (const match of matches) {
-    const matchDateInMs = new Date(match.fixture.fixture.date).getTime();
+    const matchDateInMs = new Date(match.fixture.utcDate).getTime();
     if (matchDateInMs < nowInMs) {
       continue;
     }
@@ -270,7 +281,7 @@ async function calculateLastRanking(
 ) {
   const startDay = startOfDay(Date.now(), config.timeZone);
   const matchUntilStartDay = matches.filter(
-    ({ fixture }) => new Date(fixture.fixture.date).getTime() < startDay
+    ({ fixture }) => new Date(fixture.utcDate).getTime() < startDay
   );
   const items = await Promise.all(
     players.map((player) => rankingItem(player, matchUntilStartDay, config))
@@ -294,7 +305,7 @@ export function getMatchesOfDay(
   day: Date | number | string = Date.now()
 ) {
   return matches.filter(
-    (match) => startOfDay(match.fixture.fixture.date) === startOfDay(day)
+    (match) => startOfDay(match.fixture.utcDate) === startOfDay(day)
   );
 }
 

@@ -181,7 +181,7 @@ export function getPhaseLockAt(
       if (!("fixture" in match)) {
         return null;
       }
-      return match.fixture?.fixture?.date || null;
+      return match.fixture?.utcDate || null;
     })
     .filter((value): value is string => value != null)
     .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());

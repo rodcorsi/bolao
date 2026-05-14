@@ -2,7 +2,11 @@ import { Bet } from "./getBets";
 import { Goals } from "./getFootballFixture";
 import { ScorePoints } from "./getConfig";
 
-export default function calculatePoints(bet: Bet, score: Goals, scorePoints: ScorePoints) {
+export default function calculatePoints(
+  bet: Bet,
+  score: Goals,
+  scorePoints: ScorePoints
+) {
   if (score.home == null || score.away == null) {
     return 0;
   }
