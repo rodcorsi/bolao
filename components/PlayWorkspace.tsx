@@ -58,6 +58,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   const [isOpeningSession, setIsOpeningSession] = useState(false);
   const [isSavingBets, setIsSavingBets] = useState(false);
   const [hasRestoredStoredAuth, setHasRestoredStoredAuth] = useState(false);
+  const canCreatePlayer = phaseState.currentPhase === "INICIO";
 
   useEffect(() => {
     setCredentials(initialCredentials);
@@ -324,17 +325,19 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
                 CPF final {session.user.cpf.slice(-4)} • PIX {session.user.pixKey}
               </p>
             </div>
-            <form onSubmit={handleCreatePlayer} className="flex w-full max-w-md gap-2">
-              <input
-                className="w-full rounded-xl border border-slate-300 px-3 py-2"
-                placeholder="Novo jogador"
-                value={newPlayerName}
-                onChange={(event) => setNewPlayerName(event.target.value)}
-              />
-              <button className="rounded-full bg-slate-900 px-4 py-2 font-semibold text-white">
-                Criar
-              </button>
-            </form>
+            {canCreatePlayer ? (
+              <form onSubmit={handleCreatePlayer} className="flex w-full max-w-md gap-2">
+                <input
+                  className="w-full rounded-xl border border-slate-300 px-3 py-2"
+                  placeholder="Novo jogador"
+                  value={newPlayerName}
+                  onChange={(event) => setNewPlayerName(event.target.value)}
+                />
+                <button className="rounded-full bg-slate-900 px-4 py-2 font-semibold text-white">
+                  Criar
+                </button>
+              </form>
+            ) : null}
           </div>
 
           <div className="mt-4 flex flex-wrap gap-2">
