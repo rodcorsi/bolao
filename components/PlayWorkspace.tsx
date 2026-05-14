@@ -1,10 +1,11 @@
 import { FormEvent, useMemo, useState } from "react";
-import { Config } from "../lib/getConfig";
+
 import { Bet } from "../lib/getBets";
+import { Config } from "../lib/getConfig";
 import { MatchResult } from "../lib/ranking";
-import { formatDateTime } from "../lib/formatDate";
 import { PhaseState } from "../lib/tournamentPhase";
 import { PlaySession } from "../lib/play";
+import { formatDateTime } from "../lib/formatDate";
 
 interface PlayWorkspaceProps {
   config: Config;
@@ -254,7 +255,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
             />
             <input
               className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Código secreto"
+              placeholder="Senha"
               type="password"
               value={registerForm.secretCode}
               onChange={(event) =>
@@ -287,7 +288,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
         >
           <h2 className="text-xl font-bold text-slate-900">Reabrir cadastro</h2>
           <p className="mt-1 text-sm text-slate-600">
-            Use CPF e código secreto para editar jogadores e palpites até o prazo.
+            Use CPF e Senha para editar jogadores e palpites até o prazo.
           </p>
           <div className="mt-4 grid gap-3">
             <input
@@ -303,7 +304,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
             />
             <input
               className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Código secreto"
+              placeholder="Senha"
               type="password"
               value={credentials.secretCode}
               onChange={(event) =>

@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { assertUserSecret, getUserByCPF } from "../../../lib/users";
+import { requirePostMethod, sendError } from "../../../lib/api";
+
+import { buildPlaySession } from "../../../lib/play";
 import { getConfig } from "../../../lib/getConfig";
 import { getMatchesResult } from "../../../lib/ranking";
-import { buildPlaySession } from "../../../lib/play";
-import { getUserByCPF, assertUserSecret } from "../../../lib/users";
 import { getPhaseState } from "../../../lib/phaseState";
-import { requirePostMethod, sendError } from "../../../lib/api";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +17,7 @@ export default async function handler(
   try {
     const { cpf, secretCode } = req.body || {};
     if (!cpf || !secretCode) {
-      return sendError(res, 400, "CPF e código secreto são obrigatórios.");
+      return sendError(res, 400, "CPF e Senha são obrigatórios.");
     }
     const user = await getUserByCPF(cpf);
     if (!user) {

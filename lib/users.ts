@@ -1,5 +1,6 @@
-import { supabase } from "./supabaseClient";
 import { hashSecret, verifySecret } from "./secret";
+
+import { supabase } from "./supabaseClient";
 
 export interface User {
   id: number;
@@ -65,6 +66,6 @@ export async function createUser(input: {
 
 export function assertUserSecret(user: UserRecord, secretCode: string) {
   if (!verifySecret(secretCode, user.secretHash)) {
-    throw new Error("Código secreto inválido.");
+    throw new Error("Senha inválida.");
   }
 }

@@ -1,10 +1,11 @@
 import { NextApiRequest, NextApiResponse } from "next";
+import { assertUserSecret, getUserByCPF } from "../../../lib/users";
+import { buildPlaySession, createPlayerForUser } from "../../../lib/play";
+import { requirePostMethod, sendError } from "../../../lib/api";
+
 import { getConfig } from "../../../lib/getConfig";
 import { getMatchesResult } from "../../../lib/ranking";
-import { buildPlaySession, createPlayerForUser } from "../../../lib/play";
-import { getUserByCPF, assertUserSecret } from "../../../lib/users";
 import { getPhaseState } from "../../../lib/phaseState";
-import { requirePostMethod, sendError } from "../../../lib/api";
 
 export default async function handler(
   req: NextApiRequest,
@@ -16,7 +17,7 @@ export default async function handler(
   try {
     const { cpf, secretCode, playerName } = req.body || {};
     if (!cpf || !secretCode || !playerName) {
-      return sendError(res, 400, "CPF, código secreto e nome do jogador são obrigatórios.");
+      return sendError(res, 400, "CPF, Senha e nome do jogador são obrigatórios.");
     }
     const user = await getUserByCPF(cpf);
     if (!user) {
