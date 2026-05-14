@@ -32,7 +32,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
             <>
               <IsEqual
                 value={bet.homeGoals}
-                expected={goals.home}
+                expected={goals.homeTeam}
                 className="w-10 text-lg text-center"
               >
                 {bet.homeGoals}
@@ -40,7 +40,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
               <div className="text-sm text-center m-auto">x</div>
               <IsEqual
                 value={bet.awayGoals}
-                expected={goals.away}
+                expected={goals.awayTeam}
                 className="w-10 text-lg text-center"
               >
                 {bet.awayGoals}
@@ -59,12 +59,12 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
           </div>
           <InPlay status={match.status} />
           <div className="w-full my-auto text-right">
-            {goals.home != null && (
+            {goals.homeTeam != null && (
               <div className="font-bold text-sm text-gray-700">
                 <span>Placar:</span>
-                <span>{goals.home}</span>
+                <span>{goals.homeTeam}</span>
                 <span>x</span>
-                <span>{goals.away}</span>
+                <span>{goals.awayTeam}</span>
               </div>
             )}
           </div>

@@ -6,16 +6,18 @@ const SECOND_IN_MS = 1000;
 const MINUTE_IN_MS = 60 * SECOND_IN_MS;
 const FOOTBALL_DATA_ORG_COMPETITION =
   process.env.FOOTBALL_DATA_ORG_COMPETITION || "WC";
-const FOOTBALL_DATA_ORG_SEASON =
-  process.env.FOOTBALL_DATA_ORG_SEASON || "2026";
+const FOOTBALL_DATA_ORG_SEASON = process.env.FOOTBALL_DATA_ORG_SEASON || "2026";
 
 export async function getFootballFixtureMap() {
   const fixture = await getFootballFixture();
   if (!fixture || !fixture.matches) return {};
-  return fixture.matches.reduce((acc, match) => {
-    acc[match.id] = match;
-    return acc;
-  }, {} as { [fixtureID: number]: FootballDataMatch });
+  return fixture.matches.reduce(
+    (acc, match) => {
+      acc[match.id] = match;
+      return acc;
+    },
+    {} as { [fixtureID: number]: FootballDataMatch },
+  );
 }
 
 export default async function getFootballFixture(): Promise<FootballMatchesResponse | null> {
@@ -40,41 +42,43 @@ export default async function getFootballFixture(): Promise<FootballMatchesRespo
 function fetchFootballFixture() {
   console.info("fetchFootballFixture");
   return apiFootball<FootballMatchesResponse>(
-    `/competitions/${FOOTBALL_DATA_ORG_COMPETITION}/matches?season=${FOOTBALL_DATA_ORG_SEASON}`
+    `/competitions/${FOOTBALL_DATA_ORG_COMPETITION}/matches?season=${FOOTBALL_DATA_ORG_SEASON}`,
   );
 }
 
 export function selectGoals(match: FootballDataMatch) {
-  if (match.score.fullTime.home != null && match.score.fullTime.away != null) {
-    return match.score.fullTime;
-  }
   if (
-    match.score.regularTime.home != null &&
-    match.score.regularTime.away != null
+    match.score.regularTime?.homeTeam != null &&
+    match.score.regularTime?.awayTeam != null
   ) {
     return match.score.regularTime;
+  }
+  if (
+    match.score.fullTime.homeTeam != null &&
+    match.score.fullTime.awayTeam != null
+  ) {
+    return match.score.fullTime;
   }
   return match.score.halfTime;
 }
 
+// https://docs.football-data.org/general/v4
 export interface Goals {
-  home: number | null;
-  away: number | null;
+  homeTeam: number | null;
+  awayTeam: number | null;
 }
 
 export interface FootballDataArea {
   id: number;
   name: string;
-  code?: string | null;
-  flag?: string | null;
+  code?: string;
+  flag?: string;
 }
 
 export interface FootballDataCompetition {
   id: number;
   name: string;
   code: string;
-  type?: string;
-  emblem?: string | null;
 }
 
 export interface FootballDataSeason {
@@ -82,7 +86,6 @@ export interface FootballDataSeason {
   startDate: string;
   endDate: string;
   currentMatchday?: number | null;
-  winner?: FootballDataTeam | null;
 }
 
 export interface FootballDataTeam {
@@ -95,10 +98,10 @@ export interface FootballDataTeam {
 
 export interface FootballDataScore {
   winner?: "HOME_TEAM" | "AWAY_TEAM" | "DRAW" | null;
-  duration?: string;
+  duration?: "REGULAR" | "EXTRA_TIME" | "PENALTY_SHOOTOUT";
   fullTime: Goals;
+  regularTime?: Goals;
   halfTime: Goals;
-  regularTime: Goals;
   extraTime?: Goals;
   penalties?: Goals;
 }
@@ -106,7 +109,18 @@ export interface FootballDataScore {
 export interface FootballDataMatch {
   id: number;
   utcDate: string;
-  status: string;
+  status:
+    | "SCHEDULED"
+    | "TIMED"
+    | "IN_PLAY"
+    | "PAUSED"
+    | "EXTRA_TIME"
+    | "PENALTY_SHOOTOUT"
+    | "FINISHED"
+    | "SUSPENDED"
+    | "POSTPONED"
+    | "CANCELLED"
+    | "AWARDED";
   matchday?: number | null;
   stage?: string | null;
   group?: string | null;

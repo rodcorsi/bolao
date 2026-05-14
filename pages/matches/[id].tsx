@@ -1,3 +1,4 @@
+import { Config, getConfig } from "../../lib/getConfig";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import getRanking, {
   MatchResult,
@@ -11,7 +12,6 @@ import Link from "next/link";
 import MatchHeader from "../../components/MatchHeader";
 import Position from "../../components/Position";
 import { selectGoals } from "../../lib/getFootballFixture";
-import { getConfig, Config } from "../../lib/getConfig";
 
 const Match = ({
   ranking,
@@ -36,8 +36,8 @@ const Match = ({
       </h1>
       <MatchHeader
         match={match}
-        homeGoals={goals.home}
-        awayGoals={goals.away}
+        homeGoals={goals.homeTeam}
+        awayGoals={goals.awayTeam}
       />
       <div
         className={`flex text-sm px-3 py-2 border-b bg-gray-700 w-full rounded-t-lg sticky top-0 text-white `}

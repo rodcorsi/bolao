@@ -113,21 +113,15 @@ export async function getMatchesResult() {
 
 function calculateStatus(fixture: FootballDataMatch): MatchStatus {
   const status = fixture.status;
-  if (
-    status === "FINISHED" ||
-    status === "AWARDED" ||
-    status === "AFTER_EXTRA_TIME" ||
-    status === "PENALTY_SHOOTOUT"
-  ) {
+  switch (status) {
+    case "FINISHED":
+    case "AWARDED":
     return "FINISHED";
-  }
-  if (
-    status === "SCHEDULED" ||
-    status === "TIMED" ||
-    status === "POSTPONED" ||
-    status === "SUSPENDED" ||
-    status === "CANCELLED"
-  ) {
+    case "SCHEDULED":
+    case "TIMED":
+    case "POSTPONED":
+    case "SUSPENDED":
+    case "CANCELLED":
     return "NOT_STARTED";
   }
   return "IN_PLAY";

@@ -22,8 +22,8 @@ const ListActiveMatches: React.FC<ListActiveMatchesProps> = ({
             <MatchHeader
               className="hover:bg-slate-200 border-gray-200 border"
               match={match}
-              homeGoals={goals.home}
-              awayGoals={goals.away}
+              homeGoals={goals.homeTeam}
+              awayGoals={goals.awayTeam}
             />
           </Link>
         );
