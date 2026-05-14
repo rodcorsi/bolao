@@ -23,6 +23,17 @@ const emptyCredentials = {
   secretCode: "",
 };
 
+const defaultPlayerName = "principal";
+
+const sanitizeCPF = (value: string) => value.replace(/\D/g, "").slice(0, 11);
+
+const Spinner: React.FC = () => (
+  <span
+    className="inline-block h-4 w-4 animate-spin rounded-full border-2 border-white/40 border-t-white"
+    aria-hidden="true"
+  />
+);
+
 const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   config,
   phaseState,
@@ -39,12 +50,15 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
     cpf: "",
     pixKey: "",
     secretCode: "",
-    playerName: "",
+    playerName: defaultPlayerName,
   });
   const [newPlayerName, setNewPlayerName] = useState("");
   const [betForm, setBetForm] = useState<Record<number, { home: string; away: string }>>(
     {}
   );
+  const [isRegistering, setIsRegistering] = useState(false);
+  const [isOpeningSession, setIsOpeningSession] = useState(false);
+  const [isSavingBets, setIsSavingBets] = useState(false);
 
   const selectedPlayer = useMemo(() => {
     if (!session || selectedPlayerId == null) {
@@ -94,6 +108,9 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsRegistering(true);
+    setErrorMessage(null);
+    setStatusMessage(null);
     try {
       const payload = await requestJSON<{ session: PlaySession }>(
         "/api/users/register",
@@ -106,11 +123,16 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
       setStatusMessage("Cadastro criado com sucesso.");
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Erro ao cadastrar.");
+    } finally {
+      setIsRegistering(false);
     }
   };
 
   const handleOpenSession = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    setIsOpeningSession(true);
+    setErrorMessage(null);
+    setStatusMessage(null);
     try {
       const payload = await requestJSON<{ session: PlaySession }>(
         "/api/users/session",
@@ -119,6 +141,8 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
       handleSession(payload.session, credentials);
     } catch (error) {
       setErrorMessage(error instanceof Error ? error.message : "Erro ao abrir sessão.");
+    } finally {
+      setIsOpeningSession(false);
     }
   };
 
@@ -148,6 +172,9 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
     if (!selectedPlayer || !phaseState.editablePhase) {
       return;
     }
+    setIsSavingBets(true);
+    setErrorMessage(null);
+    setStatusMessage(null);
     try {
       const bets: Bet[] = matches.map((match) => ({
         playerID: selectedPlayer.id,
@@ -171,6 +198,8 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
       setErrorMessage(
         error instanceof Error ? error.message : "Erro ao salvar palpites."
       );
+    } finally {
+      setIsSavingBets(false);
     }
   };
 
@@ -223,6 +252,9 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
             <input
               className="rounded-xl border border-slate-300 px-3 py-2"
               placeholder="Nome"
+              minLength={3}
+              maxLength={256}
+              required
               value={registerForm.name}
               onChange={(event) =>
                 setRegisterForm((current) => ({
@@ -233,18 +265,26 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
             />
             <input
               className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="CPF"
+              placeholder="CPF (apenas números)"
+              inputMode="numeric"
+              pattern="[0-9]{11}"
+              minLength={11}
+              maxLength={11}
+              required
               value={registerForm.cpf}
               onChange={(event) =>
                 setRegisterForm((current) => ({
                   ...current,
-                  cpf: event.target.value,
+                  cpf: sanitizeCPF(event.target.value),
                 }))
               }
             />
             <input
               className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Chave do PIX"
+              placeholder="Chave do PIX (caso de vitorioso)"
+              minLength={8}
+              maxLength={256}
+              required
               value={registerForm.pixKey}
               onChange={(event) =>
                 setRegisterForm((current) => ({
@@ -257,6 +297,9 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
               className="rounded-xl border border-slate-300 px-3 py-2"
               placeholder="Senha"
               type="password"
+              minLength={6}
+              maxLength={256}
+              required
               value={registerForm.secretCode}
               onChange={(event) =>
                 setRegisterForm((current) => ({
@@ -267,7 +310,10 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
             />
             <input
               className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Nome do jogador"
+              placeholder="Nome do jogo"
+              minLength={3}
+              maxLength={256}
+              required
               value={registerForm.playerName}
               onChange={(event) =>
                 setRegisterForm((current) => ({
@@ -276,8 +322,12 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
                 }))
               }
             />
-            <button className="rounded-full bg-slate-900 px-4 py-2 font-semibold text-white">
-              Criar cadastro
+            <button
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
+              disabled={isRegistering}
+            >
+              {isRegistering ? <Spinner /> : null}
+              {isRegistering ? "Criando cadastro..." : "Criar cadastro"}
             </button>
           </div>
         </form>
@@ -294,11 +344,16 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
             <input
               className="rounded-xl border border-slate-300 px-3 py-2"
               placeholder="CPF"
+              inputMode="numeric"
+              pattern="[0-9]{11}"
+              minLength={11}
+              maxLength={11}
+              required
               value={credentials.cpf}
               onChange={(event) =>
                 setCredentials((current) => ({
                   ...current,
-                  cpf: event.target.value,
+                  cpf: sanitizeCPF(event.target.value),
                 }))
               }
             />
@@ -306,6 +361,9 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
               className="rounded-xl border border-slate-300 px-3 py-2"
               placeholder="Senha"
               type="password"
+              minLength={6}
+              maxLength={256}
+              required
               value={credentials.secretCode}
               onChange={(event) =>
                 setCredentials((current) => ({
@@ -314,8 +372,12 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
                 }))
               }
             />
-            <button className="rounded-full bg-emerald-700 px-4 py-2 font-semibold text-white">
-              Abrir sessão
+            <button
+              className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-4 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
+              disabled={isOpeningSession}
+            >
+              {isOpeningSession ? <Spinner /> : null}
+              {isOpeningSession ? "Abrindo sessão..." : "Abrir sessão"}
             </button>
           </div>
         </form>
@@ -425,8 +487,12 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
               </div>
             ))}
           </div>
-          <button className="mt-4 rounded-full bg-emerald-700 px-4 py-2 font-semibold text-white">
-            Salvar palpites
+          <button
+            className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-4 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
+            disabled={isSavingBets}
+          >
+            {isSavingBets ? <Spinner /> : null}
+            {isSavingBets ? "Salvando palpites..." : "Salvar palpites"}
           </button>
         </form>
       ) : null}
