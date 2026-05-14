@@ -8,9 +8,9 @@ import getRanking, {
   getMatchesOfDay,
 } from "../lib/ranking";
 
-import ExternalLink from "../components/ExternalLink";
 import Footer from "../components/Footer";
 import Head from "next/head";
+import Link from "next/link";
 import ListActiveMatches from "../components/ListActiveMatches";
 import ListBestPlayers from "../components/ListBestPlayers";
 import { PhaseState } from "../lib/tournamentPhase";
@@ -69,7 +69,7 @@ function Home({
             scorePoints={scorePoints}
           />
         </div>
-        <div className="px-2 font-bold text-sm text-gray-800">
+        <div className="px-2 pt-4 font-bold text-sm text-gray-800">
           <div>{`Total de ${items.length} jogadores`}</div>
           <div>{`Premiação Total ${currencyFormat(
             totalGame
@@ -89,15 +89,10 @@ function Home({
           {`A premiação é calculada sobre o valor total arrecadado (R$ ${prize.GAME_VALUE} por jogo) + bônus de ${currencyFormat(prize.BONUS)}.`}
         </div>
         <div className="p-2">
-          {`Maiores informações e regras no link: `}
-          <ExternalLink
-            href={
-              config.tournament.rulesUrl ||
-              "https://docs.google.com/document/d/1X6Gq8_0G8x3_t8J1kZ_1Z8x_y8_1_z_1_y_1_x_1_w/edit?usp=sharing"
-            }
-          >
+          {`Maiores informações leia o `}
+          <Link href="/rules" className="text-blue-600 hover:underline">
             Regulamento
-          </ExternalLink>
+          </Link>
         </div>
       </main>
       <Footer updateTime={updateTime} expire={expire} config={config} />
