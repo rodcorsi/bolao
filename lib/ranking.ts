@@ -1,7 +1,6 @@
 import { Bet, getBetsByPlayerID } from "./getBets";
 import {
   ResponseFixture,
-  Status,
   getFootballFixtureMap,
   selectGoals,
 } from "./getFootballFixture";
@@ -10,7 +9,7 @@ import getMatches, { Match } from "./getMatches";
 import getPlayers, { Player } from "./getPlayers";
 
 import calculatePoints from "./calculatePoints";
-import config from "../static_data/config.json";
+import { getConfig, Config, ScorePoints } from "./getConfig";
 import startOfDay from "./startOfDay";
 
 export interface Ranking {
@@ -46,11 +45,10 @@ export interface MatchResult extends Match {
   fixture: ResponseFixture;
 }
 
+export type MatchStatus = "FINISHED" | "IN_PLAY" | "NOT_STARTED";
+
 const CACHE_NAME =
   process.env.NODE_ENV === "development" ? "ranking:dev" : "ranking";
-
-const MIN_REFRESH_IN_MS = config.refreshTiming.MIN_REFRESH_SEC * 1000;
-const MAX_REFRESH_IN_MS = config.refreshTiming.MAX_REFRESH_SEC * 1000;
 
 export default async function getRanking(): Promise<Ranking> {
   await connectCache();
@@ -78,74 +76,62 @@ export default async function getRanking(): Promise<Ranking> {
 }
 
 async function _getRanking(): Promise<Ranking> {
+  const config = await getConfig();
   const matches = await getMatchesResult();
-  const players = getPlayers();
-  const items = createRankingItems(players, matches);
+  const players = await getPlayers();
+  const items = await createRankingItems(players, matches, config);
   return {
     matches,
     items,
     updateTime: new Date().toISOString(),
     lastPosition: items[items.length - 1]?.position || 0,
-    expire: calculateCacheExpire(matches),
+    expire: calculateCacheExpire(matches, config),
   };
 }
 
 async function getMatchesResult() {
-  const matches = getMatches();
+  const matches = await getMatches();
   const fixtureMap = await getFootballFixtureMap();
   const matchesResult = [];
   for (let i = 0; i < matches.length; i++) {
     const match = matches[i];
     const fixture = fixtureMap[match.fixtureID];
     if (!fixture) {
-      console.warn(`Fixture not found for match ${match.id} (fixtureID: ${match.fixtureID})`);
+      console.warn(
+        `Fixture not found for match ${match.id} (fixtureID: ${match.fixtureID})`
+      );
       continue;
     }
-    const status = matchStatus(fixture.fixture.status);
-    matchesResult.push({ ...match, status, fixture });
+    matchesResult.push({
+      ...match,
+      status: calculateStatus(fixture),
+      fixture,
+    });
   }
-  matchesResult.sort((a, b) => a.sequence - b.sequence);
   return matchesResult;
 }
 
-export type MatchStatus = "NOT_STARTED" | "IN_PLAY" | "FINISHED";
-
-const matchStatusByFixture: { [status: string]: MatchStatus } = {
-  TBD: "NOT_STARTED",
-  NS: "NOT_STARTED",
-  "1H": "IN_PLAY",
-  HT: "IN_PLAY",
-  "2H": "IN_PLAY",
-  ET: "IN_PLAY",
-  BT: "IN_PLAY",
-  P: "IN_PLAY",
-  SUSP: "IN_PLAY",
-  INT: "IN_PLAY",
-  FT: "FINISHED",
-  AET: "FINISHED",
-  PEN: "FINISHED",
-  PST: "NOT_STARTED",
-  CANC: "NOT_STARTED",
-  ABD: "NOT_STARTED",
-  AWD: "NOT_STARTED",
-  WO: "NOT_STARTED",
-  LIVE: "IN_PLAY",
-};
-
-export function matchStatus(status: Status) {
-  return matchStatusByFixture[status.short];
+function calculateStatus(fixture: ResponseFixture): MatchStatus {
+  const status = fixture.fixture.status.short;
+  if (status === "FT" || status === "AET" || status === "PEN") {
+    return "FINISHED";
+  }
+  if (status === "NS" || status === "TBD") {
+    return "NOT_STARTED";
+  }
+  return "IN_PLAY";
 }
 
-function calculateCacheExpire(matches: MatchResult[]) {
+function calculateCacheExpire(matches: MatchResult[], config: Config) {
+  const MIN_REFRESH_IN_MS = config.refreshTiming.MIN_REFRESH_SEC * 1000;
+  const MAX_REFRESH_IN_MS = config.refreshTiming.MAX_REFRESH_SEC * 1000;
+
   if (hasInPlayMatch(matches)) {
     return Date.now() + MIN_REFRESH_IN_MS;
   }
-  let nextMatch = whenIsNextMatchInMs(matches);
-  if (nextMatch > 0) {
-    return Math.min(
-      Date.now() + nextMatch + MIN_REFRESH_IN_MS,
-      Date.now() + MAX_REFRESH_IN_MS
-    );
+  const nextMatchInMs = whenIsNextMatchInMs(matches);
+  if (nextMatchInMs > 0 && nextMatchInMs < MAX_REFRESH_IN_MS) {
+    return Date.now() + Math.max(nextMatchInMs, MIN_REFRESH_IN_MS);
   }
   return Date.now() + MAX_REFRESH_IN_MS;
 }
@@ -167,15 +153,27 @@ function whenIsNextMatchInMs(matches: MatchResult[]) {
   return nextMatch === Infinity ? -1 : nextMatch;
 }
 
-function createRankingItems(players: Player[], matches: MatchResult[]) {
-  const items = players.map((player) => rankingItem(player, matches));
+async function createRankingItems(
+  players: Player[],
+  matches: MatchResult[],
+  config: Config
+) {
+  const items = await Promise.all(
+    players.map((player) => rankingItem(player, matches, config))
+  );
   sortRankingItems(items);
-  assignOldPosition(items, calculateLastRanking(players, matches));
+  const lastRanking = await calculateLastRanking(players, matches, config);
+  assignOldPosition(items, lastRanking);
   return items;
 }
 
-function rankingItem(player: Player, matches: MatchResult[]): RankingItem {
-  const betsByMatchID = getBetsByPlayerID(player.id).reduce((acc, bet) => {
+async function rankingItem(
+  player: Player,
+  matches: MatchResult[],
+  config: Config
+): Promise<RankingItem> {
+  const playerBets = await getBetsByPlayerID(player.id);
+  const betsByMatchID = playerBets.reduce((acc, bet) => {
     acc[bet.matchID] = bet;
     return acc;
   }, {} as { [matchID: number]: Bet });
@@ -185,7 +183,7 @@ function rankingItem(player: Player, matches: MatchResult[]): RankingItem {
     const bet = betsByMatchID[match.id];
     let points = null;
     if (match.status !== "NOT_STARTED" && bet != null) {
-      points = calculatePoints(bet, selectGoals(match.fixture));
+      points = calculatePoints(bet, selectGoals(match.fixture), config.scorePoints);
     }
     bets[i] = { ...bet, points };
   }
@@ -194,7 +192,7 @@ function rankingItem(player: Player, matches: MatchResult[]): RankingItem {
     oldPosition: 0,
     player,
     points: sumPoints(bets),
-    countPoints: countPoints(bets),
+    countPoints: countPoints(bets, config.scorePoints),
     bets,
   };
 }
@@ -209,8 +207,7 @@ function sumPoints(bets: BetResult[]) {
   return points;
 }
 
-function countPoints(bets: BetResult[]): CountPoints {
-  const { scorePoints } = config;
+function countPoints(bets: BetResult[], scorePoints: ScorePoints): CountPoints {
   return {
     exact: countPointsValue(bets, scorePoints.EXACT),
     winnerAndOneScore: countPointsValue(bets, scorePoints.WINNER_AND_ONE_SCORE),
@@ -266,13 +263,17 @@ function isTieRankingItems(a: RankingItem, b: RankingItem) {
   return true;
 }
 
-function calculateLastRanking(players: Player[], matches: MatchResult[]) {
+async function calculateLastRanking(
+  players: Player[],
+  matches: MatchResult[],
+  config: Config
+) {
   const startDay = startOfDay();
   const matchUntilStartDay = matches.filter(
     ({ fixture }) => new Date(fixture.fixture.date).getTime() < startDay
   );
-  const items = players.map((player) =>
-    rankingItem(player, matchUntilStartDay)
+  const items = await Promise.all(
+    players.map((player) => rankingItem(player, matchUntilStartDay, config))
   );
   sortRankingItems(items);
   return items;
@@ -300,7 +301,8 @@ export function getMatchesOfDay(
 export function bestRankingForMatches(
   matches: MatchResult[],
   items: RankingItem[],
-  tryMaxItems: number
+  tryMaxItems: number,
+  scorePoints: ScorePoints
 ): RankingItem[] {
   const matchSet = matches.reduce(
     (set, match) => set.add(match.id),
@@ -312,7 +314,7 @@ export function bestRankingForMatches(
       ...item,
       bets,
       points: sumPoints(bets),
-      countPoints: countPoints(bets),
+      countPoints: countPoints(bets, scorePoints),
     } as RankingItem;
   });
   sortRankingItems(itemsForMatches);

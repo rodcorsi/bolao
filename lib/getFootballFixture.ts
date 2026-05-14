@@ -1,6 +1,5 @@
 import apiFootball from "./apiFootball";
 import cache from "./cache";
-import footballFixtureStatic from "../static_data/football_fixture.json";
 
 const CACHE_NAME = "football";
 const SECOND_IN_MS = 1000;
@@ -8,13 +7,14 @@ const MINUTE_IN_MS = 60 * SECOND_IN_MS;
 
 export async function getFootballFixtureMap() {
   const fixture = await getFootballFixture();
+  if (!fixture || !fixture.response) return {};
   return fixture.response.reduce((acc, response) => {
     acc[response.fixture.id] = response;
     return acc;
   }, {} as { [fixtureID: number]: ResponseFixture });
 }
 
-export default async function getFootballFixture(): Promise<FootballFixture> {
+export default async function getFootballFixture(): Promise<FootballFixture | null> {
   const cachedResponse = cache.get(CACHE_NAME);
   if (cachedResponse) {
     console.info("getFootballFixture using Cache");
@@ -22,24 +22,18 @@ export default async function getFootballFixture(): Promise<FootballFixture> {
   }
   try {
     if (!process.env.FOOTBALL_API_KEY) {
-      console.info("getFootballFixture using static data (missing API KEY)");
-      return footballFixtureStatic as unknown as FootballFixture;
+      console.warn("getFootballFixture: Missing API KEY");
+      return cache.getLast(CACHE_NAME);
     }
     const data = await fetchFootballFixture();
     if (data.errors && Object.keys(data.errors).length > 0) {
-      console.info("getFootballFixture using static data (API ERROR)");
-      return footballFixtureStatic as unknown as FootballFixture;
+      console.error("getFootballFixture API Error:", data.errors);
+      return cache.getLast(CACHE_NAME);
     }
     return cache.put(CACHE_NAME, data, MINUTE_IN_MS);
   } catch (error) {
-    console.info("fetchFootballFixture error to get cache", error);
-    console.info("getFootballFixture get expired");
-    const lastCache = cache.getLast(CACHE_NAME);
-    if (lastCache) {
-      return lastCache;
-    }
-    console.info("getFootballFixture using static data (FALLBACK)");
-    return footballFixtureStatic as unknown as FootballFixture;
+    console.error("fetchFootballFixture error", error);
+    return cache.getLast(CACHE_NAME);
   }
 }
 

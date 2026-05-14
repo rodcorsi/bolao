@@ -1,14 +1,14 @@
 import React from "react";
-import config from "../static_data/config.json";
-
-const scorePoints = config.scorePoints;
+import { ScorePoints } from "../lib/getConfig";
 
 export interface RankingListHeaderProps {
   className?: string;
+  scorePoints: ScorePoints;
 }
 
 const RankingListHeader: React.FC<RankingListHeaderProps> = ({
   className = "",
+  scorePoints,
 }) => {
   return (
     <div

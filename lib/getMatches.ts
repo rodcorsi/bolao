@@ -1,4 +1,4 @@
-import matches from "../static_data/matches.json";
+import { supabase } from "./supabaseClient";
 
 export interface Match {
   id: number;
@@ -10,21 +10,37 @@ export interface Match {
   group: string;
 }
 
-export default function getMatches() {
-  return matches as Match[];
+export default async function getMatches(): Promise<Match[]> {
+  const { data, error } = await supabase.from('matches').select('*').order('sequence');
+  if (error) {
+    console.error('Error fetching matches:', error.message);
+    return [];
+  }
+  return data.map((m: any) => ({
+    id: m.id,
+    sequence: m.sequence,
+    homeTeam: m.home_team,
+    awayTeam: m.away_team,
+    fase: m.fase,
+    fixtureID: m.fixture_id,
+    group: m.group_name
+  })) as Match[];
 }
 
-export function getMatchesMap() {
-  return getMatches().reduce((acc, match) => {
+export async function getMatchesMap() {
+  const matches = await getMatches();
+  return matches.reduce((acc, match) => {
     acc[match.id] = match;
     return acc;
   }, {} as { [id: number]: Match });
 }
 
-export function getMatchesByID(id: number) {
-  return getMatches().find((match) => match.id === match.id);
+export async function getMatchesByID(id: number) {
+  const matches = await getMatches();
+  return matches.find((match) => match.id === id);
 }
 
-export function getMatchesByFixtureID(fixtureID: number) {
-  return getMatches().find((match) => match.fixtureID === match.fixtureID);
+export async function getMatchesByFixtureID(fixtureID: number) {
+  const matches = await getMatches();
+  return matches.find((match) => match.fixtureID === fixtureID);
 }

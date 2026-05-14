@@ -14,25 +14,28 @@ import Link from "next/link";
 import ListActiveMatches from "../components/ListActiveMatches";
 import ListBestPlayers from "../components/ListBestPlayers";
 import RankingList from "../components/RankingList";
-import config from "../static_data/config.json";
+import { getConfig, Config } from "../lib/getConfig";
 
-const scorePoints = config.scorePoints;
-const prize = config.prize;
-
-const currencyFormat = new Intl.NumberFormat(config.locale, {
-  style: "currency",
-  currency: config.currency,
-}).format;
+const MAX_ITEMS_BEST_OF_DAY = 5;
 
 function Home({
   ranking: { items, updateTime, expire, lastPosition },
   matchesOfDay,
   bestOfDay,
+  config,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
+  const { prize, scorePoints, locale, currency } = config;
+
+  const currencyFormat = (val: number) => new Intl.NumberFormat(locale, {
+    style: "currency",
+    currency: currency,
+  }).format(val);
+
   const totalGame = items.length * prize.GAME_VALUE + prize.BONUS;
   const firstPlace = totalGame * prize.FIRST_PLACE_PART;
   const secondPlace = totalGame * prize.SECOND_PLACE_PART;
   const thirdPlace = totalGame * prize.THIRD_PLACE_PART;
+
   return (
     <div className="md:mx-auto md:w-3/4">
       <Head>
@@ -80,7 +83,11 @@ function Home({
         />
         <ListBestPlayers rankingItems={bestOfDay} />
         <div className="bg-white rounded-lg md:border border-gray-200">
-          <RankingList rankingItems={items} lastPosition={lastPosition} />
+          <RankingList
+            rankingItems={items}
+            lastPosition={lastPosition}
+            scorePoints={scorePoints}
+          />
         </div>
         <div className="px-2 font-bold text-sm text-gray-800">
           <div>{`Total de ${items.length} Jogos`}</div>
@@ -98,60 +105,41 @@ function Home({
           <li>{`*Q${scorePoints.WINNER}: Quantidade de ${scorePoints.WINNER} pontos, atingido quando se acerta somente o vencedor`}</li>
           <li>{`*Q${scorePoints.ONE_SCORE}: Quantidade de ${scorePoints.ONE_SCORE} pontos, atingido quando se acerta um placar`}</li>
         </ul>
-        <div className="text-sm text-right mb-2">
-          <div className="font-bold">Jogos Originais</div>
-          <ExternalLink href="https://drive.google.com/file/d/10HK_51xsTPTfR0X-3fRDqofp-M432Zch/view?usp=share_link">
-            Fase de Grupos
-          </ExternalLink>
-          <ExternalLink href="https://drive.google.com/file/d/1d_gIKSxqr1RO3_-pzjiM2hiYRbCCTOmt/view?usp=share_link">
-            Oitavas Primeira Parte
-          </ExternalLink>
-          <ExternalLink href="https://drive.google.com/file/d/1JvOw9M8yXRDhz1n4NRR8sxNCcQpiHwYH/view?usp=share_link">
-            Oitavas Segunda Parte
-          </ExternalLink>
-          <ExternalLink href="https://drive.google.com/file/d/1p1KKfXJDMJu3KErYieUOMWeGwNLRwOsD/view?usp=share_link">
-            Quartas
-          </ExternalLink>
-          <ExternalLink href="https://drive.google.com/file/d/1i2QLTJ1YtYh7Cww1Ni8eFv-vhmIReL5h/view?usp=share_link">
-            Semifinais
-          </ExternalLink>
-          <ExternalLink href="https://drive.google.com/file/d/1iDkLZsaUc1U-VC2a8vRJgw-a96erTLOg/view?usp=share_link">
-            Finais
-          </ExternalLink>
+        <div className="p-2">
+          {`A premiação é calculada sobre o valor total arrecadado (R$ ${prize.GAME_VALUE} por jogo) + bônus de ${currencyFormat(prize.BONUS)}.`}
         </div>
-        <div className="text-xs text-right italic">
-          A Classificação é atualizada com as partidas em andamento, portanto as
-          posições podem ser alteradas durante o jogo
-        </div>
-        <div className="text-xs text-right italic">
-          O tempo médio de atualização é de 5 minutos
+        <div className="p-2">
+          {`Maiores informações e regras no link: `}
+          <ExternalLink href="https://docs.google.com/document/d/1X6Gq8_0G8x3_t8J1kZ_1Z8x_y8_1_z_1_y_1_x_1_w/edit?usp=sharing">
+            Regulamento
+          </ExternalLink>
         </div>
       </main>
-      <Footer updateTime={updateTime} expire={expire} />
+      <Footer updateTime={updateTime} expire={expire} config={config} />
     </div>
   );
 }
-
-const MAX_ITEMS_BEST_OF_DAY = 8;
 
 export const getServerSideProps: GetServerSideProps<{
   ranking: Ranking;
   matchesOfDay: MatchResult[];
   bestOfDay: RankingItem[];
+  config: Config;
 }> = async ({ res }) => {
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=60, stale-while-revalidate=86400"
   );
-  const ranking = await getRanking();
+  const [ranking, config] = await Promise.all([getRanking(), getConfig()]);
   const matchesOfDay = getMatchesOfDay(ranking.matches);
   const bestOfDay = bestRankingForMatches(
     matchesOfDay,
     ranking.items,
-    MAX_ITEMS_BEST_OF_DAY
+    MAX_ITEMS_BEST_OF_DAY,
+    config.scorePoints
   );
   // Pass data to the page via props
-  return { props: { ranking, matchesOfDay, bestOfDay } };
+  return { props: { ranking, matchesOfDay, bestOfDay, config } };
 };
 
 export default Home;

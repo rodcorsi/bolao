@@ -11,10 +11,12 @@ import Link from "next/link";
 import MatchHeader from "../../components/MatchHeader";
 import Position from "../../components/Position";
 import { selectGoals } from "../../lib/getFootballFixture";
+import { getConfig, Config } from "../../lib/getConfig";
 
 const Match = ({
   ranking,
   match,
+  config,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const matchName = match.homeTeam + " x " + match.awayTeam;
   const goals = selectGoals(match.fixture);
@@ -72,7 +74,11 @@ const Match = ({
           );
         })}
       </ul>
-      <Footer updateTime={ranking.updateTime} expire={ranking.expire} />
+      <Footer
+        updateTime={ranking.updateTime}
+        expire={ranking.expire}
+        config={config}
+      />
     </div>
   );
 };
@@ -90,13 +96,14 @@ function sortByPoints(rankingItems: RankingItem[], matchID: number) {
 export const getServerSideProps: GetServerSideProps<{
   ranking: Ranking;
   match: MatchResult;
+  config: Config;
 }> = async ({ req, res, params }) => {
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=60, stale-while-revalidate=86400"
   );
   const id = parseInt(params?.id as string);
-  const ranking = await getRanking();
+  const [ranking, config] = await Promise.all([getRanking(), getConfig()]);
   const match = ranking.matches.find((match) => match.id === id);
   if (match == null) {
     return {
@@ -107,6 +114,7 @@ export const getServerSideProps: GetServerSideProps<{
     props: {
       ranking,
       match,
+      config,
     },
   };
 };

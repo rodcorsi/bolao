@@ -6,6 +6,7 @@ import Footer from "../../components/Footer";
 import RankingList from "../../components/RankingList";
 import { getPlayerByID, Player } from "../../lib/getPlayers";
 import getRanking, { MatchResult, RankingItem } from "../../lib/ranking";
+import { getConfig, Config } from "../../lib/getConfig";
 
 const PlayerDetails = ({
   player,
@@ -14,6 +15,7 @@ const PlayerDetails = ({
   matches,
   updateTime,
   expire,
+  config,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <div className="md:mx-auto md:w-3/4 grid">
@@ -28,9 +30,13 @@ const PlayerDetails = ({
       <h1 className="p-2 text-lg text-gray-700 font-bold">
         <Link href="/">⇦ Bolão da Copa 2022 - Palpites</Link>
       </h1>
-      <RankingList rankingItems={[rankingItem]} lastPosition={lastPosition} />
+      <RankingList
+        rankingItems={[rankingItem]}
+        lastPosition={lastPosition}
+        scorePoints={config.scorePoints}
+      />
       <BetsList rankingItem={rankingItem} matches={matches} />
-      <Footer updateTime={updateTime} expire={expire} />
+      <Footer updateTime={updateTime} expire={expire} config={config} />
     </div>
   );
 };
@@ -42,19 +48,20 @@ export const getServerSideProps: GetServerSideProps<{
   matches: MatchResult[];
   updateTime: string;
   expire: number;
+  config: Config;
 }> = async ({ req, res, params }) => {
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=60, stale-while-revalidate=86400"
   );
   const id = parseInt(params?.id as string);
-  const player = getPlayerByID(id);
+  const player = await getPlayerByID(id);
   if (!player) {
     return {
       notFound: true,
     };
   }
-  const ranking = await getRanking();
+  const [ranking, config] = await Promise.all([getRanking(), getConfig()]);
   const rankingItem = ranking.items.find((item) => item.player.id === id);
   if (!rankingItem) {
     return {
@@ -69,6 +76,7 @@ export const getServerSideProps: GetServerSideProps<{
       updateTime: ranking.updateTime,
       expire: ranking.expire,
       lastPosition: ranking.lastPosition,
+      config,
     },
   };
 };

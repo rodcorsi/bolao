@@ -1,10 +1,8 @@
 import { Bet } from "./getBets";
 import { Goals } from "./getFootballFixture";
-import config from "../static_data/config.json";
+import { ScorePoints } from "./getConfig";
 
-const scorePoints = config.scorePoints;
-
-export default function calculatePoints(bet: Bet, score: Goals) {
+export default function calculatePoints(bet: Bet, score: Goals, scorePoints: ScorePoints) {
   if (score.home == null || score.away == null) {
     return 0;
   }
