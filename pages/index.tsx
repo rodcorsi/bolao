@@ -13,8 +13,11 @@ import Head from "next/head";
 import Link from "next/link";
 import ListActiveMatches from "../components/ListActiveMatches";
 import ListBestPlayers from "../components/ListBestPlayers";
+import PhaseStatusCard from "../components/PhaseStatusCard";
 import RankingList from "../components/RankingList";
 import { getConfig, Config } from "../lib/getConfig";
+import { PhaseState } from "../lib/tournamentPhase";
+import { getPhaseState } from "../lib/phaseState";
 
 const MAX_ITEMS_BEST_OF_DAY = 5;
 
@@ -23,6 +26,7 @@ function Home({
   matchesOfDay,
   bestOfDay,
   config,
+  phaseState,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const { prize, scorePoints, locale, currency } = config;
 
@@ -39,43 +43,20 @@ function Home({
   return (
     <div className="md:mx-auto md:w-3/4">
       <Head>
-        <title>Bolão Scheelita Copa 2022</title>
+        <title>{config.tournament.title}</title>
         <meta
           name="description"
-          content="Pagina com resultados do bolão da scheelita copa 2022"
+          content={`Acompanhe o ranking e as fases de ${config.tournament.title}`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className="md:container">
-        <div>
-          <h1 className="p-2 text-xl text-gray-700 font-bold">
-            Parabéns aos vencedores!!
-          </h1>
-          <div className="grid sm:grid-cols-2 gap-2 mb-2">
-            <div className="border border-gray-300 p-2 rounded-md shadow-md">
-              <div className="font-bold text-lg text-gray-700">
-                🥇🥉Carlos Nascimento
-              </div>
-              <img
-                className="mx-auto"
-                width={175}
-                height={305}
-                src="images/pix-carlos.jpeg"
-              ></img>
-            </div>
-            <div className="border border-gray-300 p-2 rounded-md shadow-md">
-              <div className="font-bold text-lg text-gray-700">🥈Rubens</div>
-              <img
-                className="mx-auto"
-                width={175}
-                height={305}
-                src="images/pix-rubens.jpeg"
-              ></img>
-            </div>
-          </div>
-        </div>
+        <h1 className="p-2 text-2xl text-gray-800 font-bold">
+          {config.tournament.title}
+        </h1>
+        <PhaseStatusCard phaseState={phaseState} config={config} />
         <h2 className="p-2 text-lg text-gray-700 font-bold">
-          Bolão da Copa 2022 - Ranking Geral
+          Ranking geral
         </h2>
         <ListActiveMatches
           className="grid sm:grid-cols-2 gap-2 mb-2"
@@ -90,7 +71,7 @@ function Home({
           />
         </div>
         <div className="px-2 font-bold text-sm text-gray-800">
-          <div>{`Total de ${items.length} Jogos`}</div>
+          <div>{`Total de ${items.length} jogadores`}</div>
           <div>{`Premiação Total ${currencyFormat(
             totalGame
           )} a ser divida entre ganhadores`}</div>
@@ -110,7 +91,12 @@ function Home({
         </div>
         <div className="p-2">
           {`Maiores informações e regras no link: `}
-          <ExternalLink href="https://docs.google.com/document/d/1X6Gq8_0G8x3_t8J1kZ_1Z8x_y8_1_z_1_y_1_x_1_w/edit?usp=sharing">
+          <ExternalLink
+            href={
+              config.tournament.rulesUrl ||
+              "https://docs.google.com/document/d/1X6Gq8_0G8x3_t8J1kZ_1Z8x_y8_1_z_1_y_1_x_1_w/edit?usp=sharing"
+            }
+          >
             Regulamento
           </ExternalLink>
         </div>
@@ -125,6 +111,7 @@ export const getServerSideProps: GetServerSideProps<{
   matchesOfDay: MatchResult[];
   bestOfDay: RankingItem[];
   config: Config;
+  phaseState: PhaseState;
 }> = async ({ res }) => {
   res.setHeader(
     "Cache-Control",
@@ -138,8 +125,9 @@ export const getServerSideProps: GetServerSideProps<{
     MAX_ITEMS_BEST_OF_DAY,
     config.scorePoints
   );
+  const phaseState = getPhaseState(config, ranking.matches);
   // Pass data to the page via props
-  return { props: { ranking, matchesOfDay, bestOfDay, config } };
+  return { props: { ranking, matchesOfDay, bestOfDay, config, phaseState } };
 };
 
 export default Home;

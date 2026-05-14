@@ -20,15 +20,15 @@ const PlayerDetails = ({
   return (
     <div className="md:mx-auto md:w-3/4 grid">
       <Head>
-        <title>{`Palpites - ${player.name} - Bolão Scheelita Copa 2022`}</title>
+        <title>{`Palpites - ${player.name} - ${config.tournament.title}`}</title>
         <meta
           name="description"
-          content={`Palpites de ${player.name} para o bolão da scheelita copa 2022`}
+          content={`Palpites de ${player.name} para ${config.tournament.title}`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1 className="p-2 text-lg text-gray-700 font-bold">
-        <Link href="/">⇦ Bolão da Copa 2022 - Palpites</Link>
+        <Link href="/">⇦ {config.tournament.title} - Palpites</Link>
       </h1>
       <RankingList
         rankingItems={[rankingItem]}

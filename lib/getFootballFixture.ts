@@ -4,6 +4,8 @@ import cache from "./cache";
 const CACHE_NAME = "football";
 const SECOND_IN_MS = 1000;
 const MINUTE_IN_MS = 60 * SECOND_IN_MS;
+const FOOTBALL_LEAGUE_ID = process.env.FOOTBALL_LEAGUE_ID || "1";
+const FOOTBALL_SEASON = process.env.FOOTBALL_SEASON || "2026";
 
 export async function getFootballFixtureMap() {
   const fixture = await getFootballFixture();
@@ -39,7 +41,9 @@ export default async function getFootballFixture(): Promise<FootballFixture | nu
 
 function fetchFootballFixture() {
   console.info("fetchFootballFixture");
-  return apiFootball("/fixtures?league=1&season=2022");
+  return apiFootball(
+    `/fixtures?league=${FOOTBALL_LEAGUE_ID}&season=${FOOTBALL_SEASON}`
+  );
 }
 
 export function selectGoals(fixture: ResponseFixture) {

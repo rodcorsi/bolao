@@ -24,15 +24,15 @@ const Match = ({
   return (
     <div className="md:mx-auto md:w-3/4 grid">
       <Head>
-        <title>{`${matchName} - Bolão Scheelita Copa 2022`}</title>
+        <title>{`${matchName} - ${config.tournament.title}`}</title>
         <meta
           name="description"
-          content={`Resultado do jogo ${matchName} para o bolão da scheelita copa 2022`}
+          content={`Resultado do jogo ${matchName} para ${config.tournament.title}`}
         />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <h1 className="p-2 text-lg text-gray-700 font-bold">
-        <Link href="/">⇦ Bolão da Copa 2022 - Jogo</Link>
+        <Link href="/">⇦ {config.tournament.title} - Jogo</Link>
       </h1>
       <MatchHeader
         match={match}

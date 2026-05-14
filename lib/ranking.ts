@@ -89,7 +89,7 @@ async function _getRanking(): Promise<Ranking> {
   };
 }
 
-async function getMatchesResult() {
+export async function getMatchesResult() {
   const matches = await getMatches();
   const fixtureMap = await getFootballFixtureMap();
   const matchesResult = [];
@@ -268,7 +268,7 @@ async function calculateLastRanking(
   matches: MatchResult[],
   config: Config
 ) {
-  const startDay = startOfDay();
+  const startDay = startOfDay(Date.now(), config.timeZone);
   const matchUntilStartDay = matches.filter(
     ({ fixture }) => new Date(fixture.fixture.date).getTime() < startDay
   );

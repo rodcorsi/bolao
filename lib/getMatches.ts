@@ -11,9 +11,12 @@ export interface Match {
 }
 
 export default async function getMatches(): Promise<Match[]> {
-  const { data, error } = await supabase.from('matches').select('*').order('sequence');
+  const { data, error } = await supabase
+    .from("matches")
+    .select("*")
+    .order("sequence");
   if (error) {
-    console.error('Error fetching matches:', error.message);
+    console.error("Error fetching matches:", error.message);
     return [];
   }
   return data.map((m: any) => ({
@@ -23,7 +26,7 @@ export default async function getMatches(): Promise<Match[]> {
     awayTeam: m.away_team,
     fase: m.fase,
     fixtureID: m.fixture_id,
-    group: m.group_name
+    group: m.group_name,
   })) as Match[];
 }
 
@@ -43,4 +46,25 @@ export async function getMatchesByID(id: number) {
 export async function getMatchesByFixtureID(fixtureID: number) {
   const matches = await getMatches();
   return matches.find((match) => match.fixtureID === fixtureID);
+}
+
+export async function getMatchesByFase(fase: string) {
+  const { data, error } = await supabase
+    .from("matches")
+    .select("*")
+    .eq("fase", fase)
+    .order("sequence");
+  if (error) {
+    console.error(`Error fetching matches for fase ${fase}:`, error.message);
+    return [];
+  }
+  return data.map((m: any) => ({
+    id: m.id,
+    sequence: m.sequence,
+    homeTeam: m.home_team,
+    awayTeam: m.away_team,
+    fase: m.fase,
+    fixtureID: m.fixture_id,
+    group: m.group_name,
+  })) as Match[];
 }
