@@ -3,6 +3,7 @@ import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { Bet } from "../lib/getBets";
 import { Config } from "../lib/getConfig";
+import TeamCrest from "./TeamCrest";
 import { MatchResult } from "../lib/ranking";
 import { PhaseState } from "../lib/tournamentPhase";
 import { PlaySession } from "../lib/play";
@@ -372,11 +373,19 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
                 key={match.id}
                 className="grid gap-2 rounded-xl border border-slate-200 p-3 md:grid-cols-[1fr_auto_auto_1fr]"
               >
-                <div className="font-medium text-slate-800">{match.homeTeam}</div>
+                <div className="flex items-center font-medium text-slate-800">
+                  <TeamCrest
+                    crest={match.fixture.homeTeam.crest}
+                    teamName={match.homeTeam}
+                  />
+                  <span>{match.homeTeam}</span>
+                </div>
                 <input
                   className="w-16 rounded-lg border border-slate-300 px-2 py-1 text-center"
+                  type="number"
                   inputMode="numeric"
                   min={0}
+                  max={99}
                   value={betForm[match.id]?.home || ""}
                   onChange={(event) =>
                     setBetForm((current) => ({
@@ -390,8 +399,10 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
                 />
                 <input
                   className="w-16 rounded-lg border border-slate-300 px-2 py-1 text-center"
+                  type="number"
                   inputMode="numeric"
                   min={0}
+                  max={99}
                   value={betForm[match.id]?.away || ""}
                   onChange={(event) =>
                     setBetForm((current) => ({
@@ -403,8 +414,12 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
                     }))
                   }
                 />
-                <div className="font-medium text-slate-800 md:text-right">
-                  {match.awayTeam}
+                <div className="flex items-center justify-start font-medium text-slate-800 md:justify-end">
+                  <span>{match.awayTeam}</span>
+                  <TeamCrest
+                    crest={match.fixture.awayTeam.crest}
+                    teamName={match.awayTeam}
+                  />
                 </div>
                 <div className="text-xs text-slate-500 md:col-span-4">
                   {formatDateTime(
