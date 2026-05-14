@@ -66,6 +66,26 @@ export const COMPETITION_PHASE_LABELS: CompetitionPhase[] = [
   "Finais",
 ];
 
+const VISIBLE_COMPETITION_PHASES_BY_PHASE: Record<
+  TournamentPhase,
+  CompetitionPhase[]
+> = {
+  INICIO: [],
+  FASE_DE_GRUPOS: ["Fase de grupos"],
+  SEGUNDA_FASE: ["Fase de grupos", "Segunda fase"],
+  OITAVAS: ["Fase de grupos", "Segunda fase", "Oitavas"],
+  QUARTAS: ["Fase de grupos", "Segunda fase", "Oitavas", "Quartas"],
+  SEMI_FINAIS: [
+    "Fase de grupos",
+    "Segunda fase",
+    "Oitavas",
+    "Quartas",
+    "Semi finais",
+  ],
+  FINAIS: COMPETITION_PHASE_LABELS,
+  FIM: COMPETITION_PHASE_LABELS,
+};
+
 const EDITABLE_PHASE_BY_PHASE: Partial<
   Record<TournamentPhase, CompetitionPhase | null>
 > = {
@@ -94,6 +114,10 @@ export function getCurrentPhaseLabel(phase: TournamentPhase) {
 
 export function getEditableCompetitionPhase(phase: TournamentPhase) {
   return EDITABLE_PHASE_BY_PHASE[phase] ?? null;
+}
+
+export function getVisibleCompetitionPhases(phase: TournamentPhase) {
+  return VISIBLE_COMPETITION_PHASES_BY_PHASE[phase] ?? [];
 }
 
 export function normalizeCompetitionPhase(value: string) {

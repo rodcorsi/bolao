@@ -4,9 +4,11 @@ import Link from "next/link";
 import BetsList from "../../components/BetsList";
 import Footer from "../../components/Footer";
 import RankingList from "../../components/RankingList";
+import { getPhaseState } from "../../lib/phaseState";
 import { getPlayerByID, Player } from "../../lib/getPlayers";
 import getRanking, { MatchResult, RankingItem } from "../../lib/ranking";
 import { getConfig, Config } from "../../lib/getConfig";
+import { getVisibleCompetitionPhases, normalizeCompetitionPhase } from "../../lib/tournamentPhase";
 
 const PlayerDetails = ({
   player,
@@ -62,17 +64,32 @@ export const getServerSideProps: GetServerSideProps<{
     };
   }
   const [ranking, config] = await Promise.all([getRanking(), getConfig()]);
+  const phaseState = getPhaseState(config, ranking.matches);
+  const visiblePhases = new Set(
+    getVisibleCompetitionPhases(phaseState.currentPhase)
+  );
+  const visibleMatches = ranking.matches.filter((match) => {
+    const phase = normalizeCompetitionPhase(match.fase);
+    return phase != null && visiblePhases.has(phase);
+  });
   const rankingItem = ranking.items.find((item) => item.player.id === id);
   if (!rankingItem) {
     return {
       notFound: true,
     };
   }
+  const visibleMatchIds = new Set(visibleMatches.map((match) => match.id));
+  const visibleRankingItem: RankingItem = {
+    ...rankingItem,
+    bets: rankingItem.bets.filter(
+      (bet) => bet?.matchID != null && visibleMatchIds.has(bet.matchID)
+    ),
+  };
   return {
     props: {
       player,
-      matches: ranking.matches,
-      rankingItem,
+      matches: visibleMatches,
+      rankingItem: visibleRankingItem,
       updateTime: ranking.updateTime,
       expire: ranking.expire,
       lastPosition: ranking.lastPosition,
