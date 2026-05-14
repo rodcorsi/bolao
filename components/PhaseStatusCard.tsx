@@ -13,6 +13,7 @@ const PhaseStatusCard: React.FC<PhaseStatusCardProps> = ({
   config,
 }) => {
   const hasOpenWindow = phaseState.editablePhase != null;
+  const canSignup = phaseState.currentPhase === "INICIO";
 
   return (
     <section className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm mb-4">
@@ -41,11 +42,26 @@ const PhaseStatusCard: React.FC<PhaseStatusCardProps> = ({
           ) : null}
         </div>
         <div className="flex flex-col gap-2 md:items-end">
+          {canSignup ? (
+            <Link
+              href="/signup"
+              className="rounded-full bg-emerald-700 px-4 py-2 text-center font-semibold text-white transition hover:bg-emerald-800"
+            >
+              Criar cadastro
+            </Link>
+          ) : (
+            <Link
+              href="/play"
+              className="rounded-full bg-emerald-700 px-4 py-2 text-center font-semibold text-white transition hover:bg-emerald-800"
+            >
+              {hasOpenWindow ? "Editar palpites" : "Acompanhar status"}
+            </Link>
+          )}
           <Link
             href="/play"
-            className="rounded-full bg-emerald-700 px-4 py-2 text-center font-semibold text-white transition hover:bg-emerald-800"
+            className="text-sm font-medium text-emerald-900 underline"
           >
-            {hasOpenWindow ? "Cadastrar ou editar palpites" : "Acompanhar status"}
+            Abrir sessão
           </Link>
           {config.tournament.rulesUrl ? (
             <Link

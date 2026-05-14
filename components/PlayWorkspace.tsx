@@ -1,29 +1,31 @@
-import { FormEvent, useMemo, useState } from "react";
+import Link from "next/link";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 
 import { Bet } from "../lib/getBets";
 import { Config } from "../lib/getConfig";
 import { MatchResult } from "../lib/ranking";
 import { PhaseState } from "../lib/tournamentPhase";
 import { PlaySession } from "../lib/play";
+import {
+  SessionCredentials,
+  loadPlayAuth,
+  savePlayAuth,
+} from "../lib/playAuthStorage";
 import { formatDateTime } from "../lib/formatDate";
 
 interface PlayWorkspaceProps {
   config: Config;
   phaseState: PhaseState;
   matches: MatchResult[];
+  initialCredentials?: SessionCredentials;
+  initialSession?: PlaySession | null;
+  showSignupLink?: boolean;
 }
-
-type SessionCredentials = {
-  cpf: string;
-  secretCode: string;
-};
 
 const emptyCredentials = {
   cpf: "",
   secretCode: "",
 };
-
-const defaultPlayerName = "principal";
 
 const sanitizeCPF = (value: string) => value.replace(/\D/g, "").slice(0, 11);
 
@@ -38,27 +40,34 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   config,
   phaseState,
   matches,
+  initialCredentials = emptyCredentials,
+  initialSession = null,
+  showSignupLink = true,
 }) => {
   const [credentials, setCredentials] =
-    useState<SessionCredentials>(emptyCredentials);
-  const [session, setSession] = useState<PlaySession | null>(null);
+    useState<SessionCredentials>(initialCredentials);
+  const [session, setSession] = useState<PlaySession | null>(initialSession);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
-  const [registerForm, setRegisterForm] = useState({
-    name: "",
-    cpf: "",
-    pixKey: "",
-    secretCode: "",
-    playerName: defaultPlayerName,
-  });
   const [newPlayerName, setNewPlayerName] = useState("");
   const [betForm, setBetForm] = useState<Record<number, { home: string; away: string }>>(
     {}
   );
-  const [isRegistering, setIsRegistering] = useState(false);
   const [isOpeningSession, setIsOpeningSession] = useState(false);
   const [isSavingBets, setIsSavingBets] = useState(false);
+  const [hasRestoredStoredAuth, setHasRestoredStoredAuth] = useState(false);
+
+  useEffect(() => {
+    setCredentials(initialCredentials);
+  }, [initialCredentials]);
+
+  useEffect(() => {
+    setSession(initialSession);
+    if (initialSession) {
+      refreshBetForm(initialSession);
+    }
+  }, [initialSession, matches]);
 
   const selectedPlayer = useMemo(() => {
     if (!session || selectedPlayerId == null) {
@@ -89,6 +98,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
     setErrorMessage(null);
     setStatusMessage("Sessão carregada.");
     refreshBetForm(nextSession);
+    savePlayAuth(nextCredentials);
   };
 
   const requestJSON = async <T,>(url: string, body: Record<string, unknown>) => {
@@ -106,44 +116,48 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
     return payload as T;
   };
 
-  const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    setIsRegistering(true);
-    setErrorMessage(null);
-    setStatusMessage(null);
-    try {
-      const payload = await requestJSON<{ session: PlaySession }>(
-        "/api/users/register",
-        registerForm
-      );
-      handleSession(payload.session, {
-        cpf: registerForm.cpf,
-        secretCode: registerForm.secretCode,
-      });
-      setStatusMessage("Cadastro criado com sucesso.");
-    } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Erro ao cadastrar.");
-    } finally {
-      setIsRegistering(false);
-    }
-  };
-
-  const handleOpenSession = async (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
+  const openSession = async (
+    nextCredentials: SessionCredentials,
+    options?: { silent?: boolean }
+  ) => {
     setIsOpeningSession(true);
     setErrorMessage(null);
-    setStatusMessage(null);
+    if (!options?.silent) {
+      setStatusMessage(null);
+    }
     try {
       const payload = await requestJSON<{ session: PlaySession }>(
         "/api/users/session",
-        credentials
+        nextCredentials
       );
-      handleSession(payload.session, credentials);
+      handleSession(payload.session, nextCredentials);
     } catch (error) {
-      setErrorMessage(error instanceof Error ? error.message : "Erro ao abrir sessão.");
+      if (!options?.silent) {
+        setErrorMessage(
+          error instanceof Error ? error.message : "Erro ao abrir sessão."
+        );
+      }
     } finally {
       setIsOpeningSession(false);
     }
+  };
+
+  useEffect(() => {
+    if (hasRestoredStoredAuth || session || initialSession) {
+      return;
+    }
+    const storedCredentials = loadPlayAuth();
+    setHasRestoredStoredAuth(true);
+    if (!storedCredentials) {
+      return;
+    }
+    setCredentials(storedCredentials);
+    void openSession(storedCredentials, { silent: true });
+  }, [hasRestoredStoredAuth, initialSession, session]);
+
+  const handleOpenSession = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    await openSession(credentials);
   };
 
   const handleCreatePlayer = async (event: FormEvent<HTMLFormElement>) => {
@@ -238,100 +252,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
         </div>
       ) : null}
 
-      <div className="grid gap-4 lg:grid-cols-2">
-        <form
-          onSubmit={handleRegister}
-          className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
-        >
-          <h2 className="text-xl font-bold text-slate-900">Novo cadastro</h2>
-          <p className="mt-1 text-sm text-slate-600">
-            Cadastre o usuário, crie o primeiro jogador e libere o preenchimento da
-            fase aberta.
-          </p>
-          <div className="mt-4 grid gap-3">
-            <input
-              className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Nome"
-              minLength={3}
-              maxLength={256}
-              required
-              value={registerForm.name}
-              onChange={(event) =>
-                setRegisterForm((current) => ({
-                  ...current,
-                  name: event.target.value,
-                }))
-              }
-            />
-            <input
-              className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="CPF (apenas números)"
-              inputMode="numeric"
-              pattern="[0-9]{11}"
-              minLength={11}
-              maxLength={11}
-              required
-              value={registerForm.cpf}
-              onChange={(event) =>
-                setRegisterForm((current) => ({
-                  ...current,
-                  cpf: sanitizeCPF(event.target.value),
-                }))
-              }
-            />
-            <input
-              className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Chave do PIX (caso de vitorioso)"
-              minLength={8}
-              maxLength={256}
-              required
-              value={registerForm.pixKey}
-              onChange={(event) =>
-                setRegisterForm((current) => ({
-                  ...current,
-                  pixKey: event.target.value,
-                }))
-              }
-            />
-            <input
-              className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Senha"
-              type="password"
-              minLength={6}
-              maxLength={256}
-              required
-              value={registerForm.secretCode}
-              onChange={(event) =>
-                setRegisterForm((current) => ({
-                  ...current,
-                  secretCode: event.target.value,
-                }))
-              }
-            />
-            <input
-              className="rounded-xl border border-slate-300 px-3 py-2"
-              placeholder="Nome do jogo"
-              minLength={3}
-              maxLength={256}
-              required
-              value={registerForm.playerName}
-              onChange={(event) =>
-                setRegisterForm((current) => ({
-                  ...current,
-                  playerName: event.target.value,
-                }))
-              }
-            />
-            <button
-              className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
-              disabled={isRegistering}
-            >
-              {isRegistering ? <Spinner /> : null}
-              {isRegistering ? "Criando cadastro..." : "Criar cadastro"}
-            </button>
-          </div>
-        </form>
-
+      <div className="grid gap-4">
         <form
           onSubmit={handleOpenSession}
           className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm"
@@ -340,6 +261,14 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
           <p className="mt-1 text-sm text-slate-600">
             Use CPF e Senha para editar jogadores e palpites até o prazo.
           </p>
+          {showSignupLink ? (
+            <p className="mt-2 text-sm text-slate-600">
+              Ainda não tem cadastro?{" "}
+              <Link href="/signup" className="font-semibold text-emerald-700 underline">
+                Criar agora
+              </Link>
+            </p>
+          ) : null}
           <div className="mt-4 grid gap-3">
             <input
               className="rounded-xl border border-slate-300 px-3 py-2"
