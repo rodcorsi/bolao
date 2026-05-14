@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Position from "./Position";
+import { getPlayerDisplayName } from "../lib/playerDisplayName";
 import { RankingItem } from "../lib/ranking";
 import React from "react";
 
@@ -24,7 +25,7 @@ const ListBestPlayers: React.FC<ListBestPlayersProps> = ({
             <div className="flex hover:bg-slate-200 py-4 px-2 border-gray-200 border">
               <Position position={position} lastPosition={position + 1} />
               <div className="w-full whitespace-nowrap flex-nowrap text-ellipsis overflow-hidden">
-                {player.name}
+                {getPlayerDisplayName(player)}
               </div>
               <div className="w-9 font-bold whitespace-nowrap flex-nowrap text-gray-700">
                 {"+" + points}

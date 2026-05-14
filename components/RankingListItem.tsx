@@ -1,6 +1,7 @@
 import ChangePosition from "./ChangePosition";
 import Link from "next/link";
 import Position from "./Position";
+import { getPlayerDisplayName } from "../lib/playerDisplayName";
 import { RankingItem } from "../lib/ranking";
 import React from "react";
 
@@ -18,7 +19,7 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
       <Link className="flex" href={`/players/${player.id}`}>
         <Position position={position} lastPosition={lastPosition} />
         <div className="grow text-ellipsis whitespace-nowrap overflow-hidden">
-          {player.name}
+          {getPlayerDisplayName(player)}
         </div>
         <ChangePosition
           className="w-6 text-center"

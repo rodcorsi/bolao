@@ -1,11 +1,11 @@
 import { FormEvent, useState } from "react";
+
 import { SessionCredentials } from "../lib/playAuthStorage";
+import { defaultPlayerName } from "../lib/playerDisplayName";
 
 interface SignupFormProps {
   onRegistered: (credentials: SessionCredentials) => void;
 }
-
-const defaultPlayerName = "principal";
 
 const sanitizeCPF = (value: string) => value.replace(/\D/g, "").slice(0, 11);
 
