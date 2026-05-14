@@ -74,11 +74,7 @@ const Match = ({
           );
         })}
       </ul>
-      <Footer
-        updateTime={ranking.updateTime}
-        expire={ranking.expire}
-        config={config}
-      />
+      <Footer />
     </div>
   );
 };

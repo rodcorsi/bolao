@@ -1,14 +1,14 @@
+import { Config, getConfig } from "../lib/getConfig";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import Head from "next/head";
-import Link from "next/link";
-import { useRouter } from "next/router";
+import { SessionCredentials, savePlayAuth } from "../lib/playAuthStorage";
 
 import Footer from "../components/Footer";
-import { Config, getConfig } from "../lib/getConfig";
-import { SessionCredentials, savePlayAuth } from "../lib/playAuthStorage";
+import Head from "next/head";
+import Link from "next/link";
+import SignupForm from "../components/SignupForm";
 import { getMatchesResult } from "../lib/ranking";
 import { getPhaseState } from "../lib/phaseState";
-import SignupForm from "../components/SignupForm";
+import { useRouter } from "next/router";
 
 const SignupPage = ({ config }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   const router = useRouter();
@@ -44,11 +44,7 @@ const SignupPage = ({ config }: InferGetServerSidePropsType<typeof getServerSide
           Abrir sessão
         </Link>
       </section>
-      <Footer
-        updateTime={new Date().toISOString()}
-        expire={Date.now()}
-        config={config}
-      />
+      <Footer />
     </div>
   );
 };

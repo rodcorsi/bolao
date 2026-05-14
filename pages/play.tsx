@@ -1,12 +1,13 @@
+import { Config, getConfig } from "../lib/getConfig";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
+import { MatchResult, getMatchesResult } from "../lib/ranking";
+import { PhaseState, getMatchesForCompetitionPhase } from "../lib/tournamentPhase";
+
+import Footer from "../components/Footer";
 import Head from "next/head";
 import Link from "next/link";
-import Footer from "../components/Footer";
 import PlayWorkspace from "../components/PlayWorkspace";
-import { Config, getConfig } from "../lib/getConfig";
-import { getMatchesResult, MatchResult } from "../lib/ranking";
 import { getPhaseState } from "../lib/phaseState";
-import { PhaseState, getMatchesForCompetitionPhase } from "../lib/tournamentPhase";
 
 const PlayPage = ({
   config,
@@ -37,11 +38,7 @@ const PlayPage = ({
         </p>
       </div>
       <PlayWorkspace config={config} phaseState={phaseState} matches={matches} />
-      <Footer
-        updateTime={new Date().toISOString()}
-        expire={Date.now()}
-        config={config}
-      />
+      <Footer />
     </div>
   );
 };
