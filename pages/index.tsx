@@ -1,3 +1,4 @@
+import { Config, getConfig } from "../lib/getConfig";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
 import getRanking, {
   MatchResult,
@@ -10,13 +11,11 @@ import getRanking, {
 import ExternalLink from "../components/ExternalLink";
 import Footer from "../components/Footer";
 import Head from "next/head";
-import Link from "next/link";
 import ListActiveMatches from "../components/ListActiveMatches";
 import ListBestPlayers from "../components/ListBestPlayers";
+import { PhaseState } from "../lib/tournamentPhase";
 import PhaseStatusCard from "../components/PhaseStatusCard";
 import RankingList from "../components/RankingList";
-import { getConfig, Config } from "../lib/getConfig";
-import { PhaseState } from "../lib/tournamentPhase";
 import { getPhaseState } from "../lib/phaseState";
 
 const MAX_ITEMS_BEST_OF_DAY = 5;

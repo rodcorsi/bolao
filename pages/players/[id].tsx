@@ -1,14 +1,15 @@
+import { Config, getConfig } from "../../lib/getConfig";
 import { GetServerSideProps, InferGetServerSidePropsType } from "next";
-import Head from "next/head";
-import Link from "next/link";
+import { Player, getPlayerByID } from "../../lib/getPlayers";
+import getRanking, { MatchResult, RankingItem } from "../../lib/ranking";
+import { getVisibleCompetitionPhases, normalizeCompetitionPhase } from "../../lib/tournamentPhase";
+
 import BetsList from "../../components/BetsList";
 import Footer from "../../components/Footer";
+import Head from "next/head";
+import Link from "next/link";
 import RankingList from "../../components/RankingList";
 import { getPhaseState } from "../../lib/phaseState";
-import { getPlayerByID, Player } from "../../lib/getPlayers";
-import getRanking, { MatchResult, RankingItem } from "../../lib/ranking";
-import { getConfig, Config } from "../../lib/getConfig";
-import { getVisibleCompetitionPhases, normalizeCompetitionPhase } from "../../lib/tournamentPhase";
 
 const PlayerDetails = ({
   player,
@@ -51,7 +52,7 @@ export const getServerSideProps: GetServerSideProps<{
   updateTime: string;
   expire: number;
   config: Config;
-}> = async ({ req, res, params }) => {
+}> = async ({ res, params }) => {
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=60, stale-while-revalidate=86400"

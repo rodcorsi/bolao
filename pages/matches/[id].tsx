@@ -97,7 +97,7 @@ export const getServerSideProps: GetServerSideProps<{
   ranking: Ranking;
   match: MatchResult;
   config: Config;
-}> = async ({ req, res, params }) => {
+}> = async ({ res, params }) => {
   res.setHeader(
     "Cache-Control",
     "public, s-maxage=60, stale-while-revalidate=86400"
