@@ -100,8 +100,8 @@ values
     "ONE_SCORE": 2
   }'::jsonb),
   ('prize', '{
-    "BONUS": 0,
-    "GAME_VALUE": 0,
+    "BONUS": 1000,
+    "GAME_VALUE": 50,
     "FIRST_PLACE_PART": 0.6,
     "SECOND_PLACE_PART": 0.3,
     "THIRD_PLACE_PART": 0.1
