@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "seed:matches": "bun scripts/seedMatches.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",

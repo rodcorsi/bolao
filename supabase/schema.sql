@@ -25,7 +25,7 @@ CREATE TABLE matches (
   home_team TEXT NOT NULL,
   away_team TEXT NOT NULL,
   fase TEXT,
-  fixture_id BIGINT,
+  fixture_id BIGINT UNIQUE,
   group_name TEXT,
   created_at TIMESTAMPTZ DEFAULT now()
 );
