@@ -187,10 +187,21 @@ async function rankingItem(
     const match = matches[i];
     const bet = betsByMatchID[match.id];
     let points = null;
-    if (match.status !== "NOT_STARTED" && bet != null) {
+    if (
+      match.status !== "NOT_STARTED" &&
+      bet != null &&
+      bet.homeGoals != null &&
+      bet.awayGoals != null
+    ) {
       points = calculatePoints(bet, selectGoals(match.fixture), config.scorePoints);
     }
-    bets[i] = { ...bet, points };
+    bets[i] = {
+      playerID: player.id,
+      matchID: match.id,
+      homeGoals: bet?.homeGoals ?? null,
+      awayGoals: bet?.awayGoals ?? null,
+      points,
+    };
   }
   return {
     position: 0,

@@ -5,10 +5,13 @@ import { ScorePoints } from "./getConfig";
 export default function calculatePoints(
   bet: Bet,
   score: Goals,
-  scorePoints: ScorePoints,
+  scorePoints: ScorePoints
 ) {
+  if (bet.homeGoals == null || bet.awayGoals == null) {
+    return null;
+  }
   if (score.homeTeam == null || score.awayTeam == null) {
-    return 0;
+    return null;
   }
   if (bet.homeGoals === score.homeTeam && bet.awayGoals === score.awayTeam) {
     return scorePoints.EXACT;

@@ -8,6 +8,10 @@ import {
 } from "./tournamentPhase";
 import { User } from "./users";
 
+function isValidGoalsValue(value: number | null) {
+  return value == null || (!Number.isNaN(value) && value >= 0 && value <= 99);
+}
+
 export interface PlayPlayer extends Player {
   bets: Bet[];
 }
@@ -71,7 +75,7 @@ export async function upsertBetsForPhase(input: {
     throw new Error("Nenhum jogo encontrado para a fase aberta.");
   }
   if (input.bets.length !== matchIDs.length) {
-    throw new Error("É preciso preencher todos os jogos da fase.");
+    throw new Error("É preciso enviar todos os jogos da fase.");
   }
   const expectedMatchIDs = new Set(matchIDs);
   const submittedMatchIDs = new Set<number>();
@@ -80,17 +84,19 @@ export async function upsertBetsForPhase(input: {
       throw new Error("Palpite enviado para uma fase incorreta.");
     }
     submittedMatchIDs.add(bet.matchID);
-    if (
-      Number.isNaN(bet.homeGoals) ||
-      Number.isNaN(bet.awayGoals) ||
-      bet.homeGoals < 0 ||
-      bet.awayGoals < 0
-    ) {
-      throw new Error("Todos os palpites precisam ter placares válidos.");
+    const hasHomeGoals = bet.homeGoals != null;
+    const hasAwayGoals = bet.awayGoals != null;
+    if (hasHomeGoals !== hasAwayGoals) {
+      throw new Error(
+        "Existem jogos com apenas um placar preenchido. Complete os dois lados ou deixe ambos em branco."
+      );
+    }
+    if (!isValidGoalsValue(bet.homeGoals) || !isValidGoalsValue(bet.awayGoals)) {
+      throw new Error("Todos os palpites preenchidos precisam ter placares válidos.");
     }
   }
   if (submittedMatchIDs.size !== expectedMatchIDs.size) {
-    throw new Error("É preciso preencher todos os jogos da fase.");
+    throw new Error("É preciso enviar todos os jogos da fase.");
   }
   const { error } = await supabase.from("bets").upsert(
     input.bets.map((bet) => ({

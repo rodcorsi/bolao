@@ -21,6 +21,12 @@ const Match = ({
   const matchName = match.homeTeam + " x " + match.awayTeam;
   const goals = selectGoals(match.fixture);
   const itemsByPoints = sortByPoints(ranking.items, match.id);
+  const formatBet = (homeGoals: number | null, awayGoals: number | null) => {
+    if (homeGoals == null || awayGoals == null) {
+      return "";
+    }
+    return `${homeGoals} x ${awayGoals}`;
+  };
   return (
     <div className="md:mx-auto md:w-3/4 grid">
       <Head>
@@ -66,7 +72,7 @@ const Match = ({
                   {player.name}
                 </div>
                 <div className="w-14">
-                  {bet != null ? `${bet.homeGoals} x ${bet.awayGoals}` : ""}
+                  {bet != null ? formatBet(bet.homeGoals, bet.awayGoals) : ""}
                 </div>
                 <div className="w-14 text-right">{bet?.points}</div>
               </Link>

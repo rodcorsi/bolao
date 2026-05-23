@@ -14,6 +14,7 @@ interface BetsMatchProps {
 
 const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
   const goals = selectGoals(match.fixture);
+  const hasBet = bet != null && bet.homeGoals != null && bet.awayGoals != null;
   return (
     <li className="hover:bg-slate-200">
       <Link href={`/matches/${match.id}`}>
@@ -22,7 +23,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
             {match.homeTeam}
           </div>
           <TeamCrest crest={match.fixture.homeTeam.crest} teamName={match.homeTeam} />
-          {bet == null ? (
+          {!hasBet ? (
             <>
               <div className="w-10 text-lg text-center"></div>
               <div className="text-sm text-center m-auto">x</div>
@@ -51,7 +52,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
           <div className="w-full text-ellipsis whitespace-nowrap overflow-hidden">
             {match.awayTeam}
           </div>
-          {bet != null ? <Point points={bet.points} /> : <div></div>}
+          {hasBet ? <Point points={bet?.points} /> : <div></div>}
         </div>
         <div className="flex flex-nowrap shrink-0 text-xs justify-between italic mt-2">
           <div className="w-full">
@@ -85,7 +86,7 @@ const Point: React.FC<{ points?: number | null }> = ({ points }) => {
 };
 
 interface IsEqualProps {
-  value: number;
+  value: number | null;
   expected?: number | null;
   className?: string;
   children?: React.ReactNode;
@@ -97,7 +98,7 @@ const IsEqual: React.FC<IsEqualProps> = ({
   children,
 }) => {
   let color = "";
-  if (expected != null) {
+  if (expected != null && value != null) {
     color = expected === value ? "text-green-600" : "text-red-600";
   }
   return <div className={`${color} ${className}`}>{children}</div>;

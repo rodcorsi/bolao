@@ -20,6 +20,7 @@ interface BetsEditorProps {
   config: Config;
   editablePhase: CompetitionPhase;
   editablePhaseLabel: string;
+  invalidMatchIds: number[];
   isSavingBets: boolean;
   matches: MatchResult[];
   selectedPlayer: PlayPlayer;
@@ -32,12 +33,15 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
   config,
   editablePhase,
   editablePhaseLabel,
+  invalidMatchIds,
   isSavingBets,
   matches,
   selectedPlayer,
   onSubmit,
   onChangeBet,
 }) => {
+  const invalidMatchIdSet = new Set(invalidMatchIds);
+
   return (
     <form
       onSubmit={onSubmit}
@@ -47,44 +51,56 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
         Palpites de {selectedPlayer.name} para {editablePhaseLabel}
       </h2>
       <p className="mt-1 text-sm text-slate-600">
-        É obrigatório preencher todos os jogos da fase antes do prazo final.
+        Voce pode deixar jogos em branco. Se preencher um lado, precisa preencher o outro.
       </p>
       <input type="hidden" name="editablePhase" value={editablePhase} />
       <div className="mt-4 grid gap-3">
         {matches.map((match) => (
           <div
             key={match.id}
-            className="grid gap-2 rounded-xl border border-slate-200 p-3 md:grid-cols-[1fr_auto_auto_1fr]"
+            className={`rounded-xl border p-3 ${
+              invalidMatchIdSet.has(match.id)
+                ? "border-red-300 bg-red-50"
+                : "border-slate-200"
+            }`}
           >
-            <div className="flex items-center font-medium text-slate-800">
+            <div className="flex items-center gap-2 text-sm font-medium text-slate-800">
+              <div className="min-w-0 flex-1 text-right text-ellipsis whitespace-nowrap overflow-hidden">
+                {match.homeTeam}
+              </div>
               <TeamCrest crest={match.fixture.homeTeam.crest} teamName={match.homeTeam} />
-              <span>{match.homeTeam}</span>
-            </div>
-            <input
-              className="w-16 rounded-lg border border-slate-300 px-2 py-1 text-center"
-              type="number"
-              inputMode="numeric"
-              min={0}
-              max={99}
-              value={betForm[match.id]?.home || ""}
-              onChange={(event) => onChangeBet(match.id, "home", event.target.value)}
-            />
-            <input
-              className="w-16 rounded-lg border border-slate-300 px-2 py-1 text-center"
-              type="number"
-              inputMode="numeric"
-              min={0}
-              max={99}
-              value={betForm[match.id]?.away || ""}
-              onChange={(event) => onChangeBet(match.id, "away", event.target.value)}
-            />
-            <div className="flex items-center justify-start font-medium text-slate-800 md:justify-end">
-              <span>{match.awayTeam}</span>
+              <input
+                className="w-12 shrink-0 rounded-lg border border-slate-300 px-1 py-1 text-center sm:w-14"
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={99}
+                value={betForm[match.id]?.home || ""}
+                onChange={(event) => onChangeBet(match.id, "home", event.target.value)}
+              />
+              <div className="shrink-0 text-xs text-slate-500">x</div>
+              <input
+                className="w-12 shrink-0 rounded-lg border border-slate-300 px-1 py-1 text-center sm:w-14"
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={99}
+                value={betForm[match.id]?.away || ""}
+                onChange={(event) => onChangeBet(match.id, "away", event.target.value)}
+              />
               <TeamCrest crest={match.fixture.awayTeam.crest} teamName={match.awayTeam} />
+              <div className="min-w-0 flex-1 text-ellipsis whitespace-nowrap overflow-hidden">
+                {match.awayTeam}
+              </div>
             </div>
-            <div className="text-xs text-slate-500 md:col-span-4">
+            <div className="mt-2 text-xs text-slate-500">
               {formatDateTime(match.fixture.utcDate, config.locale, config.timeZone)}
             </div>
+            {invalidMatchIdSet.has(match.id) ? (
+              <div className="mt-1 text-xs text-red-700">
+                Preencha os dois placares ou deixe ambos em branco.
+              </div>
+            ) : null}
           </div>
         ))}
       </div>

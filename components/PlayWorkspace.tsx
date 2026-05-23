@@ -29,6 +29,18 @@ const emptyCredentials = {
   secretCode: "",
 };
 
+function parseBetField(value?: string) {
+  const trimmed = value?.trim() ?? "";
+  if (trimmed === "") {
+    return null;
+  }
+  const numericValue = Number(trimmed);
+  if (!Number.isInteger(numericValue) || numericValue < 0 || numericValue > 99) {
+    return Number.NaN;
+  }
+  return numericValue;
+}
+
 const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   config,
   phaseState,
@@ -45,6 +57,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
   const [newPlayerName, setNewPlayerName] = useState("");
   const [betForm, setBetForm] = useState<BetFormState>({});
+  const [invalidBetMatchIds, setInvalidBetMatchIds] = useState<number[]>([]);
   const [isOpeningSession, setIsOpeningSession] = useState(false);
   const [isSavingBets, setIsSavingBets] = useState(false);
   const [hasRestoredStoredAuth, setHasRestoredStoredAuth] = useState(false);
@@ -77,11 +90,12 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
     for (const match of matches) {
       const bet = player?.bets.find((item) => item.matchID === match.id);
       nextValues[match.id] = {
-        home: bet ? String(bet.homeGoals) : "",
-        away: bet ? String(bet.awayGoals) : "",
+        home: bet?.homeGoals != null ? String(bet.homeGoals) : "",
+        away: bet?.awayGoals != null ? String(bet.awayGoals) : "",
       };
     }
     setBetForm(nextValues);
+    setInvalidBetMatchIds([]);
   };
 
   const handleSession = (nextSession: PlaySession, nextCredentials: SessionCredentials) => {
@@ -153,6 +167,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   };
 
   const handleChangeBet = (matchId: number, side: "home" | "away", value: string) => {
+    setInvalidBetMatchIds((current) => current.filter((id) => id !== matchId));
     setBetForm((current) => ({
       ...current,
       [matchId]: {
@@ -188,16 +203,38 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
     if (!selectedPlayer || !phaseState.editablePhase) {
       return;
     }
-    setIsSavingBets(true);
     setErrorMessage(null);
     setStatusMessage(null);
-    try {
-      const bets: Bet[] = matches.map((match) => ({
+    const invalidMatchIds: number[] = [];
+    const bets: Bet[] = matches.map((match) => {
+      const homeGoals = parseBetField(betForm[match.id]?.home);
+      const awayGoals = parseBetField(betForm[match.id]?.away);
+      const hasHomeGoals = homeGoals != null;
+      const hasAwayGoals = awayGoals != null;
+      if (
+        Number.isNaN(homeGoals) ||
+        Number.isNaN(awayGoals) ||
+        hasHomeGoals !== hasAwayGoals
+      ) {
+        invalidMatchIds.push(match.id);
+      }
+      return {
         playerID: selectedPlayer.id,
         matchID: match.id,
-        homeGoals: Number(betForm[match.id]?.home),
-        awayGoals: Number(betForm[match.id]?.away),
-      }));
+        homeGoals: hasHomeGoals && hasAwayGoals ? homeGoals : null,
+        awayGoals: hasHomeGoals && hasAwayGoals ? awayGoals : null,
+      };
+    });
+    if (invalidMatchIds.length > 0) {
+      setInvalidBetMatchIds(invalidMatchIds);
+      setErrorMessage(
+        "Existem jogos com placar incompleto ou inválido. Complete os dois lados ou deixe ambos em branco."
+      );
+      return;
+    }
+    setInvalidBetMatchIds([]);
+    setIsSavingBets(true);
+    try {
       const payload = await requestJSON<{ session: PlaySession }>(
         "/api/bets/upsert",
         {
@@ -262,6 +299,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
           config={config}
           editablePhase={phaseState.editablePhase}
           editablePhaseLabel={phaseState.editablePhaseLabel || ""}
+          invalidMatchIds={invalidBetMatchIds}
           isSavingBets={isSavingBets}
           matches={matches}
           selectedPlayer={selectedPlayer}

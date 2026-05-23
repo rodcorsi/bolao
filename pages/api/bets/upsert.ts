@@ -12,6 +12,19 @@ import { getPhaseState } from "../../../lib/phaseState";
 import { assertUserSecret, getUserByCPF } from "../../../lib/users";
 import { requirePostMethod, sendError } from "../../../lib/api";
 
+function parseGoalsValue(value: unknown) {
+  if (value === "" || value == null) {
+    return null;
+  }
+  if (typeof value !== "number") {
+    return null;
+  }
+  if (!Number.isFinite(value)) {
+    throw new Error("Todos os palpites preenchidos precisam ter placares válidos.");
+  }
+  return value;
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -42,8 +55,8 @@ export default async function handler(
       bets: bets.map((bet: Bet) => ({
         playerID: Number(playerId),
         matchID: Number(bet.matchID),
-        homeGoals: Number(bet.homeGoals),
-        awayGoals: Number(bet.awayGoals),
+        homeGoals: parseGoalsValue(bet.homeGoals),
+        awayGoals: parseGoalsValue(bet.awayGoals),
       })),
     });
     const session = await buildPlaySession(user, phaseState);

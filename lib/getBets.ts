@@ -3,8 +3,8 @@ import { supabase } from "./supabaseClient";
 export interface Bet {
   playerID: number;
   matchID: number;
-  homeGoals: number;
-  awayGoals: number;
+  homeGoals: number | null;
+  awayGoals: number | null;
 }
 
 export default async function getBets(): Promise<Bet[]> {
