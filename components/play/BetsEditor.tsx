@@ -7,6 +7,7 @@ import { MatchResult } from "../../lib/ranking";
 import { CompetitionPhase } from "../../lib/tournamentPhase";
 import { PlayPlayer } from "../../lib/play";
 import LoadingSpinner from "./LoadingSpinner";
+import ScoreInput from "./ScoreInput";
 
 export interface BetFormState {
   [matchId: number]: {
@@ -69,24 +70,16 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
                 {match.homeTeam}
               </div>
               <TeamCrest crest={match.fixture.homeTeam.crest} teamName={match.homeTeam} />
-              <input
-                className="w-12 shrink-0 rounded-lg border border-slate-300 px-1 py-1 text-center sm:w-14"
-                type="number"
-                inputMode="numeric"
-                min={0}
-                max={99}
+              <ScoreInput
+                ariaLabel={`Placar do ${match.homeTeam}`}
                 value={betForm[match.id]?.home || ""}
-                onChange={(event) => onChangeBet(match.id, "home", event.target.value)}
+                onChange={(value) => onChangeBet(match.id, "home", value)}
               />
               <div className="shrink-0 text-xs text-slate-500">x</div>
-              <input
-                className="w-12 shrink-0 rounded-lg border border-slate-300 px-1 py-1 text-center sm:w-14"
-                type="number"
-                inputMode="numeric"
-                min={0}
-                max={99}
+              <ScoreInput
+                ariaLabel={`Placar do ${match.awayTeam}`}
                 value={betForm[match.id]?.away || ""}
-                onChange={(event) => onChangeBet(match.id, "away", event.target.value)}
+                onChange={(value) => onChangeBet(match.id, "away", value)}
               />
               <TeamCrest crest={match.fixture.awayTeam.crest} teamName={match.awayTeam} />
               <div className="min-w-0 flex-1 text-ellipsis whitespace-nowrap overflow-hidden">
