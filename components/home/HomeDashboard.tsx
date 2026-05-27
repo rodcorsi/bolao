@@ -1,5 +1,6 @@
 import { Config } from "../../lib/getConfig";
 import Footer from "../Footer";
+import { buildPrizeSummary } from "../../lib/prize";
 import Link from "next/link";
 import ListActiveMatches from "../ListActiveMatches";
 import ListBestPlayers from "../ListBestPlayers";
@@ -10,6 +11,7 @@ import { MatchResult, RankingItem } from "../../lib/ranking";
 import { PhaseState } from "../../lib/tournamentPhase";
 
 interface HomeDashboardProps {
+  allMatches: MatchResult[];
   bestOfDay: RankingItem[];
   config: Config;
   expire: number;
@@ -21,6 +23,7 @@ interface HomeDashboardProps {
 }
 
 const HomeDashboard: React.FC<HomeDashboardProps> = ({
+  allMatches,
   bestOfDay,
   config,
   expire,
@@ -37,10 +40,11 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
       currency,
     }).format(val);
 
-  const totalGame = items.length * prize.GAME_VALUE + prize.BONUS;
-  const firstPlace = totalGame * prize.FIRST_PLACE_PART;
-  const secondPlace = totalGame * prize.SECOND_PLACE_PART;
-  const thirdPlace = totalGame * prize.THIRD_PLACE_PART;
+  const prizeSummary = buildPrizeSummary({
+    config,
+    matches: allMatches,
+    rankingItems: items,
+  });
 
   return (
     <div className="md:mx-auto md:w-3/4">
@@ -48,7 +52,11 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
         <h1 className="p-2 text-2xl font-bold text-gray-800">
           {config.tournament.title}
         </h1>
-        <PhaseStatusCard phaseState={phaseState} config={config} />
+        <PhaseStatusCard
+          phaseState={phaseState}
+          config={config}
+          isAuthenticated
+        />
         <h2 className="p-2 text-lg font-bold text-gray-700">Ranking geral</h2>
         <ListActiveMatches
           className="mb-2 grid gap-2 sm:grid-cols-2"
@@ -62,27 +70,46 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
             scorePoints={scorePoints}
           />
         </div>
-        <div className="px-2 pt-4 text-sm font-bold text-gray-800">
-          <div>{`Total de ${items.length} jogadores`}</div>
-          <div>{`Premiacao Total ${currencyFormat(
-            totalGame
-          )} a ser divida entre ganhadores`}</div>
-          <div>{`1o - ${currencyFormat(firstPlace)}`}</div>
-          <div>{`2o - ${currencyFormat(secondPlace)}`}</div>
-          <div>{`3o - ${currencyFormat(thirdPlace)}`}</div>
-          <div>{`Ultimo - Muito obrigado continue assim`}</div>
+        <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+          <h3 className="text-lg font-bold text-slate-900">Premiação do bolão</h3>
+          <p className="mt-1 text-sm text-slate-600">
+            {`Caixa atual de ${currencyFormat(prizeSummary.totalPool)} com prêmios para a classificação geral e para cada fase decisiva.`}
+          </p>
+          <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+            <PrizeCard
+              title="Geral"
+              subtitle={`${Math.round(prizeSummary.general.poolPart * 100)}% do caixa`}
+              amount={currencyFormat(prizeSummary.general.poolAmount)}
+              winners={prizeSummary.general.winners.map((winner) => ({
+                label: `${winner.position}º lugar`,
+                amount: currencyFormat(winner.amount),
+              }))}
+            />
+            {prizeSummary.phases.map((phase) => (
+              <PrizeCard
+                key={phase.key}
+                title={phase.label}
+                subtitle={`${Math.round(phase.poolPart * 100)}% do caixa`}
+                amount={currencyFormat(phase.poolAmount)}
+                winners={phase.winners.map((winner) => ({
+                  label: `${winner.position}º lugar`,
+                  amount: currencyFormat(winner.amount),
+                }))}
+              />
+            ))}
+          </div>
         </div>
         <ul className="px-2 pt-2 text-xs text-gray-800">
-          <li>{`*Q${scorePoints.EXACT}: Quantidade de ${scorePoints.EXACT} pontos, atingido quando se acerta o placar exato`}</li>
-          <li>{`*Q${scorePoints.WINNER_AND_ONE_SCORE}: Quantidade de ${scorePoints.WINNER_AND_ONE_SCORE} pontos, atingido quando se acerta o vencedor e um placar`}</li>
-          <li>{`*Q${scorePoints.WINNER}: Quantidade de ${scorePoints.WINNER} pontos, atingido quando se acerta somente o vencedor`}</li>
-          <li>{`*Q${scorePoints.ONE_SCORE}: Quantidade de ${scorePoints.ONE_SCORE} pontos, atingido quando se acerta um placar`}</li>
+          <li>{`*Q${scorePoints.EXACT}: quantidade de jogos com ${scorePoints.EXACT} pontos, quando se acerta o placar exato.`}</li>
+          <li>{`*Q${scorePoints.WINNER_AND_ONE_SCORE}: quantidade de jogos com ${scorePoints.WINNER_AND_ONE_SCORE} pontos, quando se acerta o vencedor e um placar.`}</li>
+          <li>{`*Q${scorePoints.WINNER}: quantidade de jogos com ${scorePoints.WINNER} pontos, quando se acerta somente o vencedor.`}</li>
+          <li>{`*Q${scorePoints.ONE_SCORE}: quantidade de jogos com ${scorePoints.ONE_SCORE} pontos, quando se acerta um placar.`}</li>
         </ul>
         <div className="p-2">
-          {`A premiacao e calculada sobre o valor total arrecadado (R$ ${prize.GAME_VALUE} por jogo) + bonus de ${currencyFormat(prize.BONUS)}.`}
+          {`A premiação é calculada sobre o valor total arrecadado (R$ ${prize.GAME_VALUE} por jogo) + bônus de ${currencyFormat(prize.BONUS)}.`}
         </div>
         <div className="p-2">
-          {`Maiores informacoes leia o `}
+          {`Para mais informações, leia o `}
           <Link href="/rules" className="text-blue-600 hover:underline">
             Regulamento
           </Link>
@@ -94,3 +121,26 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
 };
 
 export default HomeDashboard;
+
+const PrizeCard: React.FC<{
+  amount: string;
+  subtitle: string;
+  title: string;
+  winners: Array<{ label: string; amount: string }>;
+}> = ({ amount, subtitle, title, winners }) => (
+  <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+    <div className="text-sm font-semibold uppercase tracking-wide text-slate-500">
+      {title}
+    </div>
+    <div className="mt-1 text-sm text-slate-600">{subtitle}</div>
+    <div className="mt-3 text-2xl font-black text-slate-950">{amount}</div>
+    <div className="mt-3 space-y-1 text-sm text-slate-700">
+      {winners.map((winner) => (
+        <div key={winner.label} className="flex items-center justify-between gap-3">
+          <span>{winner.label}</span>
+          <span className="font-semibold">{winner.amount}</span>
+        </div>
+      ))}
+    </div>
+  </div>
+);

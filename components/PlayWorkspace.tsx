@@ -61,7 +61,10 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   const [isOpeningSession, setIsOpeningSession] = useState(false);
   const [isSavingBets, setIsSavingBets] = useState(false);
   const [hasRestoredStoredAuth, setHasRestoredStoredAuth] = useState(false);
+  const [isRestoringStoredAuth, setIsRestoringStoredAuth] = useState(false);
   const canCreatePlayer = phaseState.currentPhase === "INICIO";
+  const shouldShowOpenSessionForm =
+    !session && hasRestoredStoredAuth && !isRestoringStoredAuth;
 
   useEffect(() => {
     setCredentials(initialCredentials);
@@ -102,7 +105,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
     setCredentials(nextCredentials);
     setSession(nextSession);
     setErrorMessage(null);
-    setStatusMessage("Sessão carregada.");
+    setStatusMessage(null);
     refreshBetForm(nextSession);
     savePlayAuth(nextCredentials);
   };
@@ -158,7 +161,10 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
       return;
     }
     setCredentials(storedCredentials);
-    void openSession(storedCredentials, { silent: true });
+    setIsRestoringStoredAuth(true);
+    void openSession(storedCredentials, { silent: true }).finally(() => {
+      setIsRestoringStoredAuth(false);
+    });
   }, [hasRestoredStoredAuth, initialSession, session]);
 
   const handleOpenSession = async (event: FormEvent<HTMLFormElement>) => {
@@ -271,15 +277,17 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
         </div>
       ) : null}
 
-      <div className="grid gap-4">
-        <OpenSessionForm
-          credentials={credentials}
-          isOpeningSession={isOpeningSession}
-          showSignupLink={showSignupLink}
-          onSubmit={handleOpenSession}
-          onChange={setCredentials}
-        />
-      </div>
+      {shouldShowOpenSessionForm ? (
+        <div className="grid gap-4">
+          <OpenSessionForm
+            credentials={credentials}
+            isOpeningSession={isOpeningSession}
+            showSignupLink={showSignupLink}
+            onSubmit={handleOpenSession}
+            onChange={setCredentials}
+          />
+        </div>
+      ) : null}
 
       {session ? (
         <SessionPanel

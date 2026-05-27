@@ -1,5 +1,5 @@
 import { supabase } from "./supabaseClient";
-import type { PhaseSchedule } from "./tournamentPhase";
+import type { CompetitionPhase, PhaseSchedule } from "./tournamentPhase";
 
 export interface ScorePoints {
   EXACT: number;
@@ -8,12 +8,19 @@ export interface ScorePoints {
   ONE_SCORE: number;
 }
 
+export interface PrizeBlock {
+  poolPart: number;
+  positions: number[];
+}
+
 export interface Prize {
   BONUS: number;
   GAME_VALUE: number;
-  FIRST_PLACE_PART: number;
-  SECOND_PLACE_PART: number;
-  THIRD_PLACE_PART: number;
+  GENERAL: PrizeBlock;
+  PHASES: Partial<Record<CompetitionPhase, PrizeBlock>>;
+  FIRST_PLACE_PART?: number;
+  SECOND_PLACE_PART?: number;
+  THIRD_PLACE_PART?: number;
 }
 
 export interface RefreshTiming {
@@ -49,9 +56,32 @@ const DEFAULT_CONFIG: Config = {
   prize: {
     BONUS: 0,
     GAME_VALUE: 0,
-    FIRST_PLACE_PART: 0.5,
-    SECOND_PLACE_PART: 0.3,
-    THIRD_PLACE_PART: 0.2,
+    GENERAL: {
+      poolPart: 0.5,
+      positions: [0.6, 0.3, 0.1],
+    },
+    PHASES: {
+      "Fase de grupos": {
+        poolPart: 0.2,
+        positions: [0.6, 0.3, 0.1],
+      },
+      "Segunda fase": {
+        poolPart: 0.18,
+        positions: [0.6, 0.3, 0.1],
+      },
+      Oitavas: {
+        poolPart: 0.04,
+        positions: [1],
+      },
+      Quartas: {
+        poolPart: 0.04,
+        positions: [1],
+      },
+      "Semi finais": {
+        poolPart: 0.04,
+        positions: [1],
+      },
+    },
   },
   refreshTiming: {
     MIN_REFRESH_SEC: 60,
@@ -74,6 +104,55 @@ const DEFAULT_CONFIG: Config = {
   },
 };
 
+function normalizePrizeBlock(
+  value: Partial<PrizeBlock> | undefined,
+  fallback: PrizeBlock
+): PrizeBlock {
+  return {
+    poolPart:
+      typeof value?.poolPart === "number" ? value.poolPart : fallback.poolPart,
+    positions:
+      Array.isArray(value?.positions) && value.positions.length > 0
+        ? value.positions.filter((item): item is number => typeof item === "number")
+        : fallback.positions,
+  };
+}
+
+function normalizePrize(prize: Partial<Prize> | undefined): Prize {
+  const fallback = DEFAULT_CONFIG.prize;
+  return {
+    BONUS: typeof prize?.BONUS === "number" ? prize.BONUS : fallback.BONUS,
+    GAME_VALUE:
+      typeof prize?.GAME_VALUE === "number" ? prize.GAME_VALUE : fallback.GAME_VALUE,
+    GENERAL: normalizePrizeBlock(prize?.GENERAL, fallback.GENERAL),
+    PHASES: {
+      "Fase de grupos": normalizePrizeBlock(
+        prize?.PHASES?.["Fase de grupos"],
+        fallback.PHASES["Fase de grupos"] as PrizeBlock
+      ),
+      "Segunda fase": normalizePrizeBlock(
+        prize?.PHASES?.["Segunda fase"],
+        fallback.PHASES["Segunda fase"] as PrizeBlock
+      ),
+      Oitavas: normalizePrizeBlock(
+        prize?.PHASES?.Oitavas,
+        fallback.PHASES.Oitavas as PrizeBlock
+      ),
+      Quartas: normalizePrizeBlock(
+        prize?.PHASES?.Quartas,
+        fallback.PHASES.Quartas as PrizeBlock
+      ),
+      "Semi finais": normalizePrizeBlock(
+        prize?.PHASES?.["Semi finais"],
+        fallback.PHASES["Semi finais"] as PrizeBlock
+      ),
+    },
+    FIRST_PLACE_PART: prize?.FIRST_PLACE_PART,
+    SECOND_PLACE_PART: prize?.SECOND_PLACE_PART,
+    THIRD_PLACE_PART: prize?.THIRD_PLACE_PART,
+  };
+}
+
 export async function getConfig(): Promise<Config> {
   const { data, error } = await supabase.from("config").select("*");
   if (error || !data || data.length === 0) {
@@ -84,5 +163,6 @@ export async function getConfig(): Promise<Config> {
   data.forEach((row: any) => {
     ((config as unknown) as Record<string, unknown>)[row.key] = row.value;
   });
+  config.prize = normalizePrize(config.prize);
   return config;
 }

@@ -1,16 +1,18 @@
-import Link from "next/link";
 import { Config } from "../lib/getConfig";
-import { formatDateTime } from "../lib/formatDate";
+import Link from "next/link";
 import { PhaseState } from "../lib/tournamentPhase";
+import { formatDateTime } from "../lib/formatDate";
 
 interface PhaseStatusCardProps {
   phaseState: PhaseState;
   config: Config;
+  isAuthenticated?: boolean;
 }
 
 const PhaseStatusCard: React.FC<PhaseStatusCardProps> = ({
   phaseState,
   config,
+  isAuthenticated = false,
 }) => {
   const hasOpenWindow = phaseState.editablePhase != null;
   const canSignup = phaseState.currentPhase === "INICIO";
@@ -36,13 +38,13 @@ const PhaseStatusCard: React.FC<PhaseStatusCardProps> = ({
               {formatDateTime(
                 phaseState.editablePhaseLockAt,
                 config.locale,
-                config.timeZone
+                config.timeZone,
               )}
             </p>
           ) : null}
         </div>
         <div className="flex flex-col gap-2 md:items-end">
-          {canSignup ? (
+          {canSignup && !isAuthenticated ? (
             <Link
               href="/signup"
               className="rounded-full bg-emerald-700 px-4 py-2 text-center font-semibold text-white transition hover:bg-emerald-800"
@@ -57,12 +59,6 @@ const PhaseStatusCard: React.FC<PhaseStatusCardProps> = ({
               {hasOpenWindow ? "Editar palpites" : "Acompanhar status"}
             </Link>
           )}
-          <Link
-            href="/play"
-            className="text-sm font-medium text-emerald-900 underline"
-          >
-            Abrir sessão
-          </Link>
           {config.tournament.rulesUrl ? (
             <Link
               href={config.tournament.rulesUrl}

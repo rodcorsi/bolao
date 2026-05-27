@@ -21,7 +21,7 @@ const MAX_ITEMS_BEST_OF_DAY = 5;
 
 function Home({
   authenticated,
-  ranking: { items, updateTime, expire, lastPosition },
+  ranking: { items, matches, updateTime, expire, lastPosition },
   matchesOfDay,
   bestOfDay,
   config,
@@ -79,6 +79,7 @@ function Home({
       </Head>
       {isAuthenticated ? (
         <HomeDashboard
+          allMatches={matches}
           bestOfDay={bestOfDay}
           config={config}
           expire={expire}
@@ -91,11 +92,13 @@ function Home({
       ) : (
         <div className={isCheckingStoredAuth ? "opacity-80 transition-opacity" : ""}>
           <HomeLanding
+            allMatches={matches}
             bestOfDay={bestOfDay}
             config={config}
             matchesOfDay={matchesOfDay}
             participantCount={items.length}
             phaseState={phaseState}
+            rankingItems={items}
           />
         </div>
       )}

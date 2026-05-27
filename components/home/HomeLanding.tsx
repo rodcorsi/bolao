@@ -1,5 +1,6 @@
 import { Config } from "../../lib/getConfig";
 import Footer from "../Footer";
+import { buildPrizeSummary, getTopPrize } from "../../lib/prize";
 import Link from "next/link";
 import React from "react";
 import { MatchResult, RankingItem } from "../../lib/ranking";
@@ -9,30 +10,38 @@ import { getPlayerDisplayName } from "../../lib/playerDisplayName";
 import { selectGoals } from "../../lib/getFootballFixture";
 
 interface HomeLandingProps {
+  allMatches: MatchResult[];
   bestOfDay: RankingItem[];
   config: Config;
   matchesOfDay: MatchResult[];
   participantCount: number;
   phaseState: PhaseState;
+  rankingItems: RankingItem[];
 }
 
 const HomeLanding: React.FC<HomeLandingProps> = ({
+  allMatches,
   bestOfDay,
   config,
   matchesOfDay,
   participantCount,
   phaseState,
+  rankingItems,
 }) => {
   const canSignup = phaseState.currentPhase === "INICIO";
   const primaryHref = canSignup ? "/signup" : "/play";
-  const primaryLabel = canSignup ? "Entrar no bolao" : "Abrir minha sessao";
-  const prizePool = participantCount * config.prize.GAME_VALUE + config.prize.BONUS;
-  const firstPlacePrize = prizePool * config.prize.FIRST_PLACE_PART;
+  const primaryLabel = canSignup ? "Entrar no bolão" : "Abrir minha sessão";
   const currencyFormat = (value: number) =>
     new Intl.NumberFormat(config.locale, {
       style: "currency",
       currency: config.currency,
     }).format(value);
+  const prizeSummary = buildPrizeSummary({
+    config,
+    matches: allMatches,
+    rankingItems,
+  });
+  const generalTopPrize = getTopPrize(prizeSummary.general);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,_rgba(16,185,129,0.25),_transparent_28%),radial-gradient(circle_at_top_right,_rgba(59,130,246,0.18),_transparent_24%),linear-gradient(180deg,_#f8fffc_0%,_#eef7ff_52%,_#f7f7ef_100%)] text-slate-900">
@@ -41,14 +50,14 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
           <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr]">
             <div className="space-y-6">
               <div className="inline-flex items-center rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-[0.25em] text-emerald-800">
-                Copa 2026 • Bolao em andamento
+                Copa 2026 • Bolão em andamento
               </div>
               <div className="space-y-4">
                 <h1 className="max-w-3xl text-4xl font-black leading-none tracking-tight text-slate-950 sm:text-5xl lg:text-6xl">
-                  O bolao que transforma cada rodada em assunto de mesa, grupo e madrugada.
+                  O bolão que transforma cada rodada em assunto de mesa, grupo e madrugada.
                 </h1>
                 <p className="max-w-2xl text-base leading-7 text-slate-700 sm:text-lg">
-                  Entre no {config.tournament.title}, monte seu jogo, acompanhe o ranking ao vivo e dispute uma premiacao que cresce com cada participante.
+                  Entre no {config.tournament.title}, monte seu jogo, acompanhe o ranking ao vivo e dispute prêmios na classificação geral e em cada fase da Copa.
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -62,12 +71,16 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
                   href="/play"
                   className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-6 py-3 text-sm font-semibold text-slate-900 transition hover:border-slate-400"
                 >
-                  Ja tenho cadastro
+                  Já tenho cadastro
                 </Link>
               </div>
               <div className="grid gap-3 sm:grid-cols-3">
                 <StatCard label="Participantes" value={String(participantCount)} hint="Cada novo jogo aumenta a disputa." />
-                <StatCard label="Premio do 1o" value={currencyFormat(firstPlacePrize)} hint="Baseado na arrecadacao atual." />
+                <StatCard
+                  label="Prêmio do 1º geral"
+                  value={currencyFormat(generalTopPrize?.amount || 0)}
+                  hint="Metade do caixa vai para o ranking acumulado."
+                />
                 <StatCard
                   label="Fase atual"
                   value={phaseState.currentPhaseLabel}
@@ -94,7 +107,7 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
                         config.locale,
                         config.timeZone
                       )}.`
-                    : "O ranking segue aberto para consulta e comparacao."}
+                    : "O ranking segue aberto para consulta e comparação."}
                 </p>
                 <div className="mt-5 grid gap-3">
                   <MiniInfo
@@ -102,18 +115,22 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
                     text="Crie sua conta, escolha seu jogador principal e registre seus placares antes de cada corte."
                   />
                   <MiniInfo
-                    title="Pontuacao"
-                    text={`Ate ${config.scorePoints.EXACT} pontos por jogo, com bonus para vencedor e acerto parcial.`}
+                    title="Pontuação"
+                    text={`Até ${config.scorePoints.EXACT} pontos por jogo, com bônus para vencedor e acerto parcial.`}
                   />
                   <MiniInfo
-                    title="Acesso rapido"
-                    text="Abra a sessao quando quiser revisar palpites, criar novos jogadores ou acompanhar seu desempenho."
+                    title="Premiação em fases"
+                    text="Mesmo depois de um início ruim, cada etapa abre uma nova chance de prêmio com placar zerado."
+                  />
+                  <MiniInfo
+                    title="Acesso rápido"
+                    text="Abra a sessão quando quiser revisar palpites, criar novos jogadores ou acompanhar seu desempenho."
                   />
                 </div>
               </div>
               <div className="rounded-[1.5rem] border border-slate-200 bg-white/85 p-5">
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-slate-500">
-                  Proxima emocao
+                  Próxima emoção
                 </div>
                 {matchesOfDay.length > 0 ? (
                   <div className="mt-4 space-y-4">
@@ -158,15 +175,19 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
             <div className="mt-4 grid gap-4">
               <FeatureCard
                 title="Palpites fase a fase"
-                text="O jogo muda junto com a Copa. Cada janela abre novos confrontos e novas decisoes."
+                text="O jogo muda junto com a Copa. Cada janela abre novos confrontos e novas decisões."
               />
               <FeatureCard
                 title="Ranking em tempo real"
                 text="Acompanhe os pontos, subidas e empates conforme os resultados entram."
               />
               <FeatureCard
+                title="Prêmios por fase"
+                text="Grupos, segunda fase, oitavas, quartas e semifinais pagam blocos próprios."
+              />
+              <FeatureCard
                 title="Mais de um jogador"
-                text="Crie estrategias diferentes sob a mesma conta e compare seu proprio desempenho."
+                text="Crie estratégias diferentes sob a mesma conta e compare seu próprio desempenho."
               />
             </div>
           </div>
@@ -175,9 +196,9 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
             <div className="flex items-center justify-between gap-3">
               <div>
                 <div className="text-xs font-semibold uppercase tracking-[0.2em] text-sky-300">
-                  Pulso do bolao
+                  Pulso do bolão
                 </div>
-                <h2 className="mt-2 text-2xl font-bold">Quem esta brilhando hoje</h2>
+                <h2 className="mt-2 text-2xl font-bold">Quem está brilhando hoje</h2>
               </div>
               <div className="rounded-full border border-white/15 px-3 py-1 text-xs text-slate-300">
                 Atualizado continuamente
@@ -210,7 +231,7 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
               ))}
               {bestOfDay.length === 0 ? (
                 <div className="rounded-2xl border border-dashed border-white/20 px-4 py-6 text-sm text-slate-300">
-                  O placar do dia ainda esta vazio. Seja um dos primeiros a marcar presenca.
+                  O placar do dia ainda está vazio. Seja um dos primeiros a marcar presença.
                 </div>
               ) : null}
             </div>
@@ -224,10 +245,10 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
                 Entrada liberada
               </div>
               <h2 className="mt-2 text-3xl font-black tracking-tight text-slate-950">
-                Monte seu placar antes da proxima virada da tabela.
+                Monte seu placar antes da próxima virada da tabela.
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-600">
-                Quanto antes voce entra, mais oportunidades tem para abrir distancia no ranking e testar estrategias diferentes.
+                Quanto antes você entrar, mais oportunidades terá para abrir distância no ranking e testar estratégias diferentes.
               </p>
             </div>
             <div className="flex flex-col gap-3 sm:flex-row">

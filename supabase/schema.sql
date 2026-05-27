@@ -102,9 +102,32 @@ values
   ('prize', '{
     "BONUS": 1000,
     "GAME_VALUE": 50,
-    "FIRST_PLACE_PART": 0.6,
-    "SECOND_PLACE_PART": 0.3,
-    "THIRD_PLACE_PART": 0.1
+    "GENERAL": {
+      "poolPart": 0.5,
+      "positions": [0.6, 0.3, 0.1]
+    },
+    "PHASES": {
+      "Fase de grupos": {
+        "poolPart": 0.2,
+        "positions": [0.6, 0.3, 0.1]
+      },
+      "Segunda fase": {
+        "poolPart": 0.18,
+        "positions": [0.6, 0.3, 0.1]
+      },
+      "Oitavas": {
+        "poolPart": 0.04,
+        "positions": [1]
+      },
+      "Quartas": {
+        "poolPart": 0.04,
+        "positions": [1]
+      },
+      "Semi finais": {
+        "poolPart": 0.04,
+        "positions": [1]
+      }
+    }
   }'::jsonb)
 on conflict (key)
 do update set
