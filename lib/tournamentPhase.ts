@@ -4,7 +4,7 @@ import type { MatchResult } from "./ranking";
 export type TournamentPhase =
   | "INICIO"
   | "FASE_DE_GRUPOS"
-  | "SEGUNDA_FASE"
+  | "16_AVOS_FINAL"
   | "OITAVAS"
   | "QUARTAS"
   | "SEMI_FINAIS"
@@ -13,7 +13,7 @@ export type TournamentPhase =
 
 export type CompetitionPhase =
   | "Fase de grupos"
-  | "Segunda fase"
+  | "16 avos de final"
   | "Oitavas"
   | "Quartas"
   | "Semi finais"
@@ -38,7 +38,7 @@ export interface PhaseState {
 export const TOURNAMENT_PHASES: TournamentPhase[] = [
   "INICIO",
   "FASE_DE_GRUPOS",
-  "SEGUNDA_FASE",
+  "16_AVOS_FINAL",
   "OITAVAS",
   "QUARTAS",
   "SEMI_FINAIS",
@@ -49,7 +49,7 @@ export const TOURNAMENT_PHASES: TournamentPhase[] = [
 export const TOURNAMENT_PHASE_LABELS: Record<TournamentPhase, string> = {
   INICIO: "Início",
   FASE_DE_GRUPOS: "Fase de grupos",
-  SEGUNDA_FASE: "Segunda fase",
+  16_AVOS_FINAL: "16 avos de final",
   OITAVAS: "Oitavas",
   QUARTAS: "Quartas",
   SEMI_FINAIS: "Semi finais",
@@ -59,7 +59,7 @@ export const TOURNAMENT_PHASE_LABELS: Record<TournamentPhase, string> = {
 
 export const COMPETITION_PHASE_LABELS: CompetitionPhase[] = [
   "Fase de grupos",
-  "Segunda fase",
+  "16 avos de final",
   "Oitavas",
   "Quartas",
   "Semi finais",
@@ -72,12 +72,12 @@ const VISIBLE_COMPETITION_PHASES_BY_PHASE: Record<
 > = {
   INICIO: [],
   FASE_DE_GRUPOS: ["Fase de grupos"],
-  SEGUNDA_FASE: ["Fase de grupos", "Segunda fase"],
-  OITAVAS: ["Fase de grupos", "Segunda fase", "Oitavas"],
-  QUARTAS: ["Fase de grupos", "Segunda fase", "Oitavas", "Quartas"],
+  16_AVOS_FINAL: ["Fase de grupos", "16 avos de final"],
+  OITAVAS: ["Fase de grupos", "16 avos de final", "Oitavas"],
+  QUARTAS: ["Fase de grupos", "16 avos de final", "Oitavas", "Quartas"],
   SEMI_FINAIS: [
     "Fase de grupos",
-    "Segunda fase",
+    "16 avos de final",
     "Oitavas",
     "Quartas",
     "Semi finais",
@@ -90,8 +90,8 @@ const EDITABLE_PHASE_BY_PHASE: Partial<
   Record<TournamentPhase, CompetitionPhase | null>
 > = {
   INICIO: "Fase de grupos",
-  FASE_DE_GRUPOS: "Segunda fase",
-  SEGUNDA_FASE: "Oitavas",
+  FASE_DE_GRUPOS: "16 avos de final",
+  16_AVOS_FINAL: "Oitavas",
   OITAVAS: "Quartas",
   QUARTAS: "Semi finais",
   SEMI_FINAIS: "Finais",
@@ -101,7 +101,7 @@ const EDITABLE_PHASE_BY_PHASE: Partial<
 
 const COMPETITION_TO_TOURNAMENT: Record<CompetitionPhase, TournamentPhase> = {
   "Fase de grupos": "FASE_DE_GRUPOS",
-  "Segunda fase": "SEGUNDA_FASE",
+  "16 avos de final": "16_AVOS_FINAL",
   Oitavas: "OITAVAS",
   Quartas: "QUARTAS",
   "Semi finais": "SEMI_FINAIS",
@@ -125,8 +125,8 @@ export function normalizeCompetitionPhase(value: string) {
   switch (normalized) {
     case "fase de grupos":
       return "Fase de grupos";
-    case "segunda fase":
-      return "Segunda fase";
+    case "16 avos de final":
+      return "16 avos de final";
     case "oitavas":
       return "Oitavas";
     case "quartas":
@@ -150,7 +150,7 @@ function parseDate(date?: string | null) {
 
 function resolveCurrentPhaseBySchedule(
   schedule: PhaseSchedule,
-  now: number
+  now: number,
 ): TournamentPhase {
   let current: TournamentPhase = "INICIO";
   let found = false;
@@ -171,7 +171,7 @@ export function resolvePhaseState(
   schedule: PhaseSchedule,
   matches: Array<Match | MatchResult>,
   nowInput: number | string | Date = Date.now(),
-  overridePhase?: TournamentPhase | null
+  overridePhase?: TournamentPhase | null,
 ): PhaseState {
   const now = new Date(nowInput).getTime();
   const currentPhase =
@@ -197,7 +197,7 @@ export function resolvePhaseState(
 export function getPhaseLockAt(
   editablePhase: CompetitionPhase,
   matches: Array<Match | MatchResult>,
-  schedule: PhaseSchedule
+  schedule: PhaseSchedule,
 ) {
   const phaseMatches = getMatchesForCompetitionPhase(matches, editablePhase);
   const matchStarts = phaseMatches
@@ -218,7 +218,9 @@ export function getPhaseLockAt(
 
 export function getMatchesForCompetitionPhase<T extends Match | MatchResult>(
   matches: T[],
-  phase: CompetitionPhase
+  phase: CompetitionPhase,
 ) {
-  return matches.filter((match) => normalizeCompetitionPhase(match.fase) === phase);
+  return matches.filter(
+    (match) => normalizeCompetitionPhase(match.fase) === phase,
+  );
 }

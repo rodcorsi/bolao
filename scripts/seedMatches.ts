@@ -1,9 +1,9 @@
-import { existsSync } from "node:fs";
-import { resolve } from "node:path";
-import { config as loadEnv } from "dotenv";
-import { createClient } from "@supabase/supabase-js";
-import apiFootball from "../lib/apiFootball";
 import type { FootballMatchesResponse } from "../lib/getFootballFixture";
+import apiFootball from "../lib/apiFootball";
+import { createClient } from "@supabase/supabase-js";
+import { existsSync } from "node:fs";
+import { config as loadEnv } from "dotenv";
+import { resolve } from "node:path";
 
 loadLocalEnv();
 
@@ -14,7 +14,7 @@ const cliOptions = parseCliArgs(process.argv.slice(2));
 
 type CompetitionPhase =
   | "Fase de grupos"
-  | "Segunda fase"
+  | "16 avos de final"
   | "Oitavas"
   | "Quartas"
   | "Semi finais"
@@ -54,7 +54,7 @@ async function main() {
   }
 
   const payload = await apiFootball<FootballMatchesResponse>(
-    `/competitions/${FOOTBALL_DATA_ORG_COMPETITION}/matches?${query.toString()}`
+    `/competitions/${FOOTBALL_DATA_ORG_COMPETITION}/matches?${query.toString()}`,
   );
 
   const mappedMatches = payload.matches
@@ -74,7 +74,9 @@ async function main() {
     .select("id, fixture_id");
 
   if (existingError) {
-    throw new Error(`Failed to load existing matches: ${existingError.message}`);
+    throw new Error(
+      `Failed to load existing matches: ${existingError.message}`,
+    );
   }
 
   const existingByFixtureID = new Map<number, ExistingMatchRow>();
@@ -121,7 +123,7 @@ async function main() {
       `inserted ${inserts.length}`,
       `updated ${updates.length}`,
       `skipped ${skippedCount}`,
-    ].join(" | ")
+    ].join(" | "),
   );
 }
 
@@ -172,7 +174,7 @@ function parseCliArgs(args: string[]) {
 
 function sortMatches(
   a: FootballMatchesResponse["matches"][number],
-  b: FootballMatchesResponse["matches"][number]
+  b: FootballMatchesResponse["matches"][number],
 ) {
   const timeDiff =
     new Date(a.utcDate).getTime() - new Date(b.utcDate).getTime();
@@ -183,12 +185,12 @@ function sortMatches(
 }
 
 function mapMatch(
-  match: FootballMatchesResponse["matches"][number]
+  match: FootballMatchesResponse["matches"][number],
 ): Omit<MatchSeedRow, "sequence"> | null {
   const fase = mapStageToPhase(match.stage);
   if (!fase) {
     console.warn(
-      `Skipping unsupported stage "${match.stage || "UNKNOWN"}" for match ${match.id}`
+      `Skipping unsupported stage "${match.stage || "UNKNOWN"}" for match ${match.id}`,
     );
     return null;
   }
@@ -208,7 +210,7 @@ function mapStageToPhase(stage?: string | null): CompetitionPhase | null {
     case "GROUP_STAGE":
       return "Fase de grupos";
     case "LAST_32":
-      return "Segunda fase";
+      return "16 avos de final";
     case "LAST_16":
       return "Oitavas";
     case "QUARTER_FINALS":

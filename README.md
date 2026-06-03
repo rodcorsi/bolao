@@ -29,7 +29,7 @@ O argumento `--phase` usa os valores de `stage` da API do `football-data.org`.
 Mapeamento entre o `stage` da API e a fase usada pela aplicação:
 
 - `GROUP_STAGE` -> `Fase de grupos`
-- `LAST_32` -> `Segunda fase`
+- `LAST_32` -> `16 avos de final`
 - `LAST_16` -> `Oitavas`
 - `QUARTER_FINALS` -> `Quartas`
 - `SEMI_FINALS` -> `Semi finais`

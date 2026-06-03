@@ -83,7 +83,7 @@ const DEFAULT_CONFIG: Config = {
   phaseSchedule: {
     INICIO: { startsAt: "" },
     FASE_DE_GRUPOS: { startsAt: "" },
-    SEGUNDA_FASE: { startsAt: "" },
+    16_AVOS_FINAL: { startsAt: "" },
     OITAVAS: { startsAt: "" },
     QUARTAS: { startsAt: "" },
     SEMI_FINAIS: { startsAt: "" },
