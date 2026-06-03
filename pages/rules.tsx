@@ -133,9 +133,10 @@ function Rules({
             4. Premiação
           </h2>
           <p className="mb-4 text-gray-700">
-            Todo o valor arrecadado com as inscrições será dividido entre prêmio
-            geral e prêmios por etapa. Assim, mesmo quem ficar para trás no
-            início continua disputando novas premiações nas etapas seguintes.
+            Todo o valor arrecadado com as inscrições será dividido entre o prêmio
+            geral e os prêmios por etapa. Ao todo, existem <strong>3 rankings premiados</strong> (Geral, Fase de Grupos e Finais).
+            Como cada ranking premia os 3 primeiros colocados, podemos ter até <strong>9 ganhadores diferentes</strong> no bolão.
+            Assim, mesmo quem ficar para trás no início continua disputando novas premiações nas etapas seguintes.
           </p>
           <div className="space-y-6 text-gray-700">
             <div>

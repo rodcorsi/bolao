@@ -119,8 +119,8 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
                     text={`Até ${config.scorePoints.EXACT} pontos por jogo, com bônus para vencedor e acerto parcial.`}
                   />
                   <MiniInfo
-                    title="Duas etapas premiadas"
-                    text="A fase de grupos e o bloco das finais têm rankings próprios, com placar zerado em cada etapa."
+                    title="Três rankings premiados"
+                    text="O caixa é dividido entre o ranking Geral, a Fase de Grupos e as Finais. Cada etapa possui placar próprio e premia o pódio completo."
                   />
                   <MiniInfo
                     title="Acesso rápido"

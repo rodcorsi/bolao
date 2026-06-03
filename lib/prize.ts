@@ -43,7 +43,7 @@ const PHASE_PRIZE_GROUPS: PrizePhaseGroup[] = [
   {
     key: "Finais",
     label: "Finais",
-    phases: ["Segunda fase", "Oitavas", "Quartas", "Semi finais", "Finais"],
+    phases: ["16 avos de final", "Oitavas", "Quartas", "Semi finais", "Finais"],
   },
 ];
 

@@ -75,7 +75,7 @@ values
     '{
       "INICIO": { "startsAt": "2026-05-01T16:00:00-03:00" },
       "FASE_DE_GRUPOS": { "startsAt": "2026-06-11T16:00:00-03:00" },
-      "16_AVOS_FINAL": { "startsAt": "2026-06-28T14:00:00-03:00" },
+      "FASE_16": { "startsAt": "2026-06-28T14:00:00-03:00" },
       "OITAVAS": { "startsAt": "2026-07-04T14:00:00-03:00" },
       "QUARTAS": { "startsAt": "2026-07-09T14:00:00-03:00" },
       "SEMI_FINAIS": { "startsAt": "2026-07-14T14:00:00-03:00" },

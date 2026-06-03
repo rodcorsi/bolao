@@ -4,7 +4,7 @@ import type { MatchResult } from "./ranking";
 export type TournamentPhase =
   | "INICIO"
   | "FASE_DE_GRUPOS"
-  | "16_AVOS_FINAL"
+  | "FASE_16"
   | "OITAVAS"
   | "QUARTAS"
   | "SEMI_FINAIS"
@@ -38,7 +38,7 @@ export interface PhaseState {
 export const TOURNAMENT_PHASES: TournamentPhase[] = [
   "INICIO",
   "FASE_DE_GRUPOS",
-  "16_AVOS_FINAL",
+  "FASE_16",
   "OITAVAS",
   "QUARTAS",
   "SEMI_FINAIS",
@@ -49,7 +49,7 @@ export const TOURNAMENT_PHASES: TournamentPhase[] = [
 export const TOURNAMENT_PHASE_LABELS: Record<TournamentPhase, string> = {
   INICIO: "Início",
   FASE_DE_GRUPOS: "Fase de grupos",
-  16_AVOS_FINAL: "16 avos de final",
+  FASE_16: "16 avos de final",
   OITAVAS: "Oitavas",
   QUARTAS: "Quartas",
   SEMI_FINAIS: "Semi finais",
@@ -66,13 +66,13 @@ export const COMPETITION_PHASE_LABELS: CompetitionPhase[] = [
   "Finais",
 ];
 
-const VISIBLE_COMPETITION_PHASES_BY_PHASE: Record<
+export const CUMULATIVE_COMPETITION_PHASES: Record<
   TournamentPhase,
   CompetitionPhase[]
 > = {
   INICIO: [],
   FASE_DE_GRUPOS: ["Fase de grupos"],
-  16_AVOS_FINAL: ["Fase de grupos", "16 avos de final"],
+  FASE_16: ["Fase de grupos", "16 avos de final"],
   OITAVAS: ["Fase de grupos", "16 avos de final", "Oitavas"],
   QUARTAS: ["Fase de grupos", "16 avos de final", "Oitavas", "Quartas"],
   SEMI_FINAIS: [
@@ -86,12 +86,12 @@ const VISIBLE_COMPETITION_PHASES_BY_PHASE: Record<
   FIM: COMPETITION_PHASE_LABELS,
 };
 
-const EDITABLE_PHASE_BY_PHASE: Partial<
+export const EDITABLE_PHASE_MAPPING: Partial<
   Record<TournamentPhase, CompetitionPhase | null>
 > = {
   INICIO: "Fase de grupos",
   FASE_DE_GRUPOS: "16 avos de final",
-  16_AVOS_FINAL: "Oitavas",
+  FASE_16: "Oitavas",
   OITAVAS: "Quartas",
   QUARTAS: "Semi finais",
   SEMI_FINAIS: "Finais",
@@ -101,7 +101,7 @@ const EDITABLE_PHASE_BY_PHASE: Partial<
 
 const COMPETITION_TO_TOURNAMENT: Record<CompetitionPhase, TournamentPhase> = {
   "Fase de grupos": "FASE_DE_GRUPOS",
-  "16 avos de final": "16_AVOS_FINAL",
+  "16 avos de final": "FASE_16",
   Oitavas: "OITAVAS",
   Quartas: "QUARTAS",
   "Semi finais": "SEMI_FINAIS",
@@ -113,11 +113,11 @@ export function getCurrentPhaseLabel(phase: TournamentPhase) {
 }
 
 export function getEditableCompetitionPhase(phase: TournamentPhase) {
-  return EDITABLE_PHASE_BY_PHASE[phase] ?? null;
+  return EDITABLE_PHASE_MAPPING[phase] ?? null;
 }
 
 export function getVisibleCompetitionPhases(phase: TournamentPhase) {
-  return VISIBLE_COMPETITION_PHASES_BY_PHASE[phase] ?? [];
+  return CUMULATIVE_COMPETITION_PHASES[phase] ?? [];
 }
 
 export function normalizeCompetitionPhase(value: string) {

@@ -83,7 +83,7 @@ const DEFAULT_CONFIG: Config = {
   phaseSchedule: {
     INICIO: { startsAt: "" },
     FASE_DE_GRUPOS: { startsAt: "" },
-    16_AVOS_FINAL: { startsAt: "" },
+    FASE_16: { startsAt: "" },
     OITAVAS: { startsAt: "" },
     QUARTAS: { startsAt: "" },
     SEMI_FINAIS: { startsAt: "" },
@@ -94,14 +94,16 @@ const DEFAULT_CONFIG: Config = {
 
 function normalizePrizeBlock(
   value: Partial<PrizeBlock> | undefined,
-  fallback: PrizeBlock
+  fallback: PrizeBlock,
 ): PrizeBlock {
   return {
     poolPart:
       typeof value?.poolPart === "number" ? value.poolPart : fallback.poolPart,
     positions:
       Array.isArray(value?.positions) && value.positions.length > 0
-        ? value.positions.filter((item): item is number => typeof item === "number")
+        ? value.positions.filter(
+            (item): item is number => typeof item === "number",
+          )
         : fallback.positions,
   };
 }
@@ -111,16 +113,18 @@ function normalizePrize(prize: Partial<Prize> | undefined): Prize {
   return {
     BONUS: typeof prize?.BONUS === "number" ? prize.BONUS : fallback.BONUS,
     GAME_VALUE:
-      typeof prize?.GAME_VALUE === "number" ? prize.GAME_VALUE : fallback.GAME_VALUE,
+      typeof prize?.GAME_VALUE === "number"
+        ? prize.GAME_VALUE
+        : fallback.GAME_VALUE,
     GENERAL: normalizePrizeBlock(prize?.GENERAL, fallback.GENERAL),
     PHASES: {
       "Fase de grupos": normalizePrizeBlock(
         prize?.PHASES?.["Fase de grupos"],
-        fallback.PHASES["Fase de grupos"] as PrizeBlock
+        fallback.PHASES["Fase de grupos"] as PrizeBlock,
       ),
       Finais: normalizePrizeBlock(
         prize?.PHASES?.Finais,
-        fallback.PHASES.Finais as PrizeBlock
+        fallback.PHASES.Finais as PrizeBlock,
       ),
     },
     FIRST_PLACE_PART: prize?.FIRST_PLACE_PART,
@@ -137,7 +141,7 @@ export async function getConfig(): Promise<Config> {
   }
   const config = JSON.parse(JSON.stringify(DEFAULT_CONFIG)) as Config;
   data.forEach((row: any) => {
-    ((config as unknown) as Record<string, unknown>)[row.key] = row.value;
+    (config as unknown as Record<string, unknown>)[row.key] = row.value;
   });
   config.prize = normalizePrize(config.prize);
   return config;
