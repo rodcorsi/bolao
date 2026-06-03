@@ -76,36 +76,33 @@ function Rules({ config }: InferGetServerSidePropsType<typeof getServerSideProps
         <section className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
           <h2 className="text-xl font-bold text-gray-700 mb-4 border-b pb-2">4. Premiação</h2>
           <p className="mb-4 text-gray-700">
-            Todo o valor arrecadado com as inscricoes sera dividido entre premio
-            geral e premios por fase. Assim, mesmo quem ficar para tras no
-            inicio continua disputando novas premiacoes nas etapas seguintes.
+            Todo o valor arrecadado com as inscrições será dividido entre prêmio
+            geral e prêmios por etapa. Assim, mesmo quem ficar para trás no
+            início continua disputando novas premiações nas etapas seguintes.
           </p>
           <div className="space-y-6 text-gray-700">
             <div>
-              <h3 className="font-bold text-gray-800">4.1 Premio Geral</h3>
+              <h3 className="font-bold text-gray-800">4.1 Prêmio Geral</h3>
               <p className="mt-2">
-                O premio geral usa a somatoria de todo o campeonato e recebe
+                O prêmio geral usa a somatória de todo o campeonato e recebe
                 <strong> 50% do caixa total</strong>.
               </p>
               <ul className="list-disc pl-5 mt-2 space-y-2">
-                <li><strong>1o colocado geral:</strong> 60% do bloco geral (30% do caixa total)</li>
-                <li><strong>2o colocado geral:</strong> 30% do bloco geral (15% do caixa total)</li>
-                <li><strong>3o colocado geral:</strong> 10% do bloco geral (5% do caixa total)</li>
+                <li><strong>1º colocado geral:</strong> 60% do bloco geral (30% do caixa total)</li>
+                <li><strong>2º colocado geral:</strong> 30% do bloco geral (15% do caixa total)</li>
+                <li><strong>3º colocado geral:</strong> 10% do bloco geral (5% do caixa total)</li>
               </ul>
             </div>
             <div>
-              <h3 className="font-bold text-gray-800">4.2 Premios por Fase</h3>
+              <h3 className="font-bold text-gray-800">4.2 Prêmios por Etapa</h3>
               <p className="mt-2">
-                Os outros <strong>50% do caixa total</strong> sao divididos entre
-                fases especificas. Em cada fase o contador zera e vale apenas o
-                desempenho daquela etapa.
+                Os outros <strong>50% do caixa total</strong> são divididos entre
+                duas etapas específicas. Em cada etapa o contador zera e vale
+                apenas o desempenho daquela etapa.
               </p>
               <ul className="list-disc pl-5 mt-2 space-y-2">
-                <li><strong>Fase de grupos:</strong> 20% do caixa total, com premios para 1o, 2o e 3o colocados da fase no formato 60/30/10.</li>
-                <li><strong>Segunda fase:</strong> 18% do caixa total, com premios para 1o, 2o e 3o colocados da fase no formato 60/30/10.</li>
-                <li><strong>Oitavas de final:</strong> 4% do caixa total para o 1o colocado da fase.</li>
-                <li><strong>Quartas de final:</strong> 4% do caixa total para o 1o colocado da fase.</li>
-                <li><strong>Semifinais:</strong> 4% do caixa total para o 1o colocado da fase.</li>
+                <li><strong>Fase de grupos:</strong> 25% do caixa total, com prêmios para 1º, 2º e 3º colocados da etapa no formato 60/30/10.</li>
+                <li><strong>Finais:</strong> 25% do caixa total, com prêmios para 1º, 2º e 3º colocados no formato 60/30/10. Essa etapa inclui Segunda fase, Oitavas de final, Quartas de final, Semifinais e Finais.</li>
               </ul>
             </div>
           </div>
@@ -114,8 +111,8 @@ function Rules({ config }: InferGetServerSidePropsType<typeof getServerSideProps
         <section className="mb-8 bg-white p-6 rounded-lg shadow-sm border border-gray-100">
           <h2 className="text-xl font-bold text-gray-700 mb-4 border-b pb-2">5. Critérios de Desempate</h2>
           <p className="mb-4 text-gray-700">
-            Caso haja empate na pontuacao final ou em uma fase premiada, os
-            criterios de desempate seguirao esta ordem:
+            Caso haja empate na pontuação final ou em uma etapa premiada, os
+            critérios de desempate seguirão esta ordem:
           </p>
           <ol className="list-decimal pl-5 space-y-2 text-gray-700">
             <li>Maior quantidade de acertos de <strong>12 pontos</strong>.</li>
@@ -123,9 +120,9 @@ function Rules({ config }: InferGetServerSidePropsType<typeof getServerSideProps
             <li>Maior quantidade de acertos de <strong>5 pontos</strong>.</li>
           </ol>
           <p className="mt-4 text-gray-700">
-            Nos premios por fase, os criterios acima consideram apenas os jogos
-            daquela fase. Se o empate persistir em uma posicao premiada, o valor
-            correspondente a essa posicao sera dividido igualmente entre os
+            Nos prêmios por etapa, os critérios acima consideram apenas os jogos
+            daquela etapa. Se o empate persistir em uma posição premiada, o valor
+            correspondente a essa posição será dividido igualmente entre os
             empatados.
           </p>
         </section>

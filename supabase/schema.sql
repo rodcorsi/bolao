@@ -108,24 +108,12 @@ values
     },
     "PHASES": {
       "Fase de grupos": {
-        "poolPart": 0.2,
+        "poolPart": 0.25,
         "positions": [0.6, 0.3, 0.1]
       },
-      "Segunda fase": {
-        "poolPart": 0.18,
+      "Finais": {
+        "poolPart": 0.25,
         "positions": [0.6, 0.3, 0.1]
-      },
-      "Oitavas": {
-        "poolPart": 0.04,
-        "positions": [1]
-      },
-      "Quartas": {
-        "poolPart": 0.04,
-        "positions": [1]
-      },
-      "Semi finais": {
-        "poolPart": 0.04,
-        "positions": [1]
       }
     }
   }'::jsonb)

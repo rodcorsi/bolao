@@ -73,7 +73,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
         <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className="text-lg font-bold text-slate-900">Premiação do bolão</h3>
           <p className="mt-1 text-sm text-slate-600">
-            {`Caixa atual de ${currencyFormat(prizeSummary.totalPool)} com prêmios para a classificação geral e para cada fase decisiva.`}
+            {`Caixa atual de ${currencyFormat(prizeSummary.totalPool)} com prêmios para a classificação geral e duas etapas premiadas.`}
           </p>
           <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             <PrizeCard

@@ -62,24 +62,12 @@ const DEFAULT_CONFIG: Config = {
     },
     PHASES: {
       "Fase de grupos": {
-        poolPart: 0.2,
+        poolPart: 0.25,
         positions: [0.6, 0.3, 0.1],
       },
-      "Segunda fase": {
-        poolPart: 0.18,
+      Finais: {
+        poolPart: 0.25,
         positions: [0.6, 0.3, 0.1],
-      },
-      Oitavas: {
-        poolPart: 0.04,
-        positions: [1],
-      },
-      Quartas: {
-        poolPart: 0.04,
-        positions: [1],
-      },
-      "Semi finais": {
-        poolPart: 0.04,
-        positions: [1],
       },
     },
   },
@@ -130,21 +118,9 @@ function normalizePrize(prize: Partial<Prize> | undefined): Prize {
         prize?.PHASES?.["Fase de grupos"],
         fallback.PHASES["Fase de grupos"] as PrizeBlock
       ),
-      "Segunda fase": normalizePrizeBlock(
-        prize?.PHASES?.["Segunda fase"],
-        fallback.PHASES["Segunda fase"] as PrizeBlock
-      ),
-      Oitavas: normalizePrizeBlock(
-        prize?.PHASES?.Oitavas,
-        fallback.PHASES.Oitavas as PrizeBlock
-      ),
-      Quartas: normalizePrizeBlock(
-        prize?.PHASES?.Quartas,
-        fallback.PHASES.Quartas as PrizeBlock
-      ),
-      "Semi finais": normalizePrizeBlock(
-        prize?.PHASES?.["Semi finais"],
-        fallback.PHASES["Semi finais"] as PrizeBlock
+      Finais: normalizePrizeBlock(
+        prize?.PHASES?.Finais,
+        fallback.PHASES.Finais as PrizeBlock
       ),
     },
     FIRST_PLACE_PART: prize?.FIRST_PLACE_PART,

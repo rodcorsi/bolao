@@ -57,7 +57,7 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
                   O bolão que transforma cada rodada em assunto de mesa, grupo e madrugada.
                 </h1>
                 <p className="max-w-2xl text-base leading-7 text-slate-700 sm:text-lg">
-                  Entre no {config.tournament.title}, monte seu jogo, acompanhe o ranking ao vivo e dispute prêmios na classificação geral e em cada fase da Copa.
+                  Entre no {config.tournament.title}, monte seu jogo, acompanhe o ranking ao vivo e dispute prêmios na classificação geral e em duas etapas da Copa.
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:flex-row">
@@ -119,8 +119,8 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
                     text={`Até ${config.scorePoints.EXACT} pontos por jogo, com bônus para vencedor e acerto parcial.`}
                   />
                   <MiniInfo
-                    title="Premiação em fases"
-                    text="Mesmo depois de um início ruim, cada etapa abre uma nova chance de prêmio com placar zerado."
+                    title="Duas etapas premiadas"
+                    text="A fase de grupos e o bloco das finais têm rankings próprios, com placar zerado em cada etapa."
                   />
                   <MiniInfo
                     title="Acesso rápido"
@@ -182,8 +182,8 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
                 text="Acompanhe os pontos, subidas e empates conforme os resultados entram."
               />
               <FeatureCard
-                title="Prêmios por fase"
-                text="Grupos, segunda fase, oitavas, quartas e semifinais pagam blocos próprios."
+                title="Prêmios por etapa"
+                text="Grupos e finais pagam blocos próprios, sempre premiando 1º, 2º e 3º lugares."
               />
               <FeatureCard
                 title="Mais de um jogador"

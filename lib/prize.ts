@@ -1,4 +1,8 @@
-import { COMPETITION_PHASE_LABELS, CompetitionPhase, getMatchesForCompetitionPhase } from "./tournamentPhase";
+import {
+  COMPETITION_PHASE_LABELS,
+  CompetitionPhase,
+  getMatchesForCompetitionPhase,
+} from "./tournamentPhase";
 import { Config, PrizeBlock } from "./getConfig";
 import type { MatchResult, RankingItem } from "./ranking";
 import { rankingForMatches } from "./rankingSummary";
@@ -24,12 +28,23 @@ export interface PrizeSummary {
   totalPool: number;
 }
 
-const PHASE_PRIZE_ORDER: CompetitionPhase[] = [
-  "Fase de grupos",
-  "Segunda fase",
-  "Oitavas",
-  "Quartas",
-  "Semi finais",
+interface PrizePhaseGroup {
+  key: CompetitionPhase;
+  label: string;
+  phases: CompetitionPhase[];
+}
+
+const PHASE_PRIZE_GROUPS: PrizePhaseGroup[] = [
+  {
+    key: "Fase de grupos",
+    label: "Fase de grupos",
+    phases: ["Fase de grupos"],
+  },
+  {
+    key: "Finais",
+    label: "Finais",
+    phases: ["Segunda fase", "Oitavas", "Quartas", "Semi finais", "Finais"],
+  },
 ];
 
 export function calculateTotalPrizePool(playerCount: number, config: Config) {
@@ -44,17 +59,19 @@ export function buildPrizeSummary(input: {
   const totalPool = calculateTotalPrizePool(input.rankingItems.length, input.config);
   const general = buildPrizeBlockSummary({
     key: "general",
-    label: "Premio geral",
+    label: "Prêmio geral",
     block: input.config.prize.GENERAL,
     poolBase: totalPool,
     rankingItems: input.rankingItems,
   });
-  const phases = PHASE_PRIZE_ORDER.flatMap((phase) => {
-    const block = input.config.prize.PHASES[phase];
+  const phases = PHASE_PRIZE_GROUPS.flatMap((group) => {
+    const block = input.config.prize.PHASES[group.key];
     if (!block) {
       return [];
     }
-    const phaseMatches = getMatchesForCompetitionPhase(input.matches, phase);
+    const phaseMatches = group.phases.flatMap((phase) =>
+      getMatchesForCompetitionPhase(input.matches, phase)
+    );
     if (phaseMatches.length === 0) {
       return [];
     }
@@ -65,8 +82,8 @@ export function buildPrizeSummary(input: {
     );
     return [
       buildPrizeBlockSummary({
-        key: phase,
-        label: phase,
+        key: group.key,
+        label: group.label,
         block,
         poolBase: totalPool,
         rankingItems: phaseRanking,
@@ -115,5 +132,7 @@ export function getTopPrize(block: PrizeBlockSummary) {
 }
 
 export function getPrizePhaseLabels() {
-  return PHASE_PRIZE_ORDER.filter((phase) => COMPETITION_PHASE_LABELS.includes(phase));
+  return PHASE_PRIZE_GROUPS.map((group) => group.key).filter((phase) =>
+    COMPETITION_PHASE_LABELS.includes(phase)
+  );
 }
