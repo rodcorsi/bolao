@@ -16,6 +16,7 @@ import { PhaseState } from "../lib/tournamentPhase";
 import { loadPlayAuth, parsePlayAuthCookie } from "../lib/playAuthStorage";
 import { assertUserSecret, getUserByCPF } from "../lib/users";
 import { getPhaseState } from "../lib/phaseState";
+import { getUserFromCookieHeader } from "../lib/sessionAuth";
 
 const MAX_ITEMS_BEST_OF_DAY = 5;
 
@@ -134,16 +135,21 @@ export const getServerSideProps: GetServerSideProps<{
   const phaseState = getPhaseState(config, ranking.matches);
 
   let authenticated = false;
-  const cookieCredentials = parsePlayAuthCookie(req.headers.cookie);
-  if (cookieCredentials) {
-    try {
-      const user = await getUserByCPF(cookieCredentials.cpf);
-      if (user) {
-        assertUserSecret(user, cookieCredentials.secretCode);
-        authenticated = true;
+  const user = await getUserFromCookieHeader(req.headers.cookie);
+  if (user) {
+    authenticated = true;
+  } else {
+    const cookieCredentials = parsePlayAuthCookie(req.headers.cookie);
+    if (cookieCredentials && cookieCredentials.secretCode) {
+      try {
+        const legacyUser = await getUserByCPF(cookieCredentials.cpf);
+        if (legacyUser) {
+          assertUserSecret(legacyUser, cookieCredentials.secretCode);
+          authenticated = true;
+        }
+      } catch {
+        authenticated = false;
       }
-    } catch {
-      authenticated = false;
     }
   }
 

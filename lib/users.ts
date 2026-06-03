@@ -41,6 +41,19 @@ export async function getUserByCPF(cpf: string) {
   return data ? mapUser(data) : null;
 }
 
+export async function getUserByID(id: number) {
+  const { data, error } = await supabase
+    .from("users")
+    .select("*")
+    .eq("id", id)
+    .maybeSingle();
+  if (error) {
+    console.error(`Error fetching user by ID ${id}:`, error.message);
+    return null;
+  }
+  return data ? mapUser(data) : null;
+}
+
 export async function createUser(input: {
   name: string;
   cpf: string;
@@ -67,5 +80,21 @@ export async function createUser(input: {
 export function assertUserSecret(user: UserRecord, secretCode: string) {
   if (!verifySecret(secretCode, user.secretHash)) {
     throw new Error("Senha inválida.");
+  }
+}
+
+export async function checkAndMigrateUserSecret(user: UserRecord, secretCode: string) {
+  assertUserSecret(user, secretCode);
+  if (!user.secretHash.startsWith("scrypt$")) {
+    const newHash = hashSecret(secretCode);
+    const { error } = await supabase
+      .from("users")
+      .update({ secret_hash: newHash })
+      .eq("id", user.id);
+    if (error) {
+      console.error(`Error updating secret hash for user ${user.id}:`, error.message);
+    } else {
+      user.secretHash = newHash;
+    }
   }
 }

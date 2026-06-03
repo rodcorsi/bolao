@@ -1,11 +1,15 @@
 import { NextApiRequest, NextApiResponse } from "next";
-import { assertUserSecret, getUserByCPF } from "../../../lib/users";
 import { buildPlaySession, createPlayerForUser } from "../../../lib/play";
 import { requirePostMethod, sendError } from "../../../lib/api";
 
 import { getConfig } from "../../../lib/getConfig";
 import { getMatchesResult } from "../../../lib/ranking";
 import { getPhaseState } from "../../../lib/phaseState";
+import {
+  assertInitialPhase,
+  assertValidPlayerName,
+} from "../../../lib/securityValidation";
+import { getUserFromRequest, setSessionCookie } from "../../../lib/sessionAuth";
 
 export default async function handler(
   req: NextApiRequest,
@@ -15,18 +19,20 @@ export default async function handler(
     return;
   }
   try {
-    const { cpf, secretCode, playerName } = req.body || {};
-    if (!cpf || !secretCode || !playerName) {
-      return sendError(res, 400, "CPF, Senha e nome do jogador são obrigatórios.");
+    const { playerName } = req.body || {};
+    if (!playerName) {
+      return sendError(res, 400, "Nome do jogador é obrigatório.");
     }
-    const user = await getUserByCPF(cpf);
+    const user = await getUserFromRequest(req);
     if (!user) {
-      return sendError(res, 404, "Usuário não encontrado.");
+      return sendError(res, 401, "Sessão inválida.");
     }
-    assertUserSecret(user, secretCode);
-    await createPlayerForUser(user.id, playerName);
     const [config, matches] = await Promise.all([getConfig(), getMatchesResult()]);
-    const session = await buildPlaySession(user, getPhaseState(config, matches));
+    const phaseState = getPhaseState(config, matches);
+    assertInitialPhase(phaseState);
+    await createPlayerForUser(user.id, assertValidPlayerName(playerName));
+    setSessionCookie(res, user);
+    const session = await buildPlaySession(user, phaseState);
     return res.status(200).json({ session });
   } catch (error) {
     const message =

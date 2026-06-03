@@ -11,6 +11,7 @@ import Head from "next/head";
 import Link from "next/link";
 import MatchHeader from "../../components/MatchHeader";
 import Position from "../../components/Position";
+import { isPublicMatchStarted } from "../../lib/securityValidation";
 import { selectGoals } from "../../lib/getFootballFixture";
 
 const Match = ({
@@ -112,9 +113,21 @@ export const getServerSideProps: GetServerSideProps<{
       notFound: true,
     };
   }
+  if (!isPublicMatchStarted(match)) {
+    return {
+      notFound: true,
+    };
+  }
+  const matchRanking: Ranking = {
+    ...ranking,
+    items: ranking.items.map((item) => ({
+      ...item,
+      bets: item.bets.filter((bet) => bet.matchID === match.id),
+    })),
+  };
   return {
     props: {
-      ranking,
+      ranking: matchRanking,
       match,
       config,
     },

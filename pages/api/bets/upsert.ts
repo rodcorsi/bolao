@@ -9,8 +9,8 @@ import {
   upsertBetsForPhase,
 } from "../../../lib/play";
 import { getPhaseState } from "../../../lib/phaseState";
-import { assertUserSecret, getUserByCPF } from "../../../lib/users";
 import { requirePostMethod, sendError } from "../../../lib/api";
+import { getUserFromRequest, setSessionCookie } from "../../../lib/sessionAuth";
 
 function parseGoalsValue(value: unknown) {
   if (value === "" || value == null) {
@@ -19,7 +19,7 @@ function parseGoalsValue(value: unknown) {
   if (typeof value !== "number") {
     return null;
   }
-  if (!Number.isFinite(value)) {
+  if (!Number.isInteger(value) || value < 0 || value > 99) {
     throw new Error("Todos os palpites preenchidos precisam ter placares válidos.");
   }
   return value;
@@ -33,15 +33,14 @@ export default async function handler(
     return;
   }
   try {
-    const { cpf, secretCode, playerId, editablePhase, bets } = req.body || {};
-    if (!cpf || !secretCode || !playerId || !editablePhase || !Array.isArray(bets)) {
+    const { playerId, editablePhase, bets } = req.body || {};
+    if (!playerId || !editablePhase || !Array.isArray(bets)) {
       return sendError(res, 400, "Dados inválidos para salvar os palpites.");
     }
-    const user = await getUserByCPF(cpf);
+    const user = await getUserFromRequest(req);
     if (!user) {
-      return sendError(res, 404, "Usuário não encontrado.");
+      return sendError(res, 401, "Sessão inválida.");
     }
-    assertUserSecret(user, secretCode);
     const userPlayers = await getPlayersByUserID(user.id);
     if (!userPlayers.some((player) => player.id === Number(playerId))) {
       return sendError(res, 403, "Este jogador não pertence ao usuário informado.");
@@ -59,6 +58,7 @@ export default async function handler(
         awayGoals: parseGoalsValue(bet.awayGoals),
       })),
     });
+    setSessionCookie(res, user);
     const session = await buildPlaySession(user, phaseState);
     return res.status(200).json({ session });
   } catch (error) {

@@ -7,7 +7,11 @@ CREATE TABLE users (
   cpf TEXT NOT NULL UNIQUE,
   pix_key TEXT NOT NULL,
   secret_hash TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now()
+  created_at TIMESTAMPTZ DEFAULT now(),
+  CONSTRAINT users_cpf_digits CHECK (cpf ~ '^[0-9]{11}$'),
+  CONSTRAINT users_name_length CHECK (char_length(trim(name)) BETWEEN 3 AND 256),
+  CONSTRAINT users_pix_key_length CHECK (char_length(trim(pix_key)) BETWEEN 8 AND 256),
+  CONSTRAINT users_secret_hash_present CHECK (char_length(secret_hash) > 0)
 );
 
 -- 2. Players table
@@ -15,7 +19,8 @@ CREATE TABLE players (
   id BIGSERIAL PRIMARY KEY,
   user_id BIGINT REFERENCES users(id),
   name TEXT NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now()
+  created_at TIMESTAMPTZ DEFAULT now(),
+  CONSTRAINT players_name_length CHECK (char_length(trim(name)) BETWEEN 3 AND 256)
 );
 
 -- 3. Matches table
@@ -38,7 +43,13 @@ CREATE TABLE bets (
   home_goals INT,
   away_goals INT,
   created_at TIMESTAMPTZ DEFAULT now(),
-  UNIQUE(player_id, match_id)
+  UNIQUE(player_id, match_id),
+  CONSTRAINT bets_home_goals_range CHECK (home_goals IS NULL OR home_goals BETWEEN 0 AND 99),
+  CONSTRAINT bets_away_goals_range CHECK (away_goals IS NULL OR away_goals BETWEEN 0 AND 99),
+  CONSTRAINT bets_complete_score CHECK (
+    (home_goals IS NULL AND away_goals IS NULL) OR
+    (home_goals IS NOT NULL AND away_goals IS NOT NULL)
+  )
 );
 
 -- 5. Config table

@@ -24,11 +24,10 @@ export function parsePlayAuthCookie(cookieHeader?: string | null): SessionCreden
     return acc;
   }, {} as Record<string, string>);
   const cpf = values[PLAY_AUTH_COOKIE_CPF_KEY];
-  const secretCode = values[PLAY_AUTH_COOKIE_SECRET_KEY];
-  if (!cpf || !secretCode) {
+  if (!cpf) {
     return null;
   }
-  return { cpf, secretCode };
+  return { cpf, secretCode: "" };
 }
 
 export function loadPlayAuth(): SessionCredentials | null {
@@ -42,14 +41,13 @@ export function loadPlayAuth(): SessionCredentials | null {
   try {
     const parsedValue = JSON.parse(rawValue) as Partial<SessionCredentials>;
     if (
-      typeof parsedValue.cpf !== "string" ||
-      typeof parsedValue.secretCode !== "string"
+      typeof parsedValue.cpf !== "string"
     ) {
       return null;
     }
     return {
       cpf: parsedValue.cpf,
-      secretCode: parsedValue.secretCode,
+      secretCode: "",
     };
   } catch {
     return null;
@@ -60,15 +58,19 @@ export function savePlayAuth(credentials: SessionCredentials) {
   if (typeof window === "undefined") {
     return;
   }
+  const cleanCredentials = {
+    cpf: credentials.cpf,
+    secretCode: "",
+  };
   window.localStorage.setItem(
     PLAY_AUTH_STORAGE_KEY,
-    JSON.stringify(credentials)
+    JSON.stringify(cleanCredentials)
   );
   document.cookie = buildCookieValue(PLAY_AUTH_COOKIE_CPF_KEY, credentials.cpf, 60 * 60 * 24 * 30);
   document.cookie = buildCookieValue(
     PLAY_AUTH_COOKIE_SECRET_KEY,
-    credentials.secretCode,
-    60 * 60 * 24 * 30
+    "",
+    0
   );
 }
 

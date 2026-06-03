@@ -9,7 +9,10 @@ import {
 import { User } from "./users";
 
 function isValidGoalsValue(value: number | null) {
-  return value == null || (!Number.isNaN(value) && value >= 0 && value <= 99);
+  return (
+    value == null ||
+    (Number.isInteger(value) && !Number.isNaN(value) && value >= 0 && value <= 99)
+  );
 }
 
 export interface PlayPlayer extends Player {

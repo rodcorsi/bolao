@@ -172,13 +172,11 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
         return;
       }
       const storedCredentials = loadPlayAuth();
-      if (!storedCredentials) {
-        setHasRestoredStoredAuth(true);
-        return;
+      if (storedCredentials) {
+        setCredentials(storedCredentials);
       }
-      setCredentials(storedCredentials);
       setIsRestoringStoredAuth(true);
-      await openSession(storedCredentials, { silent: true });
+      await openSession(storedCredentials || { cpf: "", secretCode: "" }, { silent: true });
       if (!cancelled) {
         setIsRestoringStoredAuth(false);
         setHasRestoredStoredAuth(true);
