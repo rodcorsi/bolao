@@ -1,4 +1,5 @@
 import React from "react";
+import Image from "next/image";
 
 interface TeamCrestProps {
   crest?: string | null;
@@ -18,11 +19,13 @@ const TeamCrest: React.FC<TeamCrestProps> = ({ crest, teamName }) => {
   }
 
   return (
-    <img
+    <Image
       className="mx-2 rounded-full bg-center"
-      style={{ height: 30, width: 30 }}
       src={crest}
       alt={`Escudo ${teamName}`}
+      width={30}
+      height={30}
+      unoptimized
     />
   );
 };

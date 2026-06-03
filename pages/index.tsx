@@ -13,7 +13,7 @@ import Head from "next/head";
 import HomeDashboard from "../components/home/HomeDashboard";
 import HomeLanding from "../components/home/HomeLanding";
 import { PhaseState } from "../lib/tournamentPhase";
-import { SessionCredentials, loadPlayAuth, parsePlayAuthCookie } from "../lib/playAuthStorage";
+import { loadPlayAuth, parsePlayAuthCookie } from "../lib/playAuthStorage";
 import { assertUserSecret, getUserByCPF } from "../lib/users";
 import { getPhaseState } from "../lib/phaseState";
 
@@ -31,36 +31,41 @@ function Home({
   const [isCheckingStoredAuth, setIsCheckingStoredAuth] = useState(!authenticated);
 
   useEffect(() => {
-    setIsAuthenticated(authenticated);
-    setIsCheckingStoredAuth(!authenticated);
-  }, [authenticated]);
-
-  useEffect(() => {
     if (authenticated) {
       return;
     }
-    const storedAuth = loadPlayAuth();
-    if (!storedAuth) {
-      setIsCheckingStoredAuth(false);
-      return;
-    }
-    const verifyAuth = async (credentials: SessionCredentials) => {
+    let cancelled = false;
+    const verifyStoredAuth = async () => {
+      await Promise.resolve();
+      if (cancelled) {
+        return;
+      }
+      const storedAuth = loadPlayAuth();
+      if (!storedAuth) {
+        setIsCheckingStoredAuth(false);
+        return;
+      }
       try {
         const response = await fetch("/api/users/session", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(credentials),
+          body: JSON.stringify(storedAuth),
         });
-        if (response.ok) {
+        if (response.ok && !cancelled) {
           setIsAuthenticated(true);
         }
       } finally {
-        setIsCheckingStoredAuth(false);
+        if (!cancelled) {
+          setIsCheckingStoredAuth(false);
+        }
       }
     };
-    void verifyAuth(storedAuth);
+    void verifyStoredAuth();
+    return () => {
+      cancelled = true;
+    };
   }, [authenticated]);
 
   return (

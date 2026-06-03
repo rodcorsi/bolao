@@ -1,4 +1,4 @@
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 
 import { Bet } from "../lib/getBets";
 import { Config } from "../lib/getConfig";
@@ -41,6 +41,23 @@ function parseBetField(value?: string) {
   return numericValue;
 }
 
+function buildBetForm(
+  matches: MatchResult[],
+  nextSession: PlaySession | null,
+  playerId: number | null
+) {
+  const player = nextSession?.players.find((item) => item.id === playerId);
+  const nextValues: BetFormState = {};
+  for (const match of matches) {
+    const bet = player?.bets.find((item) => item.matchID === match.id);
+    nextValues[match.id] = {
+      home: bet?.homeGoals != null ? String(bet.homeGoals) : "",
+      away: bet?.awayGoals != null ? String(bet.awayGoals) : "",
+    };
+  }
+  return nextValues;
+}
+
 const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   config,
   phaseState,
@@ -49,14 +66,18 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   initialSession = null,
   showSignupLink = true,
 }) => {
+  const initialPlayerId = initialSession?.players[0]?.id ?? null;
   const [credentials, setCredentials] =
     useState<SessionCredentials>(initialCredentials);
   const [session, setSession] = useState<PlaySession | null>(initialSession);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
+  const [selectedPlayerId, setSelectedPlayerId] =
+    useState<number | null>(initialPlayerId);
   const [newPlayerName, setNewPlayerName] = useState("");
-  const [betForm, setBetForm] = useState<BetFormState>({});
+  const [betForm, setBetForm] = useState<BetFormState>(() =>
+    buildBetForm(matches, initialSession, initialPlayerId)
+  );
   const [invalidBetMatchIds, setInvalidBetMatchIds] = useState<number[]>([]);
   const [isOpeningSession, setIsOpeningSession] = useState(false);
   const [isSavingBets, setIsSavingBets] = useState(false);
@@ -66,16 +87,16 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
   const shouldShowOpenSessionForm =
     !session && hasRestoredStoredAuth && !isRestoringStoredAuth;
 
-  useEffect(() => {
-    setCredentials(initialCredentials);
-  }, [initialCredentials]);
-
-  useEffect(() => {
-    setSession(initialSession);
-    if (initialSession) {
-      refreshBetForm(initialSession);
-    }
-  }, [initialSession, matches]);
+  const refreshBetForm = useCallback(
+    (nextSession: PlaySession | null, playerId?: number | null) => {
+      const currentPlayerId =
+        playerId ?? nextSession?.players[0]?.id ?? null;
+      setSelectedPlayerId(currentPlayerId);
+      setBetForm(buildBetForm(matches, nextSession, currentPlayerId));
+      setInvalidBetMatchIds([]);
+    },
+    [matches]
+  );
 
   const selectedPlayer = useMemo(() => {
     if (!session || selectedPlayerId == null) {
@@ -84,33 +105,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
     return session.players.find((player) => player.id === selectedPlayerId) || null;
   }, [session, selectedPlayerId]);
 
-  const refreshBetForm = (nextSession: PlaySession | null, playerId?: number | null) => {
-    const currentPlayerId =
-      playerId ?? nextSession?.players[0]?.id ?? null;
-    setSelectedPlayerId(currentPlayerId);
-    const player = nextSession?.players.find((item) => item.id === currentPlayerId);
-    const nextValues: BetFormState = {};
-    for (const match of matches) {
-      const bet = player?.bets.find((item) => item.matchID === match.id);
-      nextValues[match.id] = {
-        home: bet?.homeGoals != null ? String(bet.homeGoals) : "",
-        away: bet?.awayGoals != null ? String(bet.awayGoals) : "",
-      };
-    }
-    setBetForm(nextValues);
-    setInvalidBetMatchIds([]);
-  };
-
-  const handleSession = (nextSession: PlaySession, nextCredentials: SessionCredentials) => {
-    setCredentials(nextCredentials);
-    setSession(nextSession);
-    setErrorMessage(null);
-    setStatusMessage(null);
-    refreshBetForm(nextSession);
-    savePlayAuth(nextCredentials);
-  };
-
-  const requestJSON = async <T,>(url: string, body: Record<string, unknown>) => {
+  const requestJSON = useCallback(async <T,>(url: string, body: Record<string, unknown>) => {
     const response = await fetch(url, {
       method: "POST",
       headers: {
@@ -123,49 +118,77 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
       throw new Error(payload.error || "Não foi possível completar a operação.");
     }
     return payload as T;
-  };
+  }, []);
 
-  const openSession = async (
-    nextCredentials: SessionCredentials,
-    options?: { silent?: boolean }
-  ) => {
-    setIsOpeningSession(true);
-    setErrorMessage(null);
-    if (!options?.silent) {
+  const handleSession = useCallback(
+    (nextSession: PlaySession, nextCredentials: SessionCredentials) => {
+      setCredentials(nextCredentials);
+      setSession(nextSession);
+      setErrorMessage(null);
       setStatusMessage(null);
-    }
-    try {
-      const payload = await requestJSON<{ session: PlaySession }>(
-        "/api/users/session",
-        nextCredentials
-      );
-      handleSession(payload.session, nextCredentials);
-    } catch (error) {
+      refreshBetForm(nextSession);
+      savePlayAuth(nextCredentials);
+    },
+    [refreshBetForm]
+  );
+
+  const openSession = useCallback(
+    async (
+      nextCredentials: SessionCredentials,
+      options?: { silent?: boolean }
+    ) => {
+      setIsOpeningSession(true);
+      setErrorMessage(null);
       if (!options?.silent) {
-        setErrorMessage(
-          error instanceof Error ? error.message : "Erro ao abrir sessão."
-        );
+        setStatusMessage(null);
       }
-    } finally {
-      setIsOpeningSession(false);
-    }
-  };
+      try {
+        const payload = await requestJSON<{ session: PlaySession }>(
+          "/api/users/session",
+          nextCredentials
+        );
+        handleSession(payload.session, nextCredentials);
+      } catch (error) {
+        if (!options?.silent) {
+          setErrorMessage(
+            error instanceof Error ? error.message : "Erro ao abrir sessão."
+          );
+        }
+      } finally {
+        setIsOpeningSession(false);
+      }
+    },
+    [handleSession, requestJSON]
+  );
 
   useEffect(() => {
     if (hasRestoredStoredAuth || session || initialSession) {
       return;
     }
-    const storedCredentials = loadPlayAuth();
-    setHasRestoredStoredAuth(true);
-    if (!storedCredentials) {
-      return;
-    }
-    setCredentials(storedCredentials);
-    setIsRestoringStoredAuth(true);
-    void openSession(storedCredentials, { silent: true }).finally(() => {
-      setIsRestoringStoredAuth(false);
-    });
-  }, [hasRestoredStoredAuth, initialSession, session]);
+    let cancelled = false;
+    const restoreStoredAuth = async () => {
+      await Promise.resolve();
+      if (cancelled) {
+        return;
+      }
+      const storedCredentials = loadPlayAuth();
+      if (!storedCredentials) {
+        setHasRestoredStoredAuth(true);
+        return;
+      }
+      setCredentials(storedCredentials);
+      setIsRestoringStoredAuth(true);
+      await openSession(storedCredentials, { silent: true });
+      if (!cancelled) {
+        setIsRestoringStoredAuth(false);
+        setHasRestoredStoredAuth(true);
+      }
+    };
+    void restoreStoredAuth();
+    return () => {
+      cancelled = true;
+    };
+  }, [hasRestoredStoredAuth, initialSession, openSession, session]);
 
   const handleOpenSession = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

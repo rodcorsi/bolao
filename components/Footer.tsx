@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 
 import { Config } from "../lib/getConfig";
 import { formatDateTime } from "../lib/formatDate";
@@ -16,20 +16,7 @@ const Footer: React.FC<FooterProps> = ({
   className = "",
   config,
 }) => {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <footer className={`py-2 px-1 text-xs text-right italic ${className}`}>
-        &nbsp;
-      </footer>
-    );
-  }
-  const info = updateTime && expire && config? `Atualizado: ${formatDateTime(
+  const info = updateTime && expire && config ? `Atualizado: ${formatDateTime(
       updateTime,
       config.locale,
       config.timeZone
@@ -37,11 +24,11 @@ const Footer: React.FC<FooterProps> = ({
       expire,
       config.locale,
       config.timeZone
-    )}`: ""
+    )}` : "";
   return (
     <footer
       className={`py-2 px-1 text-xs text-right italic ${className}`}
-    >{info}</footer>
+    >{info || "\u00a0"}</footer>
   );
 };
 
