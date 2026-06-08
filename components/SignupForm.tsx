@@ -135,20 +135,6 @@ const SignupForm: React.FC<SignupFormProps> = ({ onRegistered }) => {
             }))
           }
         />
-        <input
-          className="rounded-xl border border-slate-300 px-3 py-2"
-          placeholder="Nome do jogo"
-          minLength={3}
-          maxLength={256}
-          required
-          value={registerForm.playerName}
-          onChange={(event) =>
-            setRegisterForm((current) => ({
-              ...current,
-              playerName: event.target.value,
-            }))
-          }
-        />
         <button
           className="inline-flex items-center justify-center gap-2 rounded-full bg-slate-900 px-4 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
           disabled={isRegistering}
