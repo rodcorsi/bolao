@@ -7,6 +7,7 @@ export interface User {
   name: string;
   cpf: string;
   pixKey: string;
+  isPaid: boolean | null;
 }
 
 export interface UserRecord extends User {
@@ -23,6 +24,7 @@ function mapUser(row: any): UserRecord {
     name: row.name,
     cpf: row.cpf,
     pixKey: row.pix_key,
+    isPaid: row.is_paid ?? null,
     secretHash: row.secret_hash,
   };
 }

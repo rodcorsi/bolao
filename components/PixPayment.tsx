@@ -11,6 +11,9 @@ interface PixPaymentProps {
 }
 
 const buildPixBRCode = (session: PlaySession, config: Config): string | null => {
+  if (session.user.isPaid === true) {
+    return null;
+  }
   const player = session.players[0];
   if (!player) {
     return null;

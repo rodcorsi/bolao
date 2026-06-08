@@ -7,6 +7,7 @@ CREATE TABLE users (
   cpf TEXT NOT NULL UNIQUE,
   pix_key TEXT NOT NULL,
   secret_hash TEXT NOT NULL,
+  is_paid BOOLEAN DEFAULT NULL,
   created_at TIMESTAMPTZ DEFAULT now(),
   CONSTRAINT users_cpf_digits CHECK (cpf ~ '^[0-9]{11}$'),
   CONSTRAINT users_name_length CHECK (char_length(trim(name)) BETWEEN 3 AND 256),
