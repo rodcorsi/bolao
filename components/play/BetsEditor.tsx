@@ -1,13 +1,13 @@
 import React, { FormEvent } from "react";
 
-import TeamCrest from "../TeamCrest";
-import { Config } from "../../lib/getConfig";
-import { formatDateTime } from "../../lib/formatDate";
-import { MatchResult } from "../../lib/ranking";
 import { CompetitionPhase } from "../../lib/tournamentPhase";
-import { PlayPlayer } from "../../lib/play";
+import { Config } from "../../lib/getConfig";
 import LoadingSpinner from "./LoadingSpinner";
+import { MatchResult } from "../../lib/ranking";
+import { PlayPlayer } from "../../lib/play";
 import ScoreInput from "./ScoreInput";
+import TeamCrest from "../TeamCrest";
+import { formatDateTime } from "../../lib/formatDate";
 
 export interface BetFormState {
   [matchId: number]: {
@@ -52,7 +52,8 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
         Palpites de {selectedPlayer.name} para {editablePhaseLabel}
       </h2>
       <p className="mt-1 text-sm text-slate-600">
-        Voce pode deixar jogos em branco. Se preencher um lado, precisa preencher o outro.
+        Voce pode deixar jogos em branco. Se preencher um lado, precisa
+        preencher o outro.
       </p>
       <input type="hidden" name="editablePhase" value={editablePhase} />
       <div className="mt-4 grid gap-3">
@@ -65,11 +66,11 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
                 : "border-slate-200"
             }`}
           >
-            <div className="flex items-center gap-2 text-sm font-medium text-slate-800">
-              <div className="min-w-0 flex-1 text-right text-ellipsis whitespace-nowrap overflow-hidden">
-                {match.homeTeam}
-              </div>
-              <TeamCrest crest={match.fixture.homeTeam.crest} teamName={match.homeTeam} />
+            <div className="flex items-center justify-center gap-2 text-sm font-medium text-slate-800">
+              <TeamCrest
+                crest={match.fixture.homeTeam.crest}
+                teamName={match.homeTeam}
+              />
               <ScoreInput
                 ariaLabel={`Placar do ${match.homeTeam}`}
                 value={betForm[match.id]?.home || ""}
@@ -81,13 +82,26 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
                 value={betForm[match.id]?.away || ""}
                 onChange={(value) => onChangeBet(match.id, "away", value)}
               />
-              <TeamCrest crest={match.fixture.awayTeam.crest} teamName={match.awayTeam} />
+              <TeamCrest
+                crest={match.fixture.awayTeam.crest}
+                teamName={match.awayTeam}
+              />
+            </div>
+            <div className="flex items-center gap-2 text-sm font-medium text-slate-800">
+              <div className="min-w-0 flex-1 text-right text-ellipsis whitespace-nowrap overflow-hidden">
+                {match.homeTeam}
+              </div>
+              <div className="shrink-0 text-xs text-slate-500">x</div>
               <div className="min-w-0 flex-1 text-ellipsis whitespace-nowrap overflow-hidden">
                 {match.awayTeam}
               </div>
             </div>
             <div className="mt-2 text-xs text-slate-500">
-              {formatDateTime(match.fixture.utcDate, config.locale, config.timeZone)}
+              {formatDateTime(
+                match.fixture.utcDate,
+                config.locale,
+                config.timeZone,
+              )}
             </div>
             {invalidMatchIdSet.has(match.id) ? (
               <div className="mt-1 text-xs text-red-700">
