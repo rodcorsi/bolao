@@ -101,8 +101,8 @@ values
     "rulesUrl": ""
   }'::jsonb),
   ('refreshTiming', '{
-    "MIN_REFRESH_SEC": 60,
-    "MAX_REFRESH_SEC": 900
+    "MIN_REFRESH_SEC": 10,
+    "MAX_REFRESH_SEC": 60
   }'::jsonb),
   ('scorePoints', '{
     "EXACT": 12,
