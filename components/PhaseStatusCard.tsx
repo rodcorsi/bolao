@@ -1,6 +1,7 @@
 import { Config } from "../lib/getConfig";
 import Link from "next/link";
 import { PhaseState } from "../lib/tournamentPhase";
+import PixPayment from "./PixPayment";
 import { formatDateTime } from "../lib/formatDate";
 
 interface PhaseStatusCardProps {
@@ -69,6 +70,7 @@ const PhaseStatusCard: React.FC<PhaseStatusCardProps> = ({
           ) : null}
         </div>
       </div>
+      {canSignup && isAuthenticated ? <PixPayment config={config} /> : null}
     </section>
   );
 };

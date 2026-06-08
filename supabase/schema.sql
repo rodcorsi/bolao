@@ -100,6 +100,11 @@ values
     "season": 2026,
     "rulesUrl": ""
   }'::jsonb),
+  ('pix', '{
+    "merchantName": "Rodrigo Corsi Gasparetto",
+    "merchantCity": "Sao Paulo",
+    "pixKey": "29842341895"
+  }'::jsonb),
   ('refreshTiming', '{
     "MIN_REFRESH_SEC": 10,
     "MAX_REFRESH_SEC": 60

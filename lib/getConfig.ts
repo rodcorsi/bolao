@@ -28,12 +28,19 @@ export interface RefreshTiming {
   MAX_REFRESH_SEC: number;
 }
 
+export interface Pix {
+  merchantName: string;
+  merchantCity: string;
+  pixKey: string;
+}
+
 export interface Config {
   timeZone: string;
   locale: string;
   currency: string;
   scorePoints: ScorePoints;
   prize: Prize;
+  pix: Pix;
   refreshTiming: RefreshTiming;
   tournament: {
     title: string;
@@ -70,6 +77,11 @@ const DEFAULT_CONFIG: Config = {
         positions: [0.6, 0.3, 0.1],
       },
     },
+  },
+  pix: {
+    merchantName: "Rodrigo Corsi Gasparetto",
+    merchantCity: "Sao Paulo",
+    pixKey: "29842341895",
   },
   refreshTiming: {
     MIN_REFRESH_SEC: 60,
