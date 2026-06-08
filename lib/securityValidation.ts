@@ -40,6 +40,10 @@ export function assertValidPlayerName(value: unknown) {
   return assertStringLength(value, "Nome do jogador", 3, 256).trim();
 }
 
+export function assertValidUserName(value: unknown) {
+  return assertStringLength(value, "Nome", 3, 256).trim();
+}
+
 export function isPublicMatchStarted(match: { fixture: { utcDate: string } }) {
   return new Date(match.fixture.utcDate).getTime() <= Date.now();
 }

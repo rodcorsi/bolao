@@ -225,6 +225,26 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
     }
   };
 
+  const handleUpdateUserName = async (name: string) => {
+    try {
+      const payload = await requestJSON<{ session: PlaySession }>(
+        "/api/users/name",
+        {
+          ...credentials,
+          name,
+        }
+      );
+      setSession(payload.session);
+      setErrorMessage(null);
+      setStatusMessage("Nome atualizado.");
+    } catch (error) {
+      setErrorMessage(
+        error instanceof Error ? error.message : "Erro ao atualizar nome."
+      );
+      throw error;
+    }
+  };
+
   const handleSaveBets = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (!selectedPlayer || !phaseState.editablePhase) {
@@ -319,6 +339,7 @@ const PlayWorkspace: React.FC<PlayWorkspaceProps> = ({
           onCreatePlayer={handleCreatePlayer}
           onNewPlayerNameChange={setNewPlayerName}
           onSelectPlayer={(playerId) => refreshBetForm(session, playerId)}
+          onUpdateUserName={handleUpdateUserName}
         />
       ) : null}
 

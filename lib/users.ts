@@ -79,6 +79,19 @@ export async function createUser(input: {
   return mapUser(data);
 }
 
+export async function updateUserName(userID: number, name: string) {
+  const { data, error } = await supabase
+    .from("users")
+    .update({ name: name.trim() })
+    .eq("id", userID)
+    .select("*")
+    .single();
+  if (error || !data) {
+    throw new Error(error?.message || "Não foi possível atualizar o nome.");
+  }
+  return mapUser(data);
+}
+
 export function assertUserSecret(user: UserRecord, secretCode: string) {
   if (!verifySecret(secretCode, user.secretHash)) {
     throw new Error("Senha inválida.");
