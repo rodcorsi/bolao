@@ -60,6 +60,14 @@ const PhaseStatusCard: React.FC<PhaseStatusCardProps> = ({
               {hasOpenWindow ? "Editar palpites" : "Acompanhar status"}
             </Link>
           )}
+          <Link
+            href="https://chat.whatsapp.com/IDFnXpCq09dKNgbzeBlk14"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="rounded-full bg-[#25D366] px-4 py-2 text-center font-semibold text-white transition hover:bg-[#1ebe5d]"
+          >
+            Entrar No Grupo WhatsApp
+          </Link>
           {config.tournament.rulesUrl ? (
             <Link
               href={config.tournament.rulesUrl}
