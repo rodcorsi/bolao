@@ -3,6 +3,7 @@ import { MatchResult } from "../lib/ranking";
 import React from "react";
 import TeamCrest from "./TeamCrest";
 import { formatDateTime } from "../lib/formatDate";
+import { t } from "../lib/translate";
 
 interface MatchHeaderProps {
   match: MatchResult;
@@ -21,15 +22,21 @@ const MatchHeader: React.FC<MatchHeaderProps> = ({
     <div className={className}>
       <div className={`flex flex-nowrap shrink-0 my-2 items-center`}>
         <div className="w-full text-right text-ellipsis whitespace-nowrap overflow-hidden">
-          {match.homeTeam}
+          {t(match.homeTeam)}
         </div>
-        <TeamCrest crest={match.fixture.homeTeam.crest} teamName={match.homeTeam} />
+        <TeamCrest
+          crest={match.fixture.homeTeam.crest}
+          teamName={match.homeTeam}
+        />
         <div className="w-10 text-lg text-center">{homeGoals}</div>
         <div className="text-sm text-center">x</div>
         <div className="w-10 text-lg text-center">{awayGoals}</div>
-        <TeamCrest crest={match.fixture.awayTeam.crest} teamName={match.awayTeam} />
+        <TeamCrest
+          crest={match.fixture.awayTeam.crest}
+          teamName={match.awayTeam}
+        />
         <div className="w-full text-ellipsis whitespace-nowrap overflow-hidden">
-          {match.awayTeam}
+          {t(match.awayTeam)}
         </div>
       </div>
       <div className="flex justify-between h-4 mb-2 text-xs px-2">

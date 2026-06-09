@@ -6,6 +6,7 @@ import React from "react";
 import TeamCrest from "./TeamCrest";
 import { formatDateTime } from "../lib/formatDate";
 import { selectGoals } from "../lib/getFootballFixture";
+import { t } from "../lib/translate";
 
 interface BetsMatchProps {
   match: MatchResult;
@@ -20,9 +21,12 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
       <Link href={`/matches/${match.id}`}>
         <div className="flex flex-nowrap shrink-0 mt-2">
           <div className="w-full text-right text-ellipsis whitespace-nowrap overflow-hidden">
-            {match.homeTeam}
+            {t(match.homeTeam)}
           </div>
-          <TeamCrest crest={match.fixture.homeTeam.crest} teamName={match.homeTeam} />
+          <TeamCrest
+            crest={match.fixture.homeTeam.crest}
+            teamName={match.homeTeam}
+          />
           {!hasBet ? (
             <>
               <div className="w-10 text-lg text-center"></div>
@@ -48,16 +52,17 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
               </IsEqual>
             </>
           )}
-          <TeamCrest crest={match.fixture.awayTeam.crest} teamName={match.awayTeam} />
+          <TeamCrest
+            crest={match.fixture.awayTeam.crest}
+            teamName={match.awayTeam}
+          />
           <div className="w-full text-ellipsis whitespace-nowrap overflow-hidden">
-            {match.awayTeam}
+            {t(match.awayTeam)}
           </div>
           {hasBet ? <Point points={bet?.points} /> : <div></div>}
         </div>
         <div className="flex flex-nowrap shrink-0 text-xs justify-between italic mt-2">
-          <div className="w-full">
-            {formatDateTime(match.fixture.utcDate)}
-          </div>
+          <div className="w-full">{formatDateTime(match.fixture.utcDate)}</div>
           <InPlay status={match.status} />
           <div className="w-full my-auto text-right">
             {goals.homeTeam != null && (

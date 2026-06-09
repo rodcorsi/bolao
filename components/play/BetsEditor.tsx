@@ -8,6 +8,7 @@ import { PlayPlayer } from "../../lib/play";
 import ScoreInput from "./ScoreInput";
 import TeamCrest from "../TeamCrest";
 import { formatDateTime } from "../../lib/formatDate";
+import { t } from "../../lib/translate";
 
 export interface BetFormState {
   [matchId: number]: {
@@ -72,13 +73,13 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
                 teamName={match.homeTeam}
               />
               <ScoreInput
-                ariaLabel={`Placar do ${match.homeTeam}`}
+                ariaLabel={`Placar do ${t(match.homeTeam)}`}
                 value={betForm[match.id]?.home || ""}
                 onChange={(value) => onChangeBet(match.id, "home", value)}
               />
               <div className="shrink-0 text-xs text-slate-500">x</div>
               <ScoreInput
-                ariaLabel={`Placar do ${match.awayTeam}`}
+                ariaLabel={`Placar do ${t(match.awayTeam)}`}
                 value={betForm[match.id]?.away || ""}
                 onChange={(value) => onChangeBet(match.id, "away", value)}
               />
@@ -89,11 +90,11 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
             </div>
             <div className="flex items-center gap-2 text-sm font-medium text-slate-800">
               <div className="min-w-0 flex-1 text-right text-ellipsis whitespace-nowrap overflow-hidden">
-                {match.homeTeam}
+                {t(match.homeTeam)}
               </div>
               <div className="shrink-0 text-xs text-slate-500">x</div>
               <div className="min-w-0 flex-1 text-ellipsis whitespace-nowrap overflow-hidden">
-                {match.awayTeam}
+                {t(match.awayTeam)}
               </div>
             </div>
             <div className="mt-2 text-xs text-slate-500">
