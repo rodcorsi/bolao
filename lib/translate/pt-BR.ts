@@ -45,6 +45,6 @@ export const ptBR: Record<string, string> = {
   Japan: "Japão",
   "Ivory Coast": "Costa do Marfim",
   Haiti: "Haiti",
-  Czechia: "Chéquia",
+  Czechia: "República Tcheca",
   "United States": "Estados Unidos",
 } as const;
