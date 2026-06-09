@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 
 import { SessionCredentials } from "../lib/playAuthStorage";
 import { defaultPlayerName } from "../lib/playerDisplayName";
+import { isFullName, toTitleCase } from "../lib/formatName";
 
 interface SignupFormProps {
   onRegistered: (credentials: SessionCredentials) => void;
@@ -44,6 +45,10 @@ const SignupForm: React.FC<SignupFormProps> = ({ onRegistered }) => {
 
   const handleRegister = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (!isFullName(registerForm.name)) {
+      setErrorMessage("Informe nome e sobrenome.");
+      return;
+    }
     setIsRegistering(true);
     setErrorMessage(null);
     try {
@@ -87,6 +92,12 @@ const SignupForm: React.FC<SignupFormProps> = ({ onRegistered }) => {
             setRegisterForm((current) => ({
               ...current,
               name: event.target.value,
+            }))
+          }
+          onBlur={() =>
+            setRegisterForm((current) => ({
+              ...current,
+              name: toTitleCase(current.name),
             }))
           }
         />

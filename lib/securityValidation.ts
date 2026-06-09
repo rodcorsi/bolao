@@ -1,4 +1,5 @@
 import { PhaseState } from "./tournamentPhase";
+import { isFullName } from "./formatName";
 import { normalizeCPF } from "./users";
 
 export function assertInitialPhase(phaseState: PhaseState) {
@@ -15,6 +16,9 @@ export function assertValidSignupInput(input: {
   playerName: unknown;
 }) {
   const name = assertStringLength(input.name, "Nome", 3, 256).trim();
+  if (!isFullName(name)) {
+    throw new Error("Informe nome e sobrenome.");
+  }
   const cpf = normalizeCPF(assertStringLength(input.cpf, "CPF", 11, 32));
   if (cpf.length !== 11) {
     throw new Error("CPF deve conter 11 números.");
