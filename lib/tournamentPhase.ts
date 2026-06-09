@@ -199,6 +199,11 @@ export function getPhaseLockAt(
   matches: Array<Match | MatchResult>,
   schedule: PhaseSchedule,
 ) {
+  const targetPhase = COMPETITION_TO_TOURNAMENT[editablePhase];
+  const scheduledLockAt = schedule[targetPhase]?.startsAt || null;
+  if (scheduledLockAt) {
+    return scheduledLockAt;
+  }
   const phaseMatches = getMatchesForCompetitionPhase(matches, editablePhase);
   const matchStarts = phaseMatches
     .map((match) => {
@@ -209,11 +214,7 @@ export function getPhaseLockAt(
     })
     .filter((value): value is string => value != null)
     .sort((a, b) => new Date(a).getTime() - new Date(b).getTime());
-  if (matchStarts.length > 0) {
-    return matchStarts[0];
-  }
-  const targetPhase = COMPETITION_TO_TOURNAMENT[editablePhase];
-  return schedule[targetPhase]?.startsAt || null;
+  return matchStarts[0] ?? null;
 }
 
 export function getMatchesForCompetitionPhase<T extends Match | MatchResult>(

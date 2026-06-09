@@ -10,7 +10,7 @@ export function formatDateTime(
     month: "2-digit",
     year: "numeric",
     hour12: false,
-    hour: "numeric",
+    hour: "2-digit",
     minute: "2-digit",
   };
   return dt.toLocaleString(locale, optionsDateFormat);
