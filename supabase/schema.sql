@@ -74,14 +74,14 @@ values
   (
     'phaseSchedule',
     '{
-      "INICIO": { "startsAt": "2026-05-01T16:00:00-03:00" },
-      "FASE_DE_GRUPOS": { "startsAt": "2026-06-11T16:00:00-03:00" },
-      "FASE_16": { "startsAt": "2026-06-28T14:00:00-03:00" },
-      "OITAVAS": { "startsAt": "2026-07-04T14:00:00-03:00" },
-      "QUARTAS": { "startsAt": "2026-07-09T14:00:00-03:00" },
-      "SEMI_FINAIS": { "startsAt": "2026-07-14T14:00:00-03:00" },
-      "FINAIS": { "startsAt": "2026-07-19T16:00:00-03:00" },
-      "FIM": { "startsAt": "2026-07-19T20:00:00-03:00" }
+      "INICIO": { "startsAt": "2026-05-01T14:00:00-03:00" },
+      "FASE_DE_GRUPOS": { "startsAt": "2026-06-11T14:00:00-03:00" },
+      "FASE_16": { "startsAt": "2026-06-28T12:00:00-03:00" },
+      "OITAVAS": { "startsAt": "2026-07-04T12:00:00-03:00" },
+      "QUARTAS": { "startsAt": "2026-07-09T12:00:00-03:00" },
+      "SEMI_FINAIS": { "startsAt": "2026-07-14T12:00:00-03:00" },
+      "FINAIS": { "startsAt": "2026-07-19T14:00:00-03:00" },
+      "FIM": { "startsAt": "2026-07-19T18:00:00-03:00" }
     }'::jsonb
   )
 on conflict (key)
@@ -104,7 +104,7 @@ values
   ('pix', '{
     "merchantName": "Rodrigo Corsi Gasparetto",
     "merchantCity": "Sao Paulo",
-    "pixKey": "29842341895"
+    "pixKey": "rodrigocorsi@gmail.com"
   }'::jsonb),
   ('refreshTiming', '{
     "MIN_REFRESH_SEC": 10,
