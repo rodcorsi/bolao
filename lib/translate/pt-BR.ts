@@ -10,7 +10,7 @@ export const ptBR: Record<string, string> = {
   Sweden: "Suécia",
   Scotland: "Escócia",
   Qatar: "Catar",
-  Netherlands: "Países Baixos",
+  Netherlands: "Holanda",
   Paraguay: "Paraguai",
   Jordan: "Jordânia",
   Brazil: "Brasil",
