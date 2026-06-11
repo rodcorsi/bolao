@@ -10,6 +10,7 @@ const FOOTBALL_DATA_ORG_SEASON = process.env.FOOTBALL_DATA_ORG_SEASON || "2026";
 
 export async function getFootballFixtureMap() {
   const fixture = await getFootballFixture();
+  console.log(JSON.stringify(fixture));
   if (!fixture || !fixture.matches) return {};
   return fixture.matches.reduce(
     (acc, match) => {
