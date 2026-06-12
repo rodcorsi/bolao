@@ -6,9 +6,8 @@ dayjs.extend(utc);
 dayjs.extend(timezone);
 
 export default function startOfDay(
-  date: Date | string | number = Date.now(),
-  timeZone: string = "UTC"
+  date: Date | string | number,
+  timeZone: string,
 ) {
-  const dt = dayjs(date).tz(timeZone);
-  return dt.startOf("day").toDate().getTime();
+  return dayjs.utc(date).tz(timeZone).startOf("day").valueOf();
 }

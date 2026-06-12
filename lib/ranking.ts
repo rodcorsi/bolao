@@ -1,18 +1,19 @@
 import { Bet, getBetsByPlayerID } from "./getBets";
+import { Config, getConfig } from "./getConfig";
 import {
   FootballDataMatch,
   getFootballFixtureMap,
   selectGoals,
 } from "./getFootballFixture";
 import connectCache, { getCacheResult, setCache } from "./connectCache";
+import { countPoints, sortRankingItems, sumPoints } from "./rankingSummary";
 import getMatches, { Match } from "./getMatches";
 import getPlayers, { Player } from "./getPlayers";
 
 import calculatePoints from "./calculatePoints";
-import { getConfig, Config } from "./getConfig";
-export { bestRankingForMatches, rankingForMatches } from "./rankingSummary";
-import { countPoints, sortRankingItems, sumPoints } from "./rankingSummary";
 import startOfDay from "./startOfDay";
+
+export { bestRankingForMatches, rankingForMatches } from "./rankingSummary";
 
 export interface Ranking {
   matches: MatchResult[];
@@ -100,7 +101,7 @@ export async function getMatchesResult() {
     const fixture = fixtureMap[match.fixtureID];
     if (!fixture) {
       console.warn(
-        `Fixture not found for match ${match.id} (fixtureID: ${match.fixtureID})`
+        `Fixture not found for match ${match.id} (fixtureID: ${match.fixtureID})`,
       );
       continue;
     }
@@ -118,13 +119,13 @@ function calculateStatus(fixture: FootballDataMatch): MatchStatus {
   switch (status) {
     case "FINISHED":
     case "AWARDED":
-    return "FINISHED";
+      return "FINISHED";
     case "SCHEDULED":
     case "TIMED":
     case "POSTPONED":
     case "SUSPENDED":
     case "CANCELLED":
-    return "NOT_STARTED";
+      return "NOT_STARTED";
   }
   return "IN_PLAY";
 }
@@ -163,10 +164,10 @@ function whenIsNextMatchInMs(matches: MatchResult[]) {
 async function createRankingItems(
   players: Player[],
   matches: MatchResult[],
-  config: Config
+  config: Config,
 ) {
   const items = await Promise.all(
-    players.map((player) => rankingItem(player, matches, config))
+    players.map((player) => rankingItem(player, matches, config)),
   );
   sortRankingItems(items);
   const lastRanking = await calculateLastRanking(players, matches, config);
@@ -177,13 +178,16 @@ async function createRankingItems(
 async function rankingItem(
   player: Player,
   matches: MatchResult[],
-  config: Config
+  config: Config,
 ): Promise<RankingItem> {
   const playerBets = await getBetsByPlayerID(player.id);
-  const betsByMatchID = playerBets.reduce((acc, bet) => {
-    acc[bet.matchID] = bet;
-    return acc;
-  }, {} as { [matchID: number]: Bet });
+  const betsByMatchID = playerBets.reduce(
+    (acc, bet) => {
+      acc[bet.matchID] = bet;
+      return acc;
+    },
+    {} as { [matchID: number]: Bet },
+  );
   const bets = new Array<BetResult>(matches.length);
   for (let i = 0; i < matches.length; i++) {
     const match = matches[i];
@@ -195,7 +199,11 @@ async function rankingItem(
       bet.homeGoals != null &&
       bet.awayGoals != null
     ) {
-      points = calculatePoints(bet, selectGoals(match.fixture), config.scorePoints);
+      points = calculatePoints(
+        bet,
+        selectGoals(match.fixture),
+        config.scorePoints,
+      );
     }
     bets[i] = {
       playerID: player.id,
@@ -218,24 +226,27 @@ async function rankingItem(
 async function calculateLastRanking(
   players: Player[],
   matches: MatchResult[],
-  config: Config
+  config: Config,
 ) {
   const startDay = startOfDay(Date.now(), config.timeZone);
   const matchUntilStartDay = matches.filter(
-    ({ fixture }) => new Date(fixture.utcDate).getTime() < startDay
+    ({ fixture }) => new Date(fixture.utcDate).getTime() < startDay,
   );
   const items = await Promise.all(
-    players.map((player) => rankingItem(player, matchUntilStartDay, config))
+    players.map((player) => rankingItem(player, matchUntilStartDay, config)),
   );
   sortRankingItems(items);
   return items;
 }
 
 function assignOldPosition(items: RankingItem[], lastItems: RankingItem[]) {
-  const mapLastRanking = lastItems.reduce((acc, item) => {
-    acc[item.player.id] = item.position;
-    return acc;
-  }, {} as { [playerID: string]: number });
+  const mapLastRanking = lastItems.reduce(
+    (acc, item) => {
+      acc[item.player.id] = item.position;
+      return acc;
+    },
+    {} as { [playerID: string]: number },
+  );
   for (const item of items) {
     item.oldPosition = mapLastRanking[item.player.id];
   }
@@ -243,9 +254,12 @@ function assignOldPosition(items: RankingItem[], lastItems: RankingItem[]) {
 
 export function getMatchesOfDay(
   matches: MatchResult[],
-  day: Date | number | string = Date.now()
+  day: Date | number | string = Date.now(),
+  timeZone = "America/Sao_Paulo",
 ) {
+  const targetDay = startOfDay(day, timeZone);
+
   return matches.filter(
-    (match) => startOfDay(match.fixture.utcDate) === startOfDay(day)
+    (match) => startOfDay(match.fixture.utcDate, timeZone) === targetDay,
   );
 }
