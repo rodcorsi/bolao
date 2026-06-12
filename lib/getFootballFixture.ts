@@ -46,20 +46,33 @@ function fetchFootballFixture() {
   );
 }
 
-export function selectGoals(match: FootballDataMatch) {
-  if (
-    match.score.regularTime?.homeTeam != null &&
-    match.score.regularTime?.awayTeam != null
-  ) {
-    return match.score.regularTime;
+export function selectGoals({ score }: FootballDataMatch): Goals {
+  const regularTime = getGoals(score.regularTime);
+  if (isGoalsFilled(regularTime)) return regularTime;
+
+  const fullTime = getGoals(score.fullTime);
+  if (isGoalsFilled(fullTime)) return fullTime;
+
+  return getGoals(score.halfTime);
+}
+
+function getGoals(
+  g: Goals | undefined | null | { home?: number | null; away?: number | null },
+): Goals {
+  if (!g) return { homeTeam: null, awayTeam: null };
+  if ("homeTeam" in g) {
+    return g;
   }
-  if (
-    match.score.fullTime.homeTeam != null &&
-    match.score.fullTime.awayTeam != null
-  ) {
-    return match.score.fullTime;
+  if ("home" in g) {
+    return {
+      homeTeam: g.home ?? null,
+      awayTeam: g.away ?? null,
+    };
   }
-  return match.score.halfTime;
+  return { homeTeam: null, awayTeam: null };
+}
+function isGoalsFilled(g?: Goals): g is Goals {
+  return g?.homeTeam != null && g.awayTeam != null;
 }
 
 // https://docs.football-data.org/general/v4

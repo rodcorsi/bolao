@@ -10,7 +10,6 @@ export default async function apiFootball<T>(endpoint: string): Promise<T> {
     headers,
     redirect: "follow",
   });
-
   if (!response.ok) {
     const body = await response.text();
     throw new Error(
