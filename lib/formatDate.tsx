@@ -1,7 +1,7 @@
 export function formatDateTime(
   date: Date | string | number,
-  locale: string = "en-US",
-  timeZone: string = "UTC"
+  locale: string = "pt-BR",
+  timeZone: string = "America/Sao_Paulo",
 ) {
   const dt = new Date(date);
   const optionsDateFormat: Intl.DateTimeFormatOptions = {
