@@ -22,9 +22,9 @@ const ListBestPlayers: React.FC<ListBestPlayersProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-2">
         {rankingItems.map(({ player, points, position }, index) => (
           <Link key={index} href={`/players/${player.id}`}>
-            <div className="flex hover:bg-slate-200 py-4 px-2 border-gray-200 border">
+            <div className="flex hover:bg-slate-200 py-4 px-2 border-gray-200 border items-center shadow-sm rounded-xl">
               <Position position={position} lastPosition={position + 1} />
-              <div className="w-full whitespace-nowrap flex-nowrap text-ellipsis overflow-hidden">
+              <div className="w-full pl-2 whitespace-nowrap flex-nowrap text-ellipsis overflow-hidden">
                 {getPlayerDisplayName(player)}
               </div>
               <div className="w-9 font-bold whitespace-nowrap flex-nowrap text-gray-700">

@@ -93,12 +93,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({
               key={item.player.id}
               className="flex items-center gap-3 px-3 py-3 transition hover:bg-slate-50"
             >
-              <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-slate-100">
-                <Position
-                  position={item.position}
-                  lastPosition={lastPosition}
-                />
-              </div>
+              <Position position={item.position} lastPosition={lastPosition} />
 
               <div className="min-w-0 grow">
                 <Link href={`/players/${item.player.id}`}>

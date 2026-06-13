@@ -1,9 +1,9 @@
 import ChangePosition from "./ChangePosition";
 import Link from "next/link";
 import Position from "./Position";
-import { getPlayerDisplayName } from "../lib/playerDisplayName";
 import { RankingItem } from "../lib/ranking";
 import React from "react";
+import { getPlayerDisplayName } from "../lib/playerDisplayName";
 
 interface RankingListItemProps {
   rankingItem: RankingItem;
@@ -18,7 +18,7 @@ const RankingListItem: React.FC<RankingListItemProps> = ({
     <li className="px-2 py-2 border-b border-gray-200 w-full hover:bg-slate-200">
       <Link className="flex" href={`/players/${player.id}`}>
         <Position position={position} lastPosition={lastPosition} />
-        <div className="grow text-ellipsis whitespace-nowrap overflow-hidden">
+        <div className="grow text-ellipsis whitespace-nowrap overflow-hidden pl-2 flex items-center">
           {getPlayerDisplayName(player)}
         </div>
         <ChangePosition

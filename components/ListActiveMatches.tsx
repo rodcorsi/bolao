@@ -20,7 +20,7 @@ const ListActiveMatches: React.FC<ListActiveMatchesProps> = ({
         return (
           <Link href={`/matches/${match.id}`} key={match.id}>
             <MatchHeader
-              className="hover:bg-slate-200 border-gray-200 border"
+              className="hover:bg-slate-200 border-gray-200 border rounded-xl shadow-sm"
               match={match}
               homeGoals={goals.homeTeam}
               awayGoals={goals.awayTeam}
