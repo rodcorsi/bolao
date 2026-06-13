@@ -12,6 +12,7 @@ import Link from "next/link";
 import MatchHeader from "../../components/MatchHeader";
 import Position from "../../components/Position";
 import { getPhaseState } from "../../lib/phaseState";
+import { getPlayerDisplayName } from "../../lib/playerDisplayName";
 import { isMatchVisibleForPhase } from "../../lib/tournamentPhase";
 import { selectGoals } from "../../lib/getFootballFixture";
 
@@ -71,7 +72,7 @@ const Match = ({
                   lastPosition={ranking.lastPosition}
                 />
                 <div className="grow text-ellipsis whitespace-nowrap overflow-hidden">
-                  {player.name}
+                  {getPlayerDisplayName(player)}
                 </div>
                 <div className="w-14">
                   {bet != null ? formatBet(bet.homeGoals, bet.awayGoals) : ""}
@@ -92,7 +93,7 @@ function sortByPoints(rankingItems: RankingItem[], matchID: number) {
   itemsByPoints.sort(
     (a, b) =>
       (b.bets.find((b) => b.matchID === matchID)?.points || 0) -
-      (a.bets.find((b) => b.matchID === matchID)?.points || 0)
+      (a.bets.find((b) => b.matchID === matchID)?.points || 0),
   );
   return itemsByPoints;
 }
@@ -104,7 +105,7 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async ({ res, params }) => {
   res.setHeader(
     "Cache-Control",
-    "public, s-maxage=60, stale-while-revalidate=86400"
+    "public, s-maxage=60, stale-while-revalidate=86400",
   );
   const id = parseInt(params?.id as string);
   const [ranking, config] = await Promise.all([getRanking(), getConfig()]);
