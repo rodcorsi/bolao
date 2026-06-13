@@ -188,7 +188,12 @@ export function resolvePhaseState(
     overridePhase && TOURNAMENT_PHASES.includes(overridePhase)
       ? overridePhase
       : resolveCurrentPhaseBySchedule(schedule, now);
-  const editablePhase = getEditableCompetitionPhase(currentPhase);
+  const candidateEditablePhase = getEditableCompetitionPhase(currentPhase);
+  const editablePhase =
+    candidateEditablePhase &&
+    getMatchesForCompetitionPhase(matches, candidateEditablePhase).length > 0
+      ? candidateEditablePhase
+      : null;
   const phaseStartAt = schedule[currentPhase]?.startsAt || null;
   const editablePhaseLockAt = editablePhase
     ? getPhaseLockAt(editablePhase, matches, schedule)
