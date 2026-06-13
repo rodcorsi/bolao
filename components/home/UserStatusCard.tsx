@@ -2,6 +2,7 @@ import { MatchResult, RankingItem } from "../../lib/ranking";
 import { useEffect, useState } from "react";
 
 import ChangePosition from "../ChangePosition";
+import Link from "next/link";
 import { PlaySession } from "../../lib/play";
 import Position from "../Position";
 import React from "react";
@@ -100,9 +101,11 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({
               </div>
 
               <div className="min-w-0 grow">
-                <div className="truncate font-semibold text-slate-900">
-                  {item.player.name}
-                </div>
+                <Link href={`/players/${item.player.id}`}>
+                  <div className="truncate font-semibold text-slate-900">
+                    {item.player.name}
+                  </div>
+                </Link>
               </div>
 
               <div className="flex flex-col items-center rounded-xl bg-sky-50 px-3 py-1">
