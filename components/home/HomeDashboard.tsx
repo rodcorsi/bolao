@@ -1,14 +1,15 @@
+import { MatchResult, RankingItem } from "../../lib/ranking";
+
 import { Config } from "../../lib/getConfig";
 import Footer from "../Footer";
-import { buildPrizeSummary } from "../../lib/prize";
 import Link from "next/link";
 import ListActiveMatches from "../ListActiveMatches";
 import ListBestPlayers from "../ListBestPlayers";
+import { PhaseState } from "../../lib/tournamentPhase";
 import PhaseStatusCard from "../PhaseStatusCard";
 import RankingList from "../RankingList";
 import React from "react";
-import { MatchResult, RankingItem } from "../../lib/ranking";
-import { PhaseState } from "../../lib/tournamentPhase";
+import { buildPrizeSummary } from "../../lib/prize";
 
 interface HomeDashboardProps {
   allMatches: MatchResult[];
@@ -57,12 +58,12 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
           config={config}
           isAuthenticated
         />
-        <h2 className="p-2 text-lg font-bold text-gray-700">Ranking geral</h2>
         <ListActiveMatches
           className="mb-2 grid gap-2 sm:grid-cols-2"
           matches={matchesOfDay}
         />
         <ListBestPlayers rankingItems={bestOfDay} />
+        <h2 className="p-2 text-lg font-bold text-gray-700">Ranking geral</h2>
         <div className="rounded-lg bg-white md:border md:border-gray-200">
           <RankingList
             rankingItems={items}
@@ -71,7 +72,9 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
           />
         </div>
         <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-          <h3 className="text-lg font-bold text-slate-900">Premiação do bolão</h3>
+          <h3 className="text-lg font-bold text-slate-900">
+            Premiação do bolão
+          </h3>
           <p className="mt-1 text-sm text-slate-600">
             {`Caixa atual de ${currencyFormat(prizeSummary.totalPool)} com prêmios para a classificação geral e duas etapas específicas (Fase de Grupos e Finais).`}
           </p>
@@ -136,7 +139,10 @@ const PrizeCard: React.FC<{
     <div className="mt-3 text-2xl font-black text-slate-950">{amount}</div>
     <div className="mt-3 space-y-1 text-sm text-slate-700">
       {winners.map((winner) => (
-        <div key={winner.label} className="flex items-center justify-between gap-3">
+        <div
+          key={winner.label}
+          className="flex items-center justify-between gap-3"
+        >
           <span>{winner.label}</span>
           <span className="font-semibold">{winner.amount}</span>
         </div>

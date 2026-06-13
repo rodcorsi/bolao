@@ -1,8 +1,8 @@
 import Link from "next/link";
 import Position from "./Position";
-import { getPlayerDisplayName } from "../lib/playerDisplayName";
 import { RankingItem } from "../lib/ranking";
 import React from "react";
+import { getPlayerDisplayName } from "../lib/playerDisplayName";
 
 interface ListBestPlayersProps {
   rankingItems: RankingItem[];
@@ -16,9 +16,9 @@ const ListBestPlayers: React.FC<ListBestPlayersProps> = ({
   if (rankingItems.length === 0) return null;
   return (
     <div className={className}>
-      <h3 className="font-bold text-lg text-gray-700">
+      <h2 className="p-2 font-bold text-lg text-gray-700">
         Maiores Pontuadores do dia
-      </h3>
+      </h2>
       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 mb-2">
         {rankingItems.map(({ player, points, position }, index) => (
           <Link key={index} href={`/players/${player.id}`}>
