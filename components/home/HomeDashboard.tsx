@@ -9,6 +9,7 @@ import { PhaseState } from "../../lib/tournamentPhase";
 import PhaseStatusCard from "../PhaseStatusCard";
 import RankingList from "../RankingList";
 import React from "react";
+import UserStatusCard from "./UserStatusCard";
 import { buildPrizeSummary } from "../../lib/prize";
 
 interface HomeDashboardProps {
@@ -57,6 +58,11 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
           phaseState={phaseState}
           config={config}
           isAuthenticated
+        />
+        <UserStatusCard
+          items={items}
+          matchesOfDay={matchesOfDay}
+          lastPosition={lastPosition}
         />
         <ListActiveMatches
           className="mb-2 grid gap-2 sm:grid-cols-2"
