@@ -11,7 +11,8 @@ import Head from "next/head";
 import Link from "next/link";
 import MatchHeader from "../../components/MatchHeader";
 import Position from "../../components/Position";
-import { isPublicMatchStarted } from "../../lib/securityValidation";
+import { getPhaseState } from "../../lib/phaseState";
+import { isMatchVisibleForPhase } from "../../lib/tournamentPhase";
 import { selectGoals } from "../../lib/getFootballFixture";
 
 const Match = ({
@@ -113,7 +114,8 @@ export const getServerSideProps: GetServerSideProps<{
       notFound: true,
     };
   }
-  if (!isPublicMatchStarted(match)) {
+  const phaseState = getPhaseState(config, ranking.matches);
+  if (!isMatchVisibleForPhase(match, phaseState.currentPhase)) {
     return {
       notFound: true,
     };

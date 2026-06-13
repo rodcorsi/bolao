@@ -10,7 +10,6 @@ import Head from "next/head";
 import Link from "next/link";
 import RankingList from "../../components/RankingList";
 import { getPhaseState } from "../../lib/phaseState";
-import { isPublicMatchStarted } from "../../lib/securityValidation";
 
 const PlayerDetails = ({
   player,
@@ -72,7 +71,7 @@ export const getServerSideProps: GetServerSideProps<{
   );
   const visibleMatches = ranking.matches.filter((match) => {
     const phase = normalizeCompetitionPhase(match.fase);
-    return phase != null && visiblePhases.has(phase) && isPublicMatchStarted(match);
+    return phase != null && visiblePhases.has(phase);
   });
   const rankingItem = ranking.items.find((item) => item.player.id === id);
   if (!rankingItem) {

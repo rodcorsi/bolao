@@ -120,6 +120,16 @@ export function getVisibleCompetitionPhases(phase: TournamentPhase) {
   return CUMULATIVE_COMPETITION_PHASES[phase] ?? [];
 }
 
+export function isMatchVisibleForPhase(
+  match: { fase: string },
+  currentPhase: TournamentPhase,
+): boolean {
+  const phase = normalizeCompetitionPhase(match.fase);
+  return (
+    phase != null && getVisibleCompetitionPhases(currentPhase).includes(phase)
+  );
+}
+
 export function normalizeCompetitionPhase(value: string) {
   const normalized = value.trim().toLowerCase();
   switch (normalized) {
