@@ -60,6 +60,23 @@ CREATE TABLE config (
   updated_at TIMESTAMPTZ DEFAULT now()
 );
 
+-- 6. Resultados consolidados (1x1 com matches)
+CREATE TABLE match_results (
+  match_id BIGINT PRIMARY KEY REFERENCES matches(id),
+  home_goals INT NOT NULL,
+  away_goals INT NOT NULL,
+  kickoff_at TIMESTAMPTZ NOT NULL,
+  fixture JSONB NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- 7. Pontos consolidados (1x1 com bets)
+CREATE TABLE bet_points (
+  bet_id BIGINT PRIMARY KEY REFERENCES bets(id),
+  points INT NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT now()
+);
+
 -- Enable RLS (Optional, but recommended for production)
 -- ALTER TABLE users ENABLE ROW LEVEL SECURITY;
 -- ALTER TABLE players ENABLE ROW LEVEL SECURITY;

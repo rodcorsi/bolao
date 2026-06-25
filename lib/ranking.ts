@@ -10,7 +10,9 @@ import { countPoints, sortRankingItems, sumPoints } from "./rankingSummary";
 import getMatches, { Match } from "./getMatches";
 import getPlayers, { Player } from "./getPlayers";
 
+import { betPointsKey, getBetPointsMap } from "./getBetPoints";
 import calculatePoints from "./calculatePoints";
+import { getMatchResultsMap } from "./getMatchResults";
 import startOfDay from "./startOfDay";
 
 export { bestRankingForMatches, rankingForMatches } from "./rankingSummary";
@@ -53,6 +55,11 @@ export type MatchStatus = "FINISHED" | "IN_PLAY" | "NOT_STARTED";
 const CACHE_NAME =
   process.env.NODE_ENV === "development" ? "ranking:dev" : "ranking";
 
+export async function invalidateRankingCache() {
+  await connectCache();
+  await setCache(CACHE_NAME, null, Date.now());
+}
+
 export default async function getRanking(): Promise<Ranking> {
   await connectCache();
   const result = await getCacheResult<Ranking>(CACHE_NAME);
@@ -82,7 +89,8 @@ async function _getRanking(): Promise<Ranking> {
   const config = await getConfig();
   const matches = await getMatchesResult();
   const players = await getPlayers();
-  const items = await createRankingItems(players, matches, config);
+  const betPointsMap = await getBetPointsMap();
+  const items = await createRankingItems(players, matches, config, betPointsMap);
   return {
     matches,
     items,
@@ -94,11 +102,17 @@ async function _getRanking(): Promise<Ranking> {
 
 export async function getMatchesResult() {
   const matches = await getMatches();
-  const fixtureMap = await getFootballFixtureMap();
+  const resultsMap = await getMatchResultsMap();
+  const dateFrom = maxKickoffDateFrom(resultsMap);
+  const fixtureMap = await getFootballFixtureMap(
+    dateFrom ? { dateFrom } : undefined,
+  );
   const matchesResult = [];
   for (let i = 0; i < matches.length; i++) {
     const match = matches[i];
-    const fixture = fixtureMap[match.fixtureID];
+    // Jogos consolidados usam o snapshot salvo; ao vivo/futuros usam o fixture
+    // fresco buscado a partir de dateFrom (sem nova chamada para jogos antigos).
+    const fixture = fixtureMap[match.fixtureID] ?? resultsMap[match.id]?.fixture;
     if (!fixture) {
       console.warn(
         `Fixture not found for match ${match.id} (fixtureID: ${match.fixtureID})`,
@@ -112,6 +126,19 @@ export async function getMatchesResult() {
     });
   }
   return matchesResult;
+}
+
+function maxKickoffDateFrom(resultsMap: {
+  [matchID: number]: { kickoffAt: string };
+}): string | undefined {
+  let max = 0;
+  for (const result of Object.values(resultsMap)) {
+    const time = new Date(result.kickoffAt).getTime();
+    if (!Number.isNaN(time) && time > max) {
+      max = time;
+    }
+  }
+  return max === 0 ? undefined : new Date(max).toISOString().slice(0, 10);
 }
 
 function calculateStatus(fixture: FootballDataMatch): MatchStatus {
@@ -165,12 +192,18 @@ async function createRankingItems(
   players: Player[],
   matches: MatchResult[],
   config: Config,
+  betPointsMap: { [key: string]: number },
 ) {
   const items = await Promise.all(
-    players.map((player) => rankingItem(player, matches, config)),
+    players.map((player) => rankingItem(player, matches, config, betPointsMap)),
   );
   sortRankingItems(items);
-  const lastRanking = await calculateLastRanking(players, matches, config);
+  const lastRanking = await calculateLastRanking(
+    players,
+    matches,
+    config,
+    betPointsMap,
+  );
   assignOldPosition(items, lastRanking);
   return items;
 }
@@ -179,6 +212,7 @@ async function rankingItem(
   player: Player,
   matches: MatchResult[],
   config: Config,
+  betPointsMap: { [key: string]: number },
 ): Promise<RankingItem> {
   const playerBets = await getBetsByPlayerID(player.id);
   const betsByMatchID = playerBets.reduce(
@@ -192,8 +226,12 @@ async function rankingItem(
   for (let i = 0; i < matches.length; i++) {
     const match = matches[i];
     const bet = betsByMatchID[match.id];
+    const storedPoints = betPointsMap[betPointsKey(player.id, match.id)];
     let points = null;
-    if (
+    if (storedPoints !== undefined) {
+      // Jogo consolidado: pontos vêm de bet_points, sem recálculo.
+      points = storedPoints;
+    } else if (
       match.status !== "NOT_STARTED" &&
       bet != null &&
       bet.homeGoals != null &&
@@ -227,13 +265,16 @@ async function calculateLastRanking(
   players: Player[],
   matches: MatchResult[],
   config: Config,
+  betPointsMap: { [key: string]: number },
 ) {
   const startDay = startOfDay(Date.now(), config.timeZone);
   const matchUntilStartDay = matches.filter(
     ({ fixture }) => new Date(fixture.utcDate).getTime() < startDay,
   );
   const items = await Promise.all(
-    players.map((player) => rankingItem(player, matchUntilStartDay, config)),
+    players.map((player) =>
+      rankingItem(player, matchUntilStartDay, config, betPointsMap),
+    ),
   );
   sortRankingItems(items);
   return items;

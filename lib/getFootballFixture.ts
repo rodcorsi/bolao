@@ -8,8 +8,8 @@ const FOOTBALL_DATA_ORG_COMPETITION =
   process.env.FOOTBALL_DATA_ORG_COMPETITION || "WC";
 const FOOTBALL_DATA_ORG_SEASON = process.env.FOOTBALL_DATA_ORG_SEASON || "2026";
 
-export async function getFootballFixtureMap() {
-  const fixture = await getFootballFixture();
+export async function getFootballFixtureMap(options?: { dateFrom?: string }) {
+  const fixture = await getFootballFixture(options);
   if (!fixture || !fixture.matches) return {};
   return fixture.matches.reduce(
     (acc, match) => {
@@ -20,8 +20,11 @@ export async function getFootballFixtureMap() {
   );
 }
 
-export default async function getFootballFixture(): Promise<FootballMatchesResponse | null> {
-  const cachedResponse = cache.get(CACHE_NAME);
+export default async function getFootballFixture(options?: {
+  dateFrom?: string;
+}): Promise<FootballMatchesResponse | null> {
+  const cacheKey = `${CACHE_NAME}:${options?.dateFrom ?? "all"}`;
+  const cachedResponse = cache.get(cacheKey);
   if (cachedResponse) {
     console.info("getFootballFixture using Cache");
     return cachedResponse;
@@ -29,21 +32,40 @@ export default async function getFootballFixture(): Promise<FootballMatchesRespo
   try {
     if (!process.env.FOOTBAL_DATA_ORG_API_KEY) {
       console.warn("getFootballFixture: Missing API KEY");
-      return cache.getLast(CACHE_NAME);
+      return cache.getLast(cacheKey);
     }
-    const data = await fetchFootballFixture();
-    return cache.put(CACHE_NAME, data, MINUTE_IN_MS);
+    const data = await fetchFootballFixture({ dateFrom: options?.dateFrom });
+    return cache.put(cacheKey, data, MINUTE_IN_MS);
   } catch (error) {
     console.error("fetchFootballFixture error", error);
-    return cache.getLast(CACHE_NAME);
+    return cache.getLast(cacheKey);
   }
 }
 
-function fetchFootballFixture() {
-  console.info("fetchFootballFixture");
+export function fetchFootballFixture(params?: {
+  dateFrom?: string;
+  status?: string;
+}) {
+  console.info("fetchFootballFixture", params);
+  const search = new URLSearchParams({ season: FOOTBALL_DATA_ORG_SEASON });
+  if (params?.dateFrom) {
+    // A football-data.org exige dateFrom e dateTo em conjunto; usamos um dateTo
+    // bem à frente para cobrir todos os jogos restantes a partir de dateFrom.
+    search.set("dateFrom", params.dateFrom);
+    search.set("dateTo", addDays(params.dateFrom, 365));
+  }
+  if (params?.status) {
+    search.set("status", params.status);
+  }
   return apiFootball<FootballMatchesResponse>(
-    `/competitions/${FOOTBALL_DATA_ORG_COMPETITION}/matches?season=${FOOTBALL_DATA_ORG_SEASON}`,
+    `/competitions/${FOOTBALL_DATA_ORG_COMPETITION}/matches?${search.toString()}`,
   );
+}
+
+function addDays(date: string, days: number): string {
+  const result = new Date(date);
+  result.setUTCDate(result.getUTCDate() + days);
+  return result.toISOString().slice(0, 10);
 }
 
 export function selectGoals({ score }: FootballDataMatch): Goals {
