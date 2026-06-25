@@ -5,7 +5,8 @@ import Footer from "../Footer";
 import Link from "next/link";
 import ListActiveMatches from "../ListActiveMatches";
 import ListBestPlayers from "../ListBestPlayers";
-import { PhaseState } from "../../lib/tournamentPhase";
+import { NextPhaseNotice as NextPhaseNoticeData, PhaseState } from "../../lib/tournamentPhase";
+import NextPhaseNotice from "./NextPhaseNotice";
 import PhaseStatusCard from "../PhaseStatusCard";
 import RankingList from "../RankingList";
 import React from "react";
@@ -20,6 +21,7 @@ interface HomeDashboardProps {
   items: RankingItem[];
   lastPosition: number;
   matchesOfDay: MatchResult[];
+  nextPhaseNotice: NextPhaseNoticeData | null;
   phaseState: PhaseState;
   updateTime: string;
 }
@@ -32,6 +34,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
   items,
   lastPosition,
   matchesOfDay,
+  nextPhaseNotice,
   phaseState,
   updateTime,
 }) => {
@@ -59,6 +62,7 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
           config={config}
           isAuthenticated
         />
+        <NextPhaseNotice notice={nextPhaseNotice} config={config} />
         <UserStatusCard
           items={items}
           matchesOfDay={matchesOfDay}

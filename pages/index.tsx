@@ -12,10 +12,10 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import HomeDashboard from "../components/home/HomeDashboard";
 import HomeLanding from "../components/home/HomeLanding";
-import { PhaseState } from "../lib/tournamentPhase";
+import { NextPhaseNotice, PhaseState } from "../lib/tournamentPhase";
 import { loadPlayAuth, parsePlayAuthCookie } from "../lib/playAuthStorage";
 import { assertUserSecret, getUserByCPF } from "../lib/users";
-import { getPhaseState } from "../lib/phaseState";
+import { getNextPhaseNotice, getPhaseState } from "../lib/phaseState";
 import { getUserFromCookieHeader } from "../lib/sessionAuth";
 
 const MAX_ITEMS_BEST_OF_DAY = 5;
@@ -26,6 +26,7 @@ function Home({
   matchesOfDay,
   bestOfDay,
   config,
+  nextPhaseNotice,
   phaseState,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) {
   const [isAuthenticated, setIsAuthenticated] = useState(authenticated);
@@ -92,6 +93,7 @@ function Home({
           items={items}
           lastPosition={lastPosition}
           matchesOfDay={matchesOfDay}
+          nextPhaseNotice={nextPhaseNotice}
           phaseState={phaseState}
           updateTime={updateTime}
         />
@@ -118,6 +120,7 @@ export const getServerSideProps: GetServerSideProps<{
   matchesOfDay: MatchResult[];
   bestOfDay: RankingItem[];
   config: Config;
+  nextPhaseNotice: NextPhaseNotice | null;
   phaseState: PhaseState;
 }> = async ({ req, res }) => {
   res.setHeader(
@@ -133,6 +136,7 @@ export const getServerSideProps: GetServerSideProps<{
     config.scorePoints
   );
   const phaseState = getPhaseState(config, ranking.matches);
+  const nextPhaseNotice = getNextPhaseNotice(config, phaseState, ranking.matches);
 
   let authenticated = false;
   const user = await getUserFromCookieHeader(req.headers.cookie);
@@ -160,6 +164,7 @@ export const getServerSideProps: GetServerSideProps<{
       matchesOfDay,
       bestOfDay,
       config,
+      nextPhaseNotice,
       phaseState,
     },
   };

@@ -240,3 +240,71 @@ export function getMatchesForCompetitionPhase<T extends Match | MatchResult>(
     (match) => normalizeCompetitionPhase(match.fase) === phase,
   );
 }
+
+export interface NextPhaseNotice {
+  phaseLabel: CompetitionPhase;
+  opensAt: string;
+  closesAt: string;
+}
+
+const NOTICE_LEAD_DAYS = 3;
+const DAY_IN_MS = 24 * 60 * 60 * 1000;
+// Margem após o início da última partida da fase atual para garantir que ela já
+// foi finalizada antes de liberar os palpites da próxima fase.
+const LAST_MATCH_BUFFER_MS = 3 * 60 * 60 * 1000;
+
+/**
+ * Aviso antecipado da próxima fase: informa quando os palpites da fase seguinte
+ * ficarão disponíveis (última partida da fase atual) e quando fecharão (início
+ * da próxima fase no schedule). Só retorna dados na janela de 3 dias antes da
+ * abertura; fora dela, ou sem próxima fase, retorna null.
+ */
+export function resolveNextPhaseNotice(
+  currentPhase: TournamentPhase,
+  schedule: PhaseSchedule,
+  matches: Array<Match | MatchResult>,
+  nowInput: number | string | Date = Date.now(),
+): NextPhaseNotice | null {
+  const nextPhase = getEditableCompetitionPhase(currentPhase);
+  if (!nextPhase) {
+    return null;
+  }
+  const currentCompetition = normalizeCompetitionPhase(
+    getCurrentPhaseLabel(currentPhase),
+  );
+  if (!currentCompetition) {
+    return null;
+  }
+  const lastMatchAt = getLastMatchDate(matches, currentCompetition);
+  if (!lastMatchAt) {
+    return null;
+  }
+  // Última partida + 3h: assim a partida certamente já terminou.
+  const opensMs = new Date(lastMatchAt).getTime() + LAST_MATCH_BUFFER_MS;
+  const opensAt = new Date(opensMs).toISOString();
+  const now = new Date(nowInput).getTime();
+  if (now >= opensMs || opensMs - now > NOTICE_LEAD_DAYS * DAY_IN_MS) {
+    return null;
+  }
+  const closesAt = getPhaseLockAt(nextPhase, matches, schedule);
+  if (!closesAt) {
+    return null;
+  }
+  return { phaseLabel: nextPhase, opensAt, closesAt };
+}
+
+function getLastMatchDate(
+  matches: Array<Match | MatchResult>,
+  phase: CompetitionPhase,
+) {
+  const matchStarts = getMatchesForCompetitionPhase(matches, phase)
+    .map((match) => {
+      if (!("fixture" in match)) {
+        return null;
+      }
+      return match.fixture?.utcDate || null;
+    })
+    .filter((value): value is string => value != null)
+    .sort((a, b) => new Date(b).getTime() - new Date(a).getTime());
+  return matchStarts[0] ?? null;
+}

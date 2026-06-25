@@ -2,8 +2,10 @@ import { Config } from "./getConfig";
 import { MatchResult } from "./ranking";
 import {
   TOURNAMENT_PHASES,
+  NextPhaseNotice,
   PhaseState,
   TournamentPhase,
+  resolveNextPhaseNotice,
   resolvePhaseState,
 } from "./tournamentPhase";
 
@@ -31,5 +33,18 @@ export function getPhaseState(config: Config, matches: MatchResult[]): PhaseStat
     matches,
     getNowInput(),
     getOverridePhase()
+  );
+}
+
+export function getNextPhaseNotice(
+  config: Config,
+  phaseState: PhaseState,
+  matches: MatchResult[]
+): NextPhaseNotice | null {
+  return resolveNextPhaseNotice(
+    phaseState.currentPhase,
+    config.phaseSchedule,
+    matches,
+    getNowInput()
   );
 }
