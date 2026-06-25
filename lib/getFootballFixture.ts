@@ -45,6 +45,7 @@ export default async function getFootballFixture(options?: {
 export function fetchFootballFixture(params?: {
   dateFrom?: string;
   status?: string;
+  stage?: string;
 }) {
   console.info("fetchFootballFixture", params);
   const search = new URLSearchParams({ season: FOOTBALL_DATA_ORG_SEASON });
@@ -56,6 +57,9 @@ export function fetchFootballFixture(params?: {
   }
   if (params?.status) {
     search.set("status", params.status);
+  }
+  if (params?.stage) {
+    search.set("stage", params.stage);
   }
   return apiFootball<FootballMatchesResponse>(
     `/competitions/${FOOTBALL_DATA_ORG_COMPETITION}/matches?${search.toString()}`,
