@@ -10,6 +10,7 @@ import Head from "next/head";
 import Link from "next/link";
 import RankingList from "../../components/RankingList";
 import RecentPointsSummary from "../../components/RecentPointsSummary";
+import ScrollTopButton from "../../components/ScrollTopButton";
 import { getBetsDay } from "../../lib/betsDay";
 import { getPhaseState } from "../../lib/phaseState";
 
@@ -55,6 +56,7 @@ const PlayerDetails = ({
         timeZone={config.timeZone}
       />
       <Footer updateTime={updateTime} expire={expire} config={config} />
+      <ScrollTopButton />
     </div>
   );
 };
