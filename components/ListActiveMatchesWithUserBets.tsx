@@ -74,7 +74,7 @@ const ListActiveMatchesWithUserBets: React.FC<
                 awayGoals={goals.awayTeam}
               />
             </Link>
-            <div className="h-14 overflow-y-auto border-t border-gray-100 bg-slate-50 px-3 py-2">
+            <div className="min-h-14 overflow-y-auto border-t border-gray-100 bg-slate-50 px-3 py-2">
               {userItems.length > 0 ? (
                 <ul className="space-y-1">
                   {userItems.map((item) => {
