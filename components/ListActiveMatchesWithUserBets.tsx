@@ -4,6 +4,7 @@ import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import MatchHeader from "./MatchHeader";
 import { PlaySession } from "../lib/play";
+import Point from "./Point";
 import { selectGoals } from "../lib/getFootballFixture";
 
 interface ListActiveMatchesWithUserBetsProps {
@@ -59,6 +60,7 @@ const ListActiveMatchesWithUserBets: React.FC<
     <div className={className}>
       {matches.map((match) => {
         const goals = selectGoals(match.fixture);
+        const hasResult = goals.homeTeam != null && goals.awayTeam != null;
         return (
           <article
             className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm"
@@ -81,12 +83,17 @@ const ListActiveMatchesWithUserBets: React.FC<
                     );
                     return (
                       <li
-                        className="flex items-center justify-end gap-3 text-xs text-slate-700"
+                        className="flex items-center justify-end gap-2 text-xs text-slate-700"
                         key={item.player.id}
                       >
                         <span className="min-w-0 truncate font-medium">
                           {item.player.name}
                         </span>
+                        {hasResult ? (
+                          <Point className="w-5" points={bet?.points} />
+                        ) : (
+                          <span className="w-5 text-center">--</span>
+                        )}
                         <span className="shrink-0 rounded-full bg-white px-2 py-0.5 italic font-bold text-slate-900 ring-1 ring-slate-400">
                           {bet
                             ? formatBet(bet.homeGoals, bet.awayGoals)

@@ -2,6 +2,7 @@ import { BetResult, MatchResult } from "../lib/ranking";
 
 import InPlay from "./InPlay";
 import Link from "next/link";
+import Point from "./Point";
 import React from "react";
 import TeamCrest from "./TeamCrest";
 import { formatDateTime } from "../lib/formatDate";
@@ -60,7 +61,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
             {t(match.awayTeam)}
           </div>
           {hasBet ? (
-            <Point points={bet?.points} />
+            <Point className="w-8 text-right" points={bet?.points} />
           ) : (
             <div className="w-8 shrink-0" />
           )}
@@ -88,18 +89,6 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
 };
 
 export default BetsMatch;
-
-const Point: React.FC<{ points?: number | null }> = ({ points }) => {
-  let color = "";
-  if (points === 12) color = "text-green-600";
-  else if (points != null && points >= 5) color = "text-blue-600";
-  const formatPoints = points == null ? "" : `+${points}`;
-  return (
-    <div className={`w-8 shrink-0 text-right font-bold ${color}`}>
-      {formatPoints}
-    </div>
-  );
-};
 
 interface IsEqualProps {
   value: number | null;
