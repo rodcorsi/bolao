@@ -93,9 +93,10 @@ const Point: React.FC<{ points?: number | null }> = ({ points }) => {
   let color = "";
   if (points === 12) color = "text-green-600";
   else if (points != null && points >= 5) color = "text-blue-600";
+  const formatPoints = points == null ? "" : `+${points}`;
   return (
     <div className={`w-8 shrink-0 text-right font-bold ${color}`}>
-      {points ?? ""}
+      {formatPoints}
     </div>
   );
 };
