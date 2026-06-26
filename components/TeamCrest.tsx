@@ -20,7 +20,7 @@ const TeamCrest: React.FC<TeamCrestProps> = ({ crest, teamName }) => {
 
   return (
     <Image
-      className="mx-2 shrink-0 rounded-full bg-center w-7.5 h-5 object-cover object-center"
+      className="shrink-0 rounded-full bg-center w-7.5 h-5 object-cover object-center"
       src={crest}
       alt={`Escudo ${teamName}`}
       width={30}

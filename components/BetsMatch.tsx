@@ -19,7 +19,7 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
   return (
     <li className="min-w-0 hover:bg-slate-200">
       <Link className="block min-w-0" href={`/matches/${match.id}`}>
-        <div className="flex min-w-0 flex-nowrap mt-2">
+        <div className="flex min-w-0 flex-nowrap mt-2 items-center gap-2">
           <div className="min-w-0 flex-1 text-right text-ellipsis whitespace-nowrap overflow-hidden">
             {t(match.homeTeam)}
           </div>
@@ -29,24 +29,24 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
           />
           {!hasBet ? (
             <>
-              <div className="w-10 shrink-0 text-lg text-center"></div>
-              <div className="shrink-0 text-sm text-center m-auto">x</div>
-              <div className="w-10 shrink-0 text-lg text-center"></div>
+              <div className="w-6 shrink-0 text-lg text-center"></div>
+              <div className="shrink-0 text-sm text-center">x</div>
+              <div className="w-6 shrink-0 text-lg text-center"></div>
             </>
           ) : (
             <>
               <IsEqual
                 value={bet.homeGoals}
                 expected={goals.homeTeam}
-                className="w-10 shrink-0 text-lg text-center"
+                className="w-6 shrink-0 text-lg text-center"
               >
                 {bet.homeGoals}
               </IsEqual>
-              <div className="shrink-0 text-sm text-center m-auto">x</div>
+              <div className="shrink-0 text-sm text-center">x</div>
               <IsEqual
                 value={bet.awayGoals}
                 expected={goals.awayTeam}
-                className="w-10 shrink-0 text-lg text-center"
+                className="w-6 shrink-0 text-lg text-center"
               >
                 {bet.awayGoals}
               </IsEqual>
@@ -59,7 +59,11 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
           <div className="min-w-0 flex-1 text-ellipsis whitespace-nowrap overflow-hidden">
             {t(match.awayTeam)}
           </div>
-          {hasBet ? <Point points={bet?.points} /> : <div className="w-10 shrink-0" />}
+          {hasBet ? (
+            <Point points={bet?.points} />
+          ) : (
+            <div className="w-8 shrink-0" />
+          )}
         </div>
         <div className="flex min-w-0 flex-nowrap text-xs justify-between italic mt-2">
           <div className="min-w-0 flex-1 truncate">
@@ -90,8 +94,8 @@ const Point: React.FC<{ points?: number | null }> = ({ points }) => {
   if (points === 12) color = "text-green-600";
   else if (points != null && points >= 5) color = "text-blue-600";
   return (
-    <div className={`w-10 shrink-0 text-right font-bold ${color}`}>
-      {points}
+    <div className={`w-8 shrink-0 text-right font-bold ${color}`}>
+      {points ?? ""}
     </div>
   );
 };
