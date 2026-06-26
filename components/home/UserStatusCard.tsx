@@ -59,11 +59,11 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({
     return (
       <UserStatusBody>
         <UserStatusHeader>
-          <div className="h-11" />
+          <div className="h-11.5" />
         </UserStatusHeader>
         <UserStatusList>
           <UserStatusItem>
-            <div className="h-11" />
+            <div className="h-11.5" />
           </UserStatusItem>
         </UserStatusList>
       </UserStatusBody>
@@ -73,18 +73,7 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({
   const playerIds = new Set(session.players.map((player) => player.id));
   const userItems = items.filter((item) => playerIds.has(item.player.id));
   if (userItems.length === 0) {
-    return (
-      <UserStatusBody>
-        <UserStatusHeader>
-          <div className="h-11" />
-        </UserStatusHeader>
-        <UserStatusList>
-          <UserStatusItem>
-            <div className="h-11" />
-          </UserStatusItem>
-        </UserStatusList>
-      </UserStatusBody>
-    );
+    return null;
   }
 
   const dayMatchIds = new Set(matchesOfDay.map((match) => match.id));
