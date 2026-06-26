@@ -56,20 +56,42 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({
   }, []);
 
   if (!session) {
-    return null;
+    return (
+      <UserStatusBody>
+        <UserStatusHeader>
+          <div className="h-11" />
+        </UserStatusHeader>
+        <UserStatusList>
+          <UserStatusItem>
+            <div className="h-11" />
+          </UserStatusItem>
+        </UserStatusList>
+      </UserStatusBody>
+    );
   }
 
   const playerIds = new Set(session.players.map((player) => player.id));
   const userItems = items.filter((item) => playerIds.has(item.player.id));
   if (userItems.length === 0) {
-    return null;
+    return (
+      <UserStatusBody>
+        <UserStatusHeader>
+          <div className="h-11" />
+        </UserStatusHeader>
+        <UserStatusList>
+          <UserStatusItem>
+            <div className="h-11" />
+          </UserStatusItem>
+        </UserStatusList>
+      </UserStatusBody>
+    );
   }
 
   const dayMatchIds = new Set(matchesOfDay.map((match) => match.id));
 
   return (
-    <section className="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
-      <div className="flex items-center gap-3 bg-linear-to-r from-slate-900 to-slate-700 px-4 py-3">
+    <UserStatusBody>
+      <UserStatusHeader>
         <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-white/15 text-base font-bold text-white ring-1 ring-white/25">
           {getInitials(session.user.name) || "?"}
         </div>
@@ -81,18 +103,15 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({
             {session.user.name}
           </h2>
         </div>
-      </div>
+      </UserStatusHeader>
 
-      <ul className="divide-y divide-slate-100">
+      <UserStatusList>
         {userItems.map((item) => {
           const dayPoints = sumPoints(
             item.bets.filter((bet) => dayMatchIds.has(bet.matchID)),
           );
           return (
-            <li
-              key={item.player.id}
-              className="flex items-center gap-3 px-3 py-3 transition hover:bg-slate-50"
-            >
+            <UserStatusItem key={item.player.id}>
               <Position position={item.position} lastPosition={lastPosition} />
 
               <div className="min-w-0 grow">
@@ -131,12 +150,36 @@ const UserStatusCard: React.FC<UserStatusCardProps> = ({
                   {item.points}
                 </span>
               </div>
-            </li>
+            </UserStatusItem>
           );
         })}
-      </ul>
-    </section>
+      </UserStatusList>
+    </UserStatusBody>
   );
 };
+
+const UserStatusBody: React.FC<{ children?: React.ReactNode }> = (props) => (
+  <section
+    className="mb-4 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm"
+    {...props}
+  />
+);
+const UserStatusHeader: React.FC<{ children?: React.ReactNode }> = (props) => (
+  <div
+    className="flex items-center gap-3 bg-linear-to-r from-slate-900 to-slate-700 px-4 py-3"
+    {...props}
+  />
+);
+
+const UserStatusList: React.FC<{ children?: React.ReactNode }> = (props) => (
+  <ul className="divide-y divide-slate-100" {...props} />
+);
+
+const UserStatusItem: React.FC<{ children?: React.ReactNode }> = (props) => (
+  <li
+    className="flex items-center gap-3 px-3 py-3 transition hover:bg-slate-50"
+    {...props}
+  />
+);
 
 export default UserStatusCard;
