@@ -1,5 +1,5 @@
-import React from "react";
 import Image from "next/image";
+import React from "react";
 
 interface TeamCrestProps {
   crest?: string | null;
@@ -10,7 +10,7 @@ const TeamCrest: React.FC<TeamCrestProps> = ({ crest, teamName }) => {
   if (!crest) {
     return (
       <div
-        className="mx-2 flex h-[30px] w-[30px] items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-600"
+        className="mx-2 flex h-7.5 w-5 items-center justify-center rounded-full bg-slate-200 text-xs font-bold text-slate-600"
         aria-label={`Sem escudo para ${teamName}`}
       >
         {teamName.slice(0, 1).toUpperCase()}
@@ -24,7 +24,7 @@ const TeamCrest: React.FC<TeamCrestProps> = ({ crest, teamName }) => {
       src={crest}
       alt={`Escudo ${teamName}`}
       width={30}
-      height={30}
+      height={20}
       unoptimized
     />
   );
