@@ -65,23 +65,23 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
             <div className="w-8 shrink-0" />
           )}
         </div>
-        <div className="flex min-w-0 flex-nowrap text-xs justify-between italic mt-2">
-          <div className="min-w-0 flex-1 truncate">
+        <div className="flex min-w-0 flex-nowrap text-xs items-center justify-between italic mt-2">
+          <div className="truncate">
             {formatDateTime(match.fixture.utcDate)}
           </div>
           <InPlay status={match.status} />
-          <div className="min-w-0 flex-1 my-auto text-right">
-            {goals.homeTeam != null && (
-              <div className="font-bold text-sm text-gray-700">
-                <span>Placar:</span>
-                <span>{goals.homeTeam}</span>
-                <span>x</span>
-                <span>{goals.awayTeam}</span>
-              </div>
-            )}
-          </div>
+          {goals.homeTeam != null ? (
+            <div className="font-bold text-sm shrink-0 px-2 text-slate-900 rounded-full ring-1 ring-slate-400">
+              <span className="min-w-0 truncate font-medium">Placar </span>
+              <span>{goals.homeTeam}</span>
+              <span> x </span>
+              <span>{goals.awayTeam}</span>
+            </div>
+          ) : (
+            <div className="min-w-0 flex-1 my-auto text-right" />
+          )}
         </div>
-        <hr className="mx-auto w-48 h-px border-0 bg-gray-200" />
+        <hr className="mx-auto mt-2 w-48 h-px border-0 bg-gray-200" />
       </Link>
     </li>
   );
