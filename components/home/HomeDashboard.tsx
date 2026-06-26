@@ -3,7 +3,7 @@ import { MatchResult, RankingItem } from "../../lib/ranking";
 import { Config } from "../../lib/getConfig";
 import Footer from "../Footer";
 import Link from "next/link";
-import ListActiveMatches from "../ListActiveMatches";
+import ListActiveMatchesWithUserBets from "../ListActiveMatchesWithUserBets";
 import ListBestPlayers from "../ListBestPlayers";
 import { NextPhaseNotice as NextPhaseNoticeData, PhaseState } from "../../lib/tournamentPhase";
 import NextPhaseNotice from "./NextPhaseNotice";
@@ -68,9 +68,10 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
           matchesOfDay={matchesOfDay}
           lastPosition={lastPosition}
         />
-        <ListActiveMatches
+        <ListActiveMatchesWithUserBets
           className="mb-2 grid gap-2 sm:grid-cols-2"
           matches={matchesOfDay}
+          rankingItems={items}
         />
         <ListBestPlayers rankingItems={bestOfDay} />
         <h2 className="p-2 text-lg font-bold text-gray-700">Ranking geral</h2>
