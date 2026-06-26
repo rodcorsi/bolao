@@ -1,20 +1,31 @@
 import { BetResult, MatchResult, RankingItem } from "../lib/ranking";
+import {
+  formatBetsDay,
+  getBetsDay,
+  getBetsDayAnchor,
+  getRelativeBetsDay,
+} from "../lib/betsDay";
 
 import BetsMatch from "./BetsMatch";
 import React from "react";
 import groupByArray from "../lib/groupByArray";
-import startOfDay from "../lib/startOfDay";
 import { sumPoints } from "../lib/rankingSummary";
-
-const TIME_ZONE = "America/Sao_Paulo";
-const TODAY = startOfDay(Date.now(), TIME_ZONE);
 
 interface BetsListProps {
   rankingItem: RankingItem;
   matches: MatchResult[];
+  today: number;
+  locale: string;
+  timeZone: string;
 }
 
-const BetsList: React.FC<BetsListProps> = ({ rankingItem, matches }) => {
+const BetsList: React.FC<BetsListProps> = ({
+  rankingItem,
+  matches,
+  today,
+  locale,
+  timeZone,
+}) => {
   const fases = groupByArray(matches, "fase");
   const betMap = rankingItem.bets.reduce(
     (acc, bet) => {
@@ -31,6 +42,9 @@ const BetsList: React.FC<BetsListProps> = ({ rankingItem, matches }) => {
           key={index}
           matches={matches}
           bets={rankingItem.bets}
+          today={today}
+          locale={locale}
+          timeZone={timeZone}
           findBet={findBet}
         />
       ))}
@@ -43,11 +57,21 @@ export default BetsList;
 interface FaseProps {
   matches: MatchResult[];
   bets: BetResult[];
+  today: number;
+  locale: string;
+  timeZone: string;
   findBet: (matchID: number) => BetResult | undefined;
 }
 
-const Fase: React.FC<FaseProps> = ({ matches, bets, findBet }) => {
-  const days = groupMatchesByDay(matches);
+const Fase: React.FC<FaseProps> = ({
+  matches,
+  bets,
+  today,
+  locale,
+  timeZone,
+  findBet,
+}) => {
+  const days = groupMatchesByDay(matches, timeZone);
   return (
     <div className="min-w-0 pt-1">
       <div className="bg-gray-700 text-white mb-3 px-3 py-1 font-bold sticky top-0">
@@ -56,9 +80,12 @@ const Fase: React.FC<FaseProps> = ({ matches, bets, findBet }) => {
       <div className="space-y-4">
         {days.map((matches) => (
           <Day
-            key={startOfDay(matches[0].fixture.utcDate, TIME_ZONE)}
+            key={getBetsDay(matches[0].fixture.utcDate, timeZone)}
             matches={matches}
             bets={bets}
+            today={today}
+            locale={locale}
+            timeZone={timeZone}
             findBet={findBet}
           />
         ))}
@@ -70,25 +97,37 @@ const Fase: React.FC<FaseProps> = ({ matches, bets, findBet }) => {
 interface DayProps {
   matches: MatchResult[];
   bets: BetResult[];
+  today: number;
+  locale: string;
+  timeZone: string;
   findBet: (matchID: number) => BetResult | undefined;
 }
 
-const Day: React.FC<DayProps> = ({ matches, bets, findBet }) => {
+const Day: React.FC<DayProps> = ({
+  matches,
+  bets,
+  today,
+  locale,
+  timeZone,
+  findBet,
+}) => {
   const groups = groupByArray(matches, "group");
   const matchIds = new Set(matches.map((match) => match.id));
   const dayPoints = sumPoints(bets.filter((bet) => matchIds.has(bet.matchID)));
-  const day = startOfDay(matches[0].fixture.utcDate, TIME_ZONE);
-  const isFutureDay = day > TODAY;
+  const day = getBetsDay(matches[0].fixture.utcDate, timeZone);
+  const relativeDay = getRelativeBetsDay(day, today, timeZone);
+  const anchorId = getBetsDayAnchor(relativeDay);
+  const isFutureDay = relativeDay === "future";
 
   return (
-    <div className="min-w-0">
+    <div id={anchorId} className="min-w-0 scroll-mt-16">
       <div className="mb-3 flex items-center justify-between rounded-lg bg-sky-50 px-3 py-2 text-sky-800">
         <div className="min-w-0">
           <div className="text-xs font-semibold uppercase tracking-wide text-sky-600">
-            Jogos do dia
+            {getDayTitle(relativeDay)}
           </div>
-          <div className="truncate font-bold">
-            {formatDay(matches[0].fixture.utcDate)}
+          <div className="truncate font-bold text-slate-800">
+            {formatBetsDay(matches[0].fixture.utcDate, locale, timeZone)}
           </div>
         </div>
         {!isFutureDay && (
@@ -132,12 +171,12 @@ const Group: React.FC<GroupProps> = ({ matches, findBet }) => {
   );
 };
 
-function groupMatchesByDay(matches: MatchResult[]) {
+function groupMatchesByDay(matches: MatchResult[], timeZone: string) {
   return matches.reduce((acc, match) => {
-    const day = startOfDay(match.fixture.utcDate, TIME_ZONE);
+    const day = getBetsDay(match.fixture.utcDate, timeZone);
     const lastMatches = acc[acc.length - 1];
     const lastDay = lastMatches
-      ? startOfDay(lastMatches[0].fixture.utcDate, TIME_ZONE)
+      ? getBetsDay(lastMatches[0].fixture.utcDate, timeZone)
       : null;
 
     if (lastDay !== day) {
@@ -150,11 +189,8 @@ function groupMatchesByDay(matches: MatchResult[]) {
   }, [] as MatchResult[][]);
 }
 
-function formatDay(date: Date | string | number) {
-  return new Date(date).toLocaleDateString("pt-BR", {
-    timeZone: TIME_ZONE,
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
+function getDayTitle(relativeDay: string) {
+  if (relativeDay === "today") return "Hoje";
+  if (relativeDay === "yesterday") return "Ontem";
+  return "Jogos do dia";
 }

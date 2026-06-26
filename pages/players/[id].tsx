@@ -9,6 +9,8 @@ import Footer from "../../components/Footer";
 import Head from "next/head";
 import Link from "next/link";
 import RankingList from "../../components/RankingList";
+import RecentPointsSummary from "../../components/RecentPointsSummary";
+import { getBetsDay } from "../../lib/betsDay";
 import { getPhaseState } from "../../lib/phaseState";
 
 const PlayerDetails = ({
@@ -19,6 +21,7 @@ const PlayerDetails = ({
   updateTime,
   expire,
   config,
+  today,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   return (
     <div className="md:mx-auto md:w-3/4 grid">
@@ -38,7 +41,19 @@ const PlayerDetails = ({
         lastPosition={lastPosition}
         scorePoints={config.scorePoints}
       />
-      <BetsList rankingItem={rankingItem} matches={matches} />
+      <RecentPointsSummary
+        rankingItem={rankingItem}
+        matches={matches}
+        today={today}
+        timeZone={config.timeZone}
+      />
+      <BetsList
+        rankingItem={rankingItem}
+        matches={matches}
+        today={today}
+        locale={config.locale}
+        timeZone={config.timeZone}
+      />
       <Footer updateTime={updateTime} expire={expire} config={config} />
     </div>
   );
@@ -52,6 +67,7 @@ export const getServerSideProps: GetServerSideProps<{
   updateTime: string;
   expire: number;
   config: Config;
+  today: number;
 }> = async ({ res, params }) => {
   res.setHeader(
     "Cache-Control",
@@ -95,6 +111,7 @@ export const getServerSideProps: GetServerSideProps<{
       expire: ranking.expire,
       lastPosition: ranking.lastPosition,
       config,
+      today: getBetsDay(Date.now(), config.timeZone),
     },
   };
 };
