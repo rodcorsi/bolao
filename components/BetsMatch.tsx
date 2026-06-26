@@ -17,10 +17,10 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
   const goals = selectGoals(match.fixture);
   const hasBet = bet != null && bet.homeGoals != null && bet.awayGoals != null;
   return (
-    <li className="hover:bg-slate-200">
-      <Link href={`/matches/${match.id}`}>
-        <div className="flex flex-nowrap shrink-0 mt-2">
-          <div className="w-full text-right text-ellipsis whitespace-nowrap overflow-hidden">
+    <li className="min-w-0 hover:bg-slate-200">
+      <Link className="block min-w-0" href={`/matches/${match.id}`}>
+        <div className="flex min-w-0 flex-nowrap mt-2">
+          <div className="min-w-0 flex-1 text-right text-ellipsis whitespace-nowrap overflow-hidden">
             {t(match.homeTeam)}
           </div>
           <TeamCrest
@@ -29,24 +29,24 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
           />
           {!hasBet ? (
             <>
-              <div className="w-10 text-lg text-center"></div>
-              <div className="text-sm text-center m-auto">x</div>
-              <div className="w-10 text-lg text-center"></div>
+              <div className="w-10 shrink-0 text-lg text-center"></div>
+              <div className="shrink-0 text-sm text-center m-auto">x</div>
+              <div className="w-10 shrink-0 text-lg text-center"></div>
             </>
           ) : (
             <>
               <IsEqual
                 value={bet.homeGoals}
                 expected={goals.homeTeam}
-                className="w-10 text-lg text-center"
+                className="w-10 shrink-0 text-lg text-center"
               >
                 {bet.homeGoals}
               </IsEqual>
-              <div className="text-sm text-center m-auto">x</div>
+              <div className="shrink-0 text-sm text-center m-auto">x</div>
               <IsEqual
                 value={bet.awayGoals}
                 expected={goals.awayTeam}
-                className="w-10 text-lg text-center"
+                className="w-10 shrink-0 text-lg text-center"
               >
                 {bet.awayGoals}
               </IsEqual>
@@ -56,15 +56,17 @@ const BetsMatch: React.FC<BetsMatchProps> = ({ match, bet }) => {
             crest={match.fixture.awayTeam.crest}
             teamName={match.awayTeam}
           />
-          <div className="w-full text-ellipsis whitespace-nowrap overflow-hidden">
+          <div className="min-w-0 flex-1 text-ellipsis whitespace-nowrap overflow-hidden">
             {t(match.awayTeam)}
           </div>
-          {hasBet ? <Point points={bet?.points} /> : <div></div>}
+          {hasBet ? <Point points={bet?.points} /> : <div className="w-10 shrink-0" />}
         </div>
-        <div className="flex flex-nowrap shrink-0 text-xs justify-between italic mt-2">
-          <div className="w-full">{formatDateTime(match.fixture.utcDate)}</div>
+        <div className="flex min-w-0 flex-nowrap text-xs justify-between italic mt-2">
+          <div className="min-w-0 flex-1 truncate">
+            {formatDateTime(match.fixture.utcDate)}
+          </div>
           <InPlay status={match.status} />
-          <div className="w-full my-auto text-right">
+          <div className="min-w-0 flex-1 my-auto text-right">
             {goals.homeTeam != null && (
               <div className="font-bold text-sm text-gray-700">
                 <span>Placar:</span>
@@ -87,7 +89,11 @@ const Point: React.FC<{ points?: number | null }> = ({ points }) => {
   let color = "";
   if (points === 12) color = "text-green-600";
   else if (points != null && points >= 5) color = "text-blue-600";
-  return <div className={`w-10 text-right font-bold ${color}`}>{points}</div>;
+  return (
+    <div className={`w-10 shrink-0 text-right font-bold ${color}`}>
+      {points}
+    </div>
+  );
 };
 
 interface IsEqualProps {

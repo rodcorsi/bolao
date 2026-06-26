@@ -35,11 +35,11 @@ interface FaseProps {
 const Fase: React.FC<FaseProps> = ({ matches, findBet }) => {
   const groups = groupByArray(matches, "group");
   return (
-    <div className="pt-1">
+    <div className="min-w-0 pt-1">
       <div className="bg-gray-700 text-white mb-3 px-3 py-1 font-bold sticky top-0">
         {matches[0].fase}
       </div>
-      <div className="grid lg:grid-cols-2 gap-3">
+      <div className="grid min-w-0 gap-3 lg:grid-cols-2">
         {groups.map((matches, index) => (
           <Group key={index} matches={matches} findBet={findBet} />
         ))}
@@ -50,12 +50,12 @@ const Fase: React.FC<FaseProps> = ({ matches, findBet }) => {
 
 const Group: React.FC<FaseProps> = ({ matches, findBet }) => {
   return (
-    <div className="border-2 border-gray-200 p-3 rounded-lg">
+    <div className="min-w-0 rounded-lg border-2 border-gray-200 p-3">
       <div className="flex justify-between border-b border-gray-200 pb-2 text-gray-700 italic">
         <div className="font-bold">{matches[0].group}</div>
         <div className="w-10 text-xs text-right my-auto">Pontos</div>
       </div>
-      <ul>
+      <ul className="min-w-0">
         {matches.map((match) => (
           <BetsMatch key={match.id} match={match} bet={findBet(match.id)} />
         ))}
