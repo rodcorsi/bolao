@@ -8,9 +8,10 @@ import ListBestPlayers from "../ListBestPlayers";
 import { NextPhaseNotice as NextPhaseNoticeData, PhaseState } from "../../lib/tournamentPhase";
 import NextPhaseNotice from "./NextPhaseNotice";
 import PhaseStatusCard from "../PhaseStatusCard";
-import RankingList from "../RankingList";
+import RankingTabs from "./RankingTabs";
 import React from "react";
 import UserStatusCard from "./UserStatusCard";
+import { buildPhaseRankings } from "../../lib/phaseRankings";
 import { buildPrizeSummary } from "../../lib/prize";
 
 interface HomeDashboardProps {
@@ -51,6 +52,8 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
     rankingItems: items,
   });
 
+  const phaseRankings = buildPhaseRankings(allMatches, items, scorePoints);
+
   return (
     <div className="md:mx-auto md:w-3/4">
       <main className="md:container">
@@ -74,14 +77,8 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
           rankingItems={items}
         />
         <ListBestPlayers rankingItems={bestOfDay} />
-        <h2 className="p-2 text-lg font-bold text-gray-700">Ranking geral</h2>
-        <div className="rounded-lg bg-white md:border md:border-gray-200">
-          <RankingList
-            rankingItems={items}
-            lastPosition={lastPosition}
-            scorePoints={scorePoints}
-          />
-        </div>
+        <h2 className="p-2 text-lg font-bold text-gray-700">Rankings</h2>
+        <RankingTabs rankings={phaseRankings} scorePoints={scorePoints} />
         <div className="mt-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className="text-lg font-bold text-slate-900">
             Premiação do bolão
