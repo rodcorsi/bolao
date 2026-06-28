@@ -83,7 +83,7 @@ const HomeLanding: React.FC<HomeLandingProps> = ({
                 />
                 <StatCard
                   label="Fase atual"
-                  value={phaseState.currentPhaseLabel}
+                  value={phaseState.playingPhaseLabel}
                   hint={
                     phaseState.editablePhaseLabel
                       ? `Palpites abertos para ${phaseState.editablePhaseLabel}.`

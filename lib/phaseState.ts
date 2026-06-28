@@ -42,7 +42,7 @@ export function getNextPhaseNotice(
   matches: MatchResult[]
 ): NextPhaseNotice | null {
   return resolveNextPhaseNotice(
-    phaseState.currentPhase,
+    phaseState.playingPhase,
     config.phaseSchedule,
     matches,
     getNowInput()

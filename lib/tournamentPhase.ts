@@ -28,6 +28,8 @@ export type PhaseSchedule = Record<TournamentPhase, PhaseScheduleEntry>;
 export interface PhaseState {
   currentPhase: TournamentPhase;
   currentPhaseLabel: string;
+  playingPhase: TournamentPhase;
+  playingPhaseLabel: string;
   editablePhase: CompetitionPhase | null;
   editablePhaseLabel: string | null;
   isReadOnly: boolean;
@@ -177,6 +179,53 @@ function resolveCurrentPhaseBySchedule(
   return found ? current : "INICIO";
 }
 
+/**
+ * Fase "em jogo": avança automaticamente quando a última partida da fase atual
+ * termina (estimado em +3h após o início do último jogo). Diferente de
+ * `resolveCurrentPhaseBySchedule` (que é guiada pelas datas do config e governa
+ * a janela/prazo de palpites), esta reflete o que está sendo disputado e serve
+ * apenas para o rótulo "Fase atual" exibido.
+ */
+export function resolvePlayingPhase(
+  schedule: PhaseSchedule,
+  matches: Array<Match | MatchResult>,
+  nowInput: number | string | Date = Date.now(),
+  overridePhase?: TournamentPhase | null,
+): TournamentPhase {
+  if (overridePhase && TOURNAMENT_PHASES.includes(overridePhase)) {
+    return overridePhase;
+  }
+  const now = new Date(nowInput).getTime();
+  const groupStart = parseDate(schedule.FASE_DE_GRUPOS?.startsAt);
+  if (groupStart == null || now < groupStart) {
+    return "INICIO";
+  }
+  let current: TournamentPhase = "FASE_DE_GRUPOS";
+  while (true) {
+    const competition = normalizeCompetitionPhase(getCurrentPhaseLabel(current));
+    if (!competition) {
+      break;
+    }
+    const lastMatch = getLastMatchDate(matches, competition);
+    if (!lastMatch) {
+      break;
+    }
+    if (now < new Date(lastMatch).getTime() + LAST_MATCH_BUFFER_MS) {
+      break;
+    }
+    const next: TournamentPhase | undefined =
+      TOURNAMENT_PHASES[TOURNAMENT_PHASES.indexOf(current) + 1];
+    if (!next) {
+      break;
+    }
+    current = next;
+    if (current === "FIM") {
+      break;
+    }
+  }
+  return current;
+}
+
 export function resolvePhaseState(
   schedule: PhaseSchedule,
   matches: Array<Match | MatchResult>,
@@ -188,6 +237,7 @@ export function resolvePhaseState(
     overridePhase && TOURNAMENT_PHASES.includes(overridePhase)
       ? overridePhase
       : resolveCurrentPhaseBySchedule(schedule, now);
+  const playingPhase = resolvePlayingPhase(schedule, matches, now, overridePhase);
   const candidateEditablePhase = getEditableCompetitionPhase(currentPhase);
   const editablePhase =
     candidateEditablePhase &&
@@ -201,6 +251,8 @@ export function resolvePhaseState(
   return {
     currentPhase,
     currentPhaseLabel: getCurrentPhaseLabel(currentPhase),
+    playingPhase,
+    playingPhaseLabel: getCurrentPhaseLabel(playingPhase),
     editablePhase,
     editablePhaseLabel: editablePhase,
     isReadOnly: editablePhase == null,

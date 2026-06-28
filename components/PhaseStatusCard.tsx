@@ -26,7 +26,7 @@ const PhaseStatusCard: React.FC<PhaseStatusCardProps> = ({
             Fase atual
           </div>
           <h2 className="text-2xl font-bold text-emerald-950">
-            {phaseState.currentPhaseLabel}
+            {phaseState.playingPhaseLabel}
           </h2>
           <p className="mt-1 text-sm text-emerald-900">
             {hasOpenWindow
