@@ -23,6 +23,7 @@ interface BetsEditorProps {
   editablePhase: CompetitionPhase;
   editablePhaseLabel: string;
   invalidMatchIds: number[];
+  isDirty: boolean;
   isSavingBets: boolean;
   matches: MatchResult[];
   selectedPlayer: PlayPlayer;
@@ -36,6 +37,7 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
   editablePhase,
   editablePhaseLabel,
   invalidMatchIds,
+  isDirty,
   isSavingBets,
   matches,
   selectedPlayer,
@@ -113,11 +115,22 @@ const BetsEditor: React.FC<BetsEditorProps> = ({
         ))}
       </div>
       <button
-        className="mt-4 inline-flex items-center justify-center gap-2 rounded-full bg-emerald-700 px-4 py-2 font-semibold text-white disabled:cursor-not-allowed disabled:opacity-70"
-        disabled={isSavingBets}
+        type="submit"
+        className={`fixed bottom-4 left-4 z-40 inline-flex items-center justify-center gap-2 rounded-full px-5 py-3 font-semibold text-white shadow-lg transition ${
+          isSavingBets
+            ? "cursor-not-allowed bg-emerald-700 opacity-70"
+            : isDirty
+              ? "bg-emerald-700 hover:bg-emerald-800"
+              : "cursor-not-allowed bg-slate-400"
+        }`}
+        disabled={isSavingBets || !isDirty}
       >
         {isSavingBets ? <LoadingSpinner /> : null}
-        {isSavingBets ? "Salvando palpites..." : "Salvar palpites"}
+        {isSavingBets
+          ? "Salvando palpites..."
+          : isDirty
+            ? "Salvar palpites"
+            : "Salvo"}
       </button>
     </form>
   );
