@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import Head from "next/head";
 import HomeDashboard from "../components/home/HomeDashboard";
 import HomeLanding from "../components/home/HomeLanding";
+import { BetFillProgress, getBetFillProgress } from "../lib/betProgress";
 import { NextPhaseNotice, PhaseState } from "../lib/tournamentPhase";
 import { loadPlayAuth, parsePlayAuthCookie } from "../lib/playAuthStorage";
 import { assertUserSecret, getUserByCPF } from "../lib/users";
@@ -25,6 +26,7 @@ function Home({
   ranking: { items, matches, updateTime, expire, lastPosition },
   matchesOfDay,
   bestOfDay,
+  betFillProgress,
   config,
   nextPhaseNotice,
   phaseState,
@@ -88,6 +90,7 @@ function Home({
         <HomeDashboard
           allMatches={matches}
           bestOfDay={bestOfDay}
+          betFillProgress={betFillProgress}
           config={config}
           expire={expire}
           items={items}
@@ -119,6 +122,7 @@ export const getServerSideProps: GetServerSideProps<{
   ranking: Ranking;
   matchesOfDay: MatchResult[];
   bestOfDay: RankingItem[];
+  betFillProgress: BetFillProgress | null;
   config: Config;
   nextPhaseNotice: NextPhaseNotice | null;
   phaseState: PhaseState;
@@ -157,12 +161,18 @@ export const getServerSideProps: GetServerSideProps<{
     }
   }
 
+  const betFillProgress =
+    authenticated && phaseState.editablePhase
+      ? await getBetFillProgress(phaseState.editablePhase, ranking.matches)
+      : null;
+
   return {
     props: {
       authenticated,
       ranking,
       matchesOfDay,
       bestOfDay,
+      betFillProgress,
       config,
       nextPhaseNotice,
       phaseState,

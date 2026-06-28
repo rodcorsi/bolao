@@ -6,6 +6,8 @@ import Link from "next/link";
 import ListActiveMatchesWithUserBets from "../ListActiveMatchesWithUserBets";
 import ListBestPlayers from "../ListBestPlayers";
 import { NextPhaseNotice as NextPhaseNoticeData, PhaseState } from "../../lib/tournamentPhase";
+import { BetFillProgress as BetFillProgressData } from "../../lib/betProgress";
+import BetFillProgress from "./BetFillProgress";
 import NextPhaseNotice from "./NextPhaseNotice";
 import PhaseStatusCard from "../PhaseStatusCard";
 import RankingTabs from "./RankingTabs";
@@ -17,6 +19,7 @@ import { buildPrizeSummary } from "../../lib/prize";
 interface HomeDashboardProps {
   allMatches: MatchResult[];
   bestOfDay: RankingItem[];
+  betFillProgress: BetFillProgressData | null;
   config: Config;
   expire: number;
   items: RankingItem[];
@@ -30,6 +33,7 @@ interface HomeDashboardProps {
 const HomeDashboard: React.FC<HomeDashboardProps> = ({
   allMatches,
   bestOfDay,
+  betFillProgress,
   config,
   expire,
   items,
@@ -66,6 +70,10 @@ const HomeDashboard: React.FC<HomeDashboardProps> = ({
           isAuthenticated
         />
         <NextPhaseNotice notice={nextPhaseNotice} config={config} />
+        <BetFillProgress
+          progress={betFillProgress}
+          editablePhaseLabel={phaseState.editablePhaseLabel}
+        />
         <UserStatusCard
           items={items}
           matchesOfDay={matchesOfDay}
