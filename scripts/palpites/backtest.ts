@@ -21,9 +21,10 @@
  * e salve o JSON como resultados.json nesta pasta.
  */
 
+import { Result, gameKey, loadLambdas, loadResults } from "./io";
+import { expectedPointsPick, modalPick, pointsFor, scoreMatrix } from "./model";
+
 import { existsSync } from "node:fs";
-import { scoreMatrix, modalPick, expectedPointsPick, pointsFor } from "./model";
-import { loadLambdas, loadResults, gameKey, Result } from "./io";
 
 // --- tally -----------------------------------------------------------------
 
@@ -35,7 +36,14 @@ interface Tally {
   q2: number;
   q0: number;
 }
-const newTally = (): Tally => ({ total: 0, q12: 0, q7: 0, q5: 0, q2: 0, q0: 0 });
+const newTally = (): Tally => ({
+  total: 0,
+  q12: 0,
+  q7: 0,
+  q5: 0,
+  q2: 0,
+  q0: 0,
+});
 
 function add(t: Tally, pts: number) {
   t.total += pts;
@@ -49,9 +57,11 @@ function add(t: Tally, pts: number) {
 function fmt(name: string, t: Tally, n: number): string {
   return `${name.padEnd(8)} | ${String(t.total).padStart(5)} | ${String(t.q12).padStart(3)} | ${String(
     t.q7,
-  ).padStart(3)} | ${String(t.q5).padStart(3)} | ${String(t.q2).padStart(3)} | ${String(t.q0).padStart(
+  ).padStart(
     3,
-  )} | média ${(t.total / n).toFixed(2)}`;
+  )} | ${String(t.q5).padStart(3)} | ${String(t.q2).padStart(3)} | ${String(
+    t.q0,
+  ).padStart(3)} | média ${(t.total / n).toFixed(2)}`;
 }
 
 // --- main ------------------------------------------------------------------
@@ -59,9 +69,12 @@ function fmt(name: string, t: Tally, n: number): string {
 function main() {
   const [argLambdas, argResults] = process.argv.slice(2);
   const lambdasPath =
-    argLambdas ?? (existsSync("placares-fase-grupos.csv") ? "placares-fase-grupos.csv" : "placares.csv");
+    argLambdas ??
+    (existsSync("placares-fase-grupos.csv")
+      ? "placares-fase-grupos.csv"
+      : "placares.csv");
   const resultsPath = argResults ?? "resultados.json";
-
+  console.log(argResults);
   if (!existsSync(resultsPath)) {
     console.error(
       `Arquivo de resultados não encontrado: ${resultsPath}\n` +
@@ -104,7 +117,9 @@ function main() {
 
   console.log(`Jogos casados com resultado: ${matched}/${games.length}`);
   if (unmatched.length) {
-    console.log(`Sem resultado / nome não casou (${unmatched.length}): ${unmatched.join("; ")}`);
+    console.log(
+      `Sem resultado / nome não casou (${unmatched.length}): ${unmatched.join("; ")}`,
+    );
   }
   console.log("");
   console.log("Regra    | total | Q12 |  Q7 |  Q5 |  Q2 |  Q0 |");

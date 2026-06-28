@@ -14,7 +14,7 @@
  *   --sport=soccer_fifa_world_cup
  *   --regions=us,uk,eu          regiões dos markets featured
  *   --markets=h2h,spreads,totals
- *   --tt-regions=eu             regiões do team_totals (per-event; eu=Pinnacle, econômico)
+ *   --tt-regions=us             regiões do team_totals (per-event; futebol só tem em books US)
  *   --no-team-totals            pula a coleta de team_totals
  *   --out=odds.json
  *   --concurrency=4             requests per-event simultâneos
@@ -64,7 +64,7 @@ function parseArgs(argv: string[]) {
     sport: flags.get("sport") ?? "soccer_fifa_world_cup",
     regions: flags.get("regions") ?? "us,uk,eu",
     markets: flags.get("markets") ?? "h2h,spreads,totals",
-    ttRegions: flags.get("tt-regions") ?? "eu",
+    ttRegions: flags.get("tt-regions") ?? "us",
     teamTotals: !bools.has("no-team-totals"),
     out: flags.get("out") ?? "odds.json",
     concurrency: Math.max(1, Number(flags.get("concurrency") ?? 4)),
