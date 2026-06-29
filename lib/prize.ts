@@ -114,7 +114,7 @@ function buildPrizeBlockSummary(input: {
     return {
       position,
       items: tiedItems,
-      amount: tiedItems.length > 0 ? baseAmount / tiedItems.length : baseAmount,
+      amount: baseAmount,
     };
   });
   return {
